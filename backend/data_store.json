@@ -1,0 +1,511 @@
+{
+  "communities": [
+    {
+      "id": "comm-quarter-life",
+      "name": "Quarter-Life & Navigating The Unknown",
+      "description": "For 18-30s dealing with graduation shock, existential vertigo, feeling behind peers, and defining an authentic path.",
+      "icon": "Compass",
+      "slug": "quarter-life",
+      "memberCount": 3420,
+      "frequentProblems": [
+        {
+          "problem": "Feeling behind compared to LinkedIn peers",
+          "count": 842
+        },
+        {
+          "problem": "Choice paralysis after finishing school",
+          "count": 620
+        },
+        {
+          "problem": "Grieving college friend circles drifting away",
+          "count": 495
+        },
+        {
+          "problem": "Uncertainty around personal purpose vs salary",
+          "count": 410
+        }
+      ]
+    },
+    {
+      "id": "comm-career-burnout",
+      "name": "Early Career, Grind Culture & Burnout",
+      "description": "Corporate survival, tech crunch, first jobs, boundary setting with managers, and overcoming toxic hustle mindset.",
+      "icon": "Briefcase",
+      "slug": "career-burnout",
+      "memberCount": 4890,
+      "frequentProblems": [
+        {
+          "problem": "Severe imposter syndrome in first professional role",
+          "count": 1240
+        },
+        {
+          "problem": "Inability to turn off work notifications on weekends",
+          "count": 980
+        },
+        {
+          "problem": "Exhaustion from constant restructuring / layoffs fear",
+          "count": 815
+        },
+        {
+          "problem": "Quiet quitting vs hyper-pleasing bosses",
+          "count": 640
+        }
+      ]
+    },
+    {
+      "id": "comm-money-cost-of-living",
+      "name": "Cost of Living & Financial Dread",
+      "description": "Real talk about rent spikes, groceries, student debt, living with parents, and financial shame in your 20s.",
+      "icon": "Coins",
+      "slug": "financial-anxiety",
+      "memberCount": 2950,
+      "frequentProblems": [
+        {
+          "problem": "Shame about still living at home or moving back",
+          "count": 910
+        },
+        {
+          "problem": "Anxiety checking bank balance before social outings",
+          "count": 830
+        },
+        {
+          "problem": "Feeling unable to ever afford home ownership or safety net",
+          "count": 755
+        },
+        {
+          "problem": "Guilt over small coffees/convenience purchases",
+          "count": 420
+        }
+      ]
+    },
+    {
+      "id": "comm-relationships-loneliness",
+      "name": "Social Shifts, Modern Dating & Loneliness",
+      "description": "Friendship breakups, dating app burnout, making new friends as an adult, and combating deep solitary weekends.",
+      "icon": "HeartHandshake",
+      "slug": "relationships-loneliness",
+      "memberCount": 3820,
+      "frequentProblems": [
+        {
+          "problem": "Difficulties making adult friends outside of school/work",
+          "count": 1120
+        },
+        {
+          "problem": "Dating app fatigue and feeling disposable / ghosted",
+          "count": 940
+        },
+        {
+          "problem": "Pain from close childhood friendships naturally fading",
+          "count": 780
+        },
+        {
+          "problem": "Fear of intimacy after past heartbreak",
+          "count": 510
+        }
+      ]
+    },
+    {
+      "id": "comm-family-boundaries",
+      "name": "Family Boundaries & Breaking Cycles",
+      "description": "Separating your self-worth from parental approval, immigrant parent guilt, and learning healthy assertive boundaries.",
+      "icon": "Shield",
+      "slug": "family-boundaries",
+      "memberCount": 2180,
+      "frequentProblems": [
+        {
+          "problem": "Immense guilt when saying no to family demands",
+          "count": 790
+        },
+        {
+          "problem": "Parental disappointment regarding marriage or career timeline",
+          "count": 640
+        },
+        {
+          "problem": "Unlearning generational anger and conflict avoidance",
+          "count": 520
+        },
+        {
+          "problem": "Navigating differing values / cultural expectations",
+          "count": 430
+        }
+      ]
+    },
+    {
+      "id": "comm-overwhelm-sensory",
+      "name": "Sensory Overload & Doomscroll Detox",
+      "description": "Overstimulated nervous systems, digital screen fatigue, insomnia, and reclaiming quiet moments for the mind.",
+      "icon": "Moon",
+      "slug": "overwhelm-sensory",
+      "memberCount": 3120,
+      "frequentProblems": [
+        {
+          "problem": "Bedtime revenge procrastination & endless reel scrolling",
+          "count": 1040
+        },
+        {
+          "problem": "Physical chest tightness from news / notifications overload",
+          "count": 790
+        },
+        {
+          "problem": "Brain fog and inability to focus for more than 5 minutes",
+          "count": 680
+        },
+        {
+          "problem": "Sensory fatigue in crowded urban or office spaces",
+          "count": 410
+        }
+      ]
+    }
+  ],
+  "posts": [
+    {
+      "id": "post-1",
+      "communityId": "comm-quarter-life",
+      "authorUsername": "QuietWanderer24",
+      "authorAvatar": "teal",
+      "title": "Turned 25 last week and felt an instant wave of terror. Anyone else?",
+      "content": "All through school you have a syllabus and a clear next step. Now I work an average marketing job, scroll Instagram, and see people starting startups or buying houses. I feel like an NPC in my own life. How do you accept that 20s are messy without panicking?",
+      "problemTag": "Feeling behind compared to LinkedIn peers",
+      "createdAt": "2026-11-01T12:31:49.670Z",
+      "upvotes": 42,
+      "replies": [
+        {
+          "id": "reply-1",
+          "authorUsername": "NorthStar99",
+          "content": "I had the exact same breakdown at 25. What helped me was remembering that everyone curates their highlight reel. At 28, I can tell you almost none of those people actually have it figured out. You are not late to your own life.",
+          "createdAt": "2026-11-01T14:31:49.670Z",
+          "upvotes": 21
+        },
+        {
+          "id": "reply-2",
+          "authorUsername": "EchoBreeze",
+          "content": "Try deleting LinkedIn from your phone for two weeks. It genuinely lowered my baseline cortisol by half.",
+          "createdAt": "2026-11-01T16:31:49.670Z",
+          "upvotes": 14
+        }
+      ]
+    },
+    {
+      "id": "post-2",
+      "communityId": "comm-career-burnout",
+      "authorUsername": "PixelCraft",
+      "authorAvatar": "indigo",
+      "title": "My manager sent a Slack message at 9:30 PM on Sunday. I felt physically sick.",
+      "content": "It wasn’t even marked urgent, but my heart started pounding and I couldn’t sleep the rest of the night. How do you train yourself to stop caring so intensely about work when you are in your first serious job?",
+      "problemTag": "Inability to turn off work notifications on weekends",
+      "createdAt": "2026-10-31T23:31:49.670Z",
+      "upvotes": 68,
+      "replies": [
+        {
+          "id": "reply-3",
+          "authorUsername": "SlowPaceDev",
+          "content": "Turn on scheduled Do Not Disturb from Friday 6pm to Monday 8:30am. If the company collapses over a Sunday night message, that is an organizational failure, not your responsibility.",
+          "createdAt": "2026-11-01T05:31:49.670Z",
+          "upvotes": 35
+        }
+      ]
+    },
+    {
+      "id": "post-3",
+      "communityId": "comm-money-cost-of-living",
+      "authorUsername": "BudgetNomad",
+      "authorAvatar": "amber",
+      "title": "Saying \"I can’t afford that dinner\" without feeling like a failure",
+      "content": "My friends wanted to go to a $70/plate restaurant for a casual birthday. I had $120 left until next payday. I lied and said I was sick. I want to normalize just being honest about finances without feeling shame.",
+      "problemTag": "Anxiety checking bank balance before social outings",
+      "createdAt": "2026-10-31T13:31:49.670Z",
+      "upvotes": 89,
+      "replies": [
+        {
+          "id": "reply-4",
+          "authorUsername": "SageTea",
+          "content": "True friends will happily switch to park picnics or hot pot at home. Next time say: \"My current budget is tight right now, but I would love to grab boba with you before or host drinks at my place!\" It takes courage but sets a safe standard.",
+          "createdAt": "2026-10-31T21:31:49.670Z",
+          "upvotes": 48
+        }
+      ]
+    }
+  ],
+  "checkups": [
+    {
+      "id": "chk-1",
+      "timestamp": "2026-10-26T17:31:49.670Z",
+      "stressLevel": 4,
+      "energyLevel": 7,
+      "focusLevel": 6,
+      "moodState": "Grounded",
+      "lifeDomains": [
+        "Work / Career",
+        "Social"
+      ],
+      "notes": "Good start to the week. Got through backlog without overthinking.",
+      "thresholdLevel": 1
+    },
+    {
+      "id": "chk-2",
+      "timestamp": "2026-10-27T17:31:49.670Z",
+      "stressLevel": 6,
+      "energyLevel": 5,
+      "focusLevel": 5,
+      "moodState": "Restless",
+      "lifeDomains": [
+        "Work / Career",
+        "Finances"
+      ],
+      "notes": "Unexpected car repair bill rattled my budget. Kept calculating savings balance.",
+      "thresholdLevel": 2
+    },
+    {
+      "id": "chk-3",
+      "timestamp": "2026-10-28T17:31:49.670Z",
+      "stressLevel": 5,
+      "energyLevel": 6,
+      "focusLevel": 7,
+      "moodState": "Grounded",
+      "lifeDomains": [
+        "Self-Expectations"
+      ],
+      "notes": "Went for a walk at lunch. Felt significantly calmer in the afternoon.",
+      "thresholdLevel": 1
+    },
+    {
+      "id": "chk-4",
+      "timestamp": "2026-10-29T17:31:49.670Z",
+      "stressLevel": 8,
+      "energyLevel": 3,
+      "focusLevel": 4,
+      "moodState": "Overwhelmed",
+      "lifeDomains": [
+        "Work / Career",
+        "Sleep",
+        "Social"
+      ],
+      "notes": "Late night deadline. Slept 4 hours. Felt like my chest was tied in knots.",
+      "thresholdLevel": 3
+    },
+    {
+      "id": "chk-5",
+      "timestamp": "2026-10-30T17:31:49.670Z",
+      "stressLevel": 7,
+      "energyLevel": 4,
+      "focusLevel": 5,
+      "moodState": "Anxious",
+      "lifeDomains": [
+        "Finances",
+        "Work / Career"
+      ],
+      "notes": "Lingering fatigue from earlier in the week. Needed quiet time.",
+      "thresholdLevel": 2
+    },
+    {
+      "id": "chk-6",
+      "timestamp": "2026-10-31T17:31:49.670Z",
+      "stressLevel": 4,
+      "energyLevel": 8,
+      "focusLevel": 7,
+      "moodState": "Energized",
+      "lifeDomains": [
+        "Social",
+        "Self-Expectations"
+      ],
+      "notes": "Met up with an old high school friend. Very refreshing to laugh without agenda.",
+      "thresholdLevel": 1
+    }
+  ],
+  "contacts": [
+    {
+      "id": "tc-1",
+      "name": "Maya Lin",
+      "relationship": "Best Friend / Roommate",
+      "phone": "+1 (555) 234-8901",
+      "email": "maya.lin@example.com",
+      "notes": "Knows when I get sensory burnout. Responds fast on Signal.",
+      "canAutoAlert": true
+    },
+    {
+      "id": "tc-2",
+      "name": "Marcus Chen",
+      "relationship": "Older Brother",
+      "phone": "+1 (555) 872-3312",
+      "email": "marcus.chen@example.com",
+      "notes": "Great grounding influence when I have career spirals.",
+      "canAutoAlert": true
+    }
+  ],
+  "alertLogs": [
+    {
+      "id": "alert-1793554881600",
+      "timestamp": "2026-11-01T17:41:21.600Z",
+      "level": 4,
+      "contactNames": [
+        "Maya Lin",
+        "Marcus Chen"
+      ],
+      "message": "Chatbot detected distress keywords. Triggered Level 4 escalation.",
+      "triggerSource": "chatbot",
+      "status": "prompted"
+    },
+    {
+      "id": "alert-1793554862277",
+      "timestamp": "2026-11-01T17:41:02.277Z",
+      "level": 6,
+      "contactNames": [
+        "Maya Lin",
+        "Marcus Chen"
+      ],
+      "message": "[MB Auto-Safety System] Gentle alert: Your contact has triggered their Level 6 distress threshold on Mental Beacon. Please check in on them with a supportive, low-pressure message or call.",
+      "triggerSource": "test_run",
+      "status": "simulated_sent"
+    }
+  ],
+  "journalEntries": [
+    {
+      "id": "j-1",
+      "title": "Untangling the feeling of being behind",
+      "content": "Today I caught myself spiraling because a former classmate was featured in a 30 Under 30 list. I had to pause, close my laptop, and write down what actually matters to me: good sleep, cooking nutritious dinners, having friends who love me when I have nothing impressive to say, and peace of mind. None of those are measurable on LinkedIn.",
+      "promptUsed": "What is one invisible success in your life that no one on social media can see?",
+      "tags": [
+        "Quarter-Life",
+        "Perspective",
+        "Comparison"
+      ],
+      "mood": "Grounded",
+      "createdAt": "2026-10-30T17:31:49.670Z",
+      "isPrivate": true
+    }
+  ],
+  "articles": [
+    {
+      "id": "art-quarter-life-neuro",
+      "title": "The Neuroscience of the Quarter-Life Crisis (Ages 18–30)",
+      "category": "Developmental Psychology",
+      "readTime": "4 min read",
+      "summary": "Why your brain is undergoing its last major prefrontal cortex pruning, and why identity confusion during these years is biologically expected, not a personal flaw.",
+      "content": "Between the ages of 18 and 28, the prefrontal cortex—the command center for long-term planning, impulse control, and existential evaluation—is undergoing its final myelination and structural pruning.\n\nThis neurological transition often clashes brutally with societal demands. Modern society asks young adults to choose lifelong careers, commit to economic liabilities, and establish independence at the exact moment their neural identity hardware is still calibrating.\n\n### 3 Anchor Practices When Lost:\n1. **The 6-Month Horizon Rule**: Stop planning your entire decade. Pick a 6-month experiment (a project, a skill, a lifestyle routine) and evaluate what gives you energy vs what drains you.\n2. **De-couple Identity from Job Title**: You are an active living organism who happens to exchange labor hours for currency, not a walking LinkedIn profile.\n3. **Audit Your Comparison Inputs**: Your ancestors lived in tribes of 50-100 people. Today your brain processes the top 0.001% high-achievers globally on TikTok and Instagram before breakfast. Your nervous system was never evolved for that scale.",
+      "takeaways": [
+        "The prefrontal cortex is actively developing until age 26-28",
+        "Existential doubt is a sign of neural calibration, not stagnation",
+        "Operate in 6-month growth sprints instead of rigid 10-year plans"
+      ],
+      "tags": [
+        "Quarter-Life",
+        "Neuroscience",
+        "Identity"
+      ],
+      "recommendedThresholdLevels": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "art-cortisol-reset",
+      "title": "The 5-Minute De-escalation Protocol for Acute Nervous System Overload",
+      "category": "Somatic Grounding",
+      "readTime": "3 min read",
+      "summary": "When your chest is tight, brain fog is paralyzing, and you are spiraling, here is how to mechanically trigger the vagus nerve and downregulate cortisol.",
+      "content": "When stress hormones surge, logical cognitive thinking is largely offline. Talking yourself out of panic rarely works because the amygdala has hijacked blood flow away from the prefrontal cortex.\n\nTo recover, you must speak the language of the autonomic nervous system: **mechanics, temperature, and respiration**.\n\n### Step-by-Step Somatic Reset:\n1. **The Physiological Sigh**: Take two deep inhales through your nose (first long, second quick top-up), followed by an extended, audible sigh out of the mouth. Do this 3 to 5 times. This collapses alveolar sacs and dumps CO2 instantly.\n2. **Cold Diver’s Reflex**: Splash cold water on your temples and cheeks, or hold an ice cube in your palm. This triggers an immediate mammalian heart rate deceleration.\n3. **Gaze Softening**: Staring closely at a screen tunnels vision and drives sympathetic tone. Look up, gaze into the furthest distance or horizon, and widen your peripheral awareness to loosen autonomic grip.",
+      "takeaways": [
+        "Use somatic inputs (breath + temperature) before cognitive reframing",
+        "The double-inhale physiological sigh rapidly drops acute heart rate",
+        "Panoramic vision resets the sympathetic fight-or-flight pathway"
+      ],
+      "tags": [
+        "Grounding",
+        "Anxiety",
+        "Nervous System"
+      ],
+      "recommendedThresholdLevels": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "art-family-boundaries",
+      "title": "How to Hold Loving Boundaries with Parents Without Crushing Guilt",
+      "category": "Relational Health",
+      "readTime": "5 min read",
+      "summary": "A field guide for young adults navigating generational gaps, cultural obligations, and the terrifying first steps of saying \"No\".",
+      "content": "Differentiating from family is one of the hardest developmental tasks between 18 and 35. For many children of immigrant or collectivist families, boundaries feel like betrayal.\n\nRemember this distinction: **A boundary is not a punishment for them; it is an explanation of what you need in order to remain connected safely.**\n\n### The \"Acknowledge + Pivot\" Script:\n- *When parents criticize your career pace or personal choices:*\n  \"I know you are asking because you worry about my security and love me. At the same time, I am handling this path, and when we talk today, I want to enjoy your company rather than discuss my career.\"\n- *When feeling pressured to attend overwhelming gatherings:*\n  \"I love celebrating with the family. I will be able to come for lunch from 12 to 2 PM, and then I will head out.\"\n\nSetting boundaries initially feels like cruelty because you have been conditioned to confuse compliance with harmony. Harmony built on self-erasure is resentment in disguise.",
+      "takeaways": [
+        "Boundaries preserve relationships; lack of boundaries breeds resentment",
+        "Validate their intention while clearly stating your operational limit",
+        "Guilt after setting a boundary is normal withdrawal from people-pleasing"
+      ],
+      "tags": [
+        "Family",
+        "Boundaries",
+        "Emotional Maturity"
+      ],
+      "recommendedThresholdLevels": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "art-sleep-digital-sundown",
+      "title": "Ending the Bedtime Revenge Procrastination Loop",
+      "category": "Sleep & Focus",
+      "readTime": "3 min read",
+      "summary": "Why staying up until 2 AM on your phone is your brain trying to reclaim stolen autonomy, and how to gently transition without brute force.",
+      "content": "Revenge bedtime procrastination happens when you feel you have zero control over your daylight hours. When your day belongs to your job, your classes, your family, or your errands, midnight is the only time nobody demands anything of you.\n\nYour brain craves that freedom. The problem is that short-form video algorithms exploit that need with erratic dopamine hits.\n\n### The Gentle Reclamation Ritual:\n1. **Give Yourself Legitimate \"Sloth Time\" Earlier**: Schedule 30 minutes at 7:30 PM where you do absolutely nothing productive. If you don't schedule leisure, your brain will steal it at 1 AM.\n2. **Switch to Passive Audio**: Instead of glowing blue screens, transition to sound: brown noise, rainfall, or a calming voice. This occupies the mental narrator while letting the optic nerve rest.\n3. **The 20-Minute Reset**: If you are lying in bed unable to sleep for more than 20 minutes, get out of bed. Sit in a dim chair with a paper book until sleepy. Protect the bed-sleep association.",
+      "takeaways": [
+        "Late-night scrolling is a symptom of daytime autonomy starvation",
+        "Audio immersion (brown noise) satisfies the brain without blue-light arousal",
+        "Never punish yourself for sleeplessness; treat it with gentle curiosity"
+      ],
+      "tags": [
+        "Sleep",
+        "Habits",
+        "Sensory Detox"
+      ],
+      "recommendedThresholdLevels": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "chatHistory": [
+    {
+      "id": "welcome-msg",
+      "sender": "assistant",
+      "text": "Welcome to Mental Beacon (MB). I'm your Beacon Companion. I'm connected to your check-ups and wellbeing patterns to offer grounded, zero-judgment perspective whenever things feel loud. How is your nervous system holding up right now?",
+      "timestamp": "2026-11-01T17:31:49.671Z"
+    },
+    {
+      "sender": "user",
+      "text": "I feel like I am having a panic attack and my chest is tight",
+      "id": "msg-1793554881599",
+      "timestamp": "2026-11-01T17:41:21.599Z"
+    },
+    {
+      "sender": "assistant",
+      "text": "Your body is in acute fight-or-flight right now. That feeling in your chest is adrenaline, not reality. Let's do a physiological sigh together: two quick inhales through the nose, then a slow sigh out the mouth. I also recommend pinging one of your trusted contacts or using our grounding breath guide.",
+      "distressLevel": 4,
+      "suggestedAction": {
+        "type": "trusted_contacts",
+        "label": "Reach Out to Your Trusted Circle"
+      },
+      "id": "msg-1793554881601",
+      "timestamp": "2026-11-01T17:41:21.601Z"
+    }
+  ],
+  "analytics": {
+    "totalUsers": 14820,
+    "activeUsersToday": 3240,
+    "repeatUserRate": 76.4,
+    "retentionRate30Day": 69.2,
+    "avgSessionMinutes": 14.5,
+    "satisfactionScore": 4.85,
+    "pageViews": {
+      "communities": 18452,
+      "checkup_patterns": 12300,
+      "journal": 8920,
+      "breathing_sound": 15600,
+      "articles": 10210,
+      "games": 7480,
+      "chatbot": 9150
+    }
+  }
+}
