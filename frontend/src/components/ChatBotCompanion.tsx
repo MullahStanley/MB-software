@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MessageSquareHeart, 
   Send, 
-  Sparkles, 
+  ArrowRight, 
   Bot, 
   User, 
-  ShieldAlert, 
   Wind, 
   Compass, 
-  FileText,
-  Activity
+  FileText, 
+  Loader2
 } from 'lucide-react';
 import { api, ChatMessage } from '../api';
 
@@ -91,73 +90,85 @@ export const ChatBotCompanion: React.FC<ChatBotCompanionProps> = ({ onTriggerThr
     }
   };
 
+  const actionIcon = (type: string) => {
+    if (type === 'community') return <Compass className="h-3.5 w-3.5" aria-hidden="true" />;
+    if (type === 'article') return <FileText className="h-3.5 w-3.5" aria-hidden="true" />;
+    if (type === 'breathing') return <Wind className="h-3.5 w-3.5" aria-hidden="true" />;
+    return <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />;
+  };
+
   return (
-    <div className="bg-slate-900 rounded-2xl border border-slate-800 flex flex-col h-[700px] overflow-hidden">
+    <section className="panel flex h-[700px] flex-col overflow-hidden" aria-labelledby="companion-heading">
       {/* Header */}
-      <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-850 to-teal-950/50 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/40 flex items-center justify-center">
-            <MessageSquareHeart className="w-6 h-6" />
-          </div>
+      <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-4 py-3.5 sm:px-5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-forest-100 text-forest-700" aria-hidden="true">
+            <MessageSquareHeart className="h-5 w-5" />
+          </span>
           <div>
-            <div className="flex items-center space-x-2">
-              <h2 className="text-base font-bold text-white">Beacon Companion</h2>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-300 border border-teal-500/20 font-medium">
-                Linked to Biometric Patterns
-              </span>
+            <div className="flex items-center gap-2">
+              <h1 id="companion-heading" className="text-base font-semibold tracking-tight">Beacon Companion</h1>
+              <span className="chip hidden sm:inline-flex">Uses your recent check-ins</span>
             </div>
-            <p className="text-xs text-slate-400">
-              Grounded, non-judgmental perspective informed by your recent check-ups
+            <p className="text-xs text-slate-500">
+              Grounded, non-judgmental perspective — not a replacement for professional care.
             </p>
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center space-x-1 text-xs text-slate-400">
-          <Activity className="w-3.5 h-3.5 text-teal-400" />
-          <span>Context: Live Patterns Active</span>
+        <div className="hidden items-center gap-1.5 text-xs text-slate-400 sm:flex">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-forest-500" aria-hidden="true"></span>
+          <span>Context: live patterns</span>
         </div>
       </div>
 
-      {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+      {/* Messages */}
+      <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
+        {messages.length === 0 && !isSending && (
+          <div className="mx-auto max-w-md rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
+            <p className="text-sm text-slate-600">
+              Say what's on your mind — a hard day, a decision, a spiral. Your recent check-in context is attached automatically.
+            </p>
+          </div>
+        )}
+
         {messages.map((msg) => {
           const isUser = msg.sender === 'user';
           return (
-            <div
-              key={msg.id}
-              className={`flex items-start space-x-2.5 ${isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}
-            >
-              <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  isUser ? 'bg-indigo-600 text-white' : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
+            <div key={msg.id} className={`flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+              <span
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                  isUser ? 'bg-slate-200 text-slate-600' : 'bg-forest-100 text-forest-700'
                 }`}
+                aria-hidden="true"
               >
-                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-              </div>
+                {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+              </span>
 
               <div
-                className={`max-w-[82%] sm:max-w-[75%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
+                className={`max-w-[82%] rounded-xl p-3.5 text-sm leading-relaxed sm:max-w-[75%] ${
                   isUser
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-slate-850 text-slate-200 border border-slate-750 rounded-tl-none space-y-2.5'
+                    ? 'rounded-tr-none bg-forest-600 text-white'
+                    : 'rounded-tl-none border border-slate-200 bg-slate-100 text-slate-800'
                 }`}
               >
                 <p className="whitespace-pre-line">{msg.text}</p>
 
-                {/* Suggested Action Pill if AI returned one */}
+                {/* Suggested action */}
                 {!isUser && msg.suggestedAction && (
-                  <div className="pt-2 border-t border-slate-800">
+                  <div className="mt-2.5 border-t border-slate-200 pt-2.5">
                     <button
+                      type="button"
                       onClick={() => handleActionClick(msg.suggestedAction!)}
-                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-teal-500/20 text-teal-300 border border-teal-500/40 hover:bg-teal-500/30 transition-all text-xs font-semibold"
+                      className="btn btn-sm btn-outline"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                      {actionIcon(msg.suggestedAction.type)}
                       <span>{msg.suggestedAction.label}</span>
                     </button>
                   </div>
                 )}
 
-                <span className="text-[10px] text-slate-500 block text-right">
+                <span className={`mt-1.5 block text-[10px] ${isUser ? 'text-forest-100' : 'text-slate-400'} ${isUser ? 'text-right' : ''}`}>
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
@@ -166,51 +177,55 @@ export const ChatBotCompanion: React.FC<ChatBotCompanionProps> = ({ onTriggerThr
         })}
 
         {isSending && (
-          <div className="flex items-center space-x-2 text-xs text-teal-400">
-            <Bot className="w-4 h-4 animate-spin" />
-            <span>Beacon Companion is formulating grounded response...</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500" role="status">
+            <Loader2 className="h-4 w-4 animate-spin text-forest-600" aria-hidden="true" />
+            <span>Beacon is writing a reply…</span>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Prompts Chips */}
-      <div className="px-4 py-2 bg-slate-950/80 border-t border-slate-800/80 flex space-x-2 overflow-x-auto scrollbar-none">
+      {/* Quick prompts */}
+      <div className="flex gap-2 overflow-x-auto border-t border-slate-100 bg-slate-50 px-4 py-2.5">
         {QUICK_PROMPTS.map((q, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => handleSendMessage(q)}
-            className="text-[11px] px-3 py-1 rounded-full bg-slate-800/90 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700 whitespace-nowrap transition-all"
+            className="btn btn-sm btn-outline shrink-0 rounded-full whitespace-nowrap normal-case"
           >
             {q}
           </button>
         ))}
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="p-3 sm:p-4 bg-slate-950 border-t border-slate-800 flex items-center space-x-2"
+        className="flex items-center gap-2 border-t border-slate-200 bg-white p-3 sm:p-4"
       >
+        <label htmlFor="companion-input" className="sr-only">Message Beacon Companion</label>
         <input
+          id="companion-input"
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Talk freely with Beacon Companion... (or type distress keywords to test safety protocols)"
-          className="flex-1 bg-slate-900 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+          placeholder="Talk freely — or describe what you're feeling right now…"
+          className="field"
         />
         <button
           type="submit"
           disabled={!inputText.trim() || isSending}
-          className="p-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white shadow-md transition-all"
+          className="btn btn-primary shrink-0"
           title="Send message"
+          aria-label="Send message"
         >
-          <Send className="w-4 h-4" />
+          <Send className="h-4 w-4" aria-hidden="true" />
         </button>
       </form>
-    </div>
+    </section>
   );
 };

@@ -1,38 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Users, 
-  MessageSquare, 
-  ThumbsUp, 
-  TrendingUp, 
-  Plus, 
-  Share2, 
-  Compass, 
-  Briefcase, 
-  Coins, 
-  HeartHandshake, 
-  Shield, 
-  Moon,
-  AlertCircle,
-  Clock,
-  Sparkles
-} from 'lucide-react';
+import { MessageSquare, ThumbsUp, Plus, Clock, TrendingUp } from 'lucide-react';
 import { api, Community, Post } from '../api';
+import { PageHeader } from './ui/PageHeader';
+import { Modal } from './ui/Modal';
+import { FlaticonIcon } from './ui/FlaticonIcon';
 
-const iconMap: Record<string, any> = {
-  Compass,
-  Briefcase,
-  Coins,
-  HeartHandshake,
-  Shield,
-  Moon
+// Flaticon PNGs (attribution in README → Icon Credits), tinted via CSS mask
+const iconMap: Record<string, string> = {
+  Compass: 'compass.png',
+  Briefcase: 'briefcase.png',
+  Coins: 'coins.png',
+  HeartHandshake: 'handshake.png',
+  Shield: 'shield.png',
+  Moon: 'moon.png'
 };
 
 interface CommunitiesProps {
   username: string;
-  onTriggerThreshold: (level: number) => void;
 }
 
-export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThreshold }) => {
+export const Communities: React.FC<CommunitiesProps> = ({ username }) => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -92,14 +79,13 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
         title: postTitle,
         content: postContent,
         problemTag: selectedProblemTag || selectedCommunity.frequentProblems[0]?.problem || 'General Discussion',
-        authorAvatar: 'teal'
+        authorAvatar: 'green'
       });
       setPosts([newP, ...posts]);
       setPostTitle('');
       setPostContent('');
       setSelectedProblemTag('');
       setIsNewPostOpen(false);
-      // Reload communities to update problem frequencies
       const comms = await api.getCommunities();
       setCommunities(comms);
     } catch (e) {
@@ -138,213 +124,199 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
   if (loading) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center space-y-3">
-        <div className="w-10 h-10 border-4 border-teal-500/30 border-t-teal-400 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-400">Loading authentic peer communities...</p>
+      <div className="py-24 text-center" role="status">
+        <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-forest-600 border-t-transparent"></div>
+        <p className="text-sm font-medium text-slate-500">Loading peer spaces…</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Community Banner / Young Adult Context */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-teal-950/40 p-6 sm:p-8 border border-slate-800">
-        <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-semibold mb-3">
-            <Users className="w-3.5 h-3.5" />
-            <span>Sub-divided Peer Spaces for Young Adults (15–35)</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            You are not late, defective, or alone in this transition.
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-300">
-            Real peer communities tracking the most frequent developmental obstacles—from quarter-life panic and first-job burnout to modern loneliness and rent anxiety. Post pseudonymously with zero social judgment.
-          </p>
+      <PageHeader
+        eyebrow="Peer communities"
+        title="Honest conversations for young adults."
+        description="Real spaces organized around the challenges of growing up — first jobs, career burnout, cost of living, loneliness and family expectations. Post under an anonymous handle, with nothing tied to your real identity."
+      />
 
-          <div className="mt-4 flex flex-wrap gap-2 items-center">
-            <span className="text-xs text-slate-400">Feeling at your limit?</span>
-            <button
-              onClick={() => onTriggerThreshold(1)}
-              className="text-xs px-2.5 py-1 rounded-md bg-teal-500/15 text-teal-300 border border-teal-500/30 hover:bg-teal-500/25"
-            >
-              Level 1: Community Connection
-            </button>
-            <button
-              onClick={() => onTriggerThreshold(4)}
-              className="text-xs px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25"
-            >
-              Level 4: Contact Circle
-            </button>
-          </div>
-        </div>
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
-      </div>
-
-      {/* Community Channels Grid */}
-      <div>
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-          Select A Topic Community
+      {/* Topic selector */}
+      <section aria-labelledby="topics-heading">
+        <h2 id="topics-heading" className="eyebrow mb-3">
+          Choose a topic
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {communities.map((comm) => {
-            const Icon = iconMap[comm.icon] || Compass;
+            const iconFile = iconMap[comm.icon] || 'compass.png';
             const isSelected = selectedCommunity?.id === comm.id;
             const topProblem = comm.frequentProblems[0]?.problem;
 
             return (
-              <div
+              <button
                 key={comm.id}
+                type="button"
                 onClick={() => handleSelectCommunity(comm)}
-                className={`p-4 rounded-xl cursor-pointer transition-all border ${
+                aria-pressed={isSelected}
+                className={`rounded-lg border p-4 text-left transition-colors ${
                   isSelected
-                    ? 'bg-slate-850 border-teal-500 shadow-md shadow-teal-500/10 ring-1 ring-teal-500/30'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-850/80'
+                    ? 'border-forest-600 bg-forest-50/60'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                      isSelected ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-teal-400'
-                    }`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm text-white">{comm.name}</h3>
-                      <span className="text-xs text-slate-400">{comm.memberCount.toLocaleString()} peers active</span>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                      isSelected ? 'bg-forest-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    <FlaticonIcon name={iconFile} className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-sm font-semibold text-slate-900">{comm.name}</h3>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-slate-500">{comm.description}</p>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 mt-2 line-clamp-2">{comm.description}</p>
+
                 {topProblem && (
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center space-x-1.5 text-xs text-amber-300/90 font-medium">
-                    <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span className="truncate">Top issue: {topProblem}</span>
+                  <div className="mt-3 flex items-center border-t border-slate-100 pt-2 text-[11px] text-slate-600">
+                    <TrendingUp className="mr-1.5 h-3.5 w-3.5 shrink-0 text-forest-600" aria-hidden="true" />
+                    <span className="truncate">Most reported: {topProblem}</span>
                   </div>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Active Community Detail & Problem Frequency Tracker */}
+      {/* Selected community view */}
       {selectedCommunity && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Feed: 2 Cols */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between bg-slate-900 p-4 rounded-xl border border-slate-800">
-              <div>
-                <h3 className="text-lg font-bold text-white">{selectedCommunity.name}</h3>
-                <p className="text-xs text-slate-400">Share your experiences or offer perspective</p>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Main feed */}
+          <div className="space-y-4 lg:col-span-8">
+            <div className="panel flex items-center justify-between gap-3 px-4 py-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-base font-semibold">{selectedCommunity.name}</h2>
+                <p className="text-xs text-slate-500">
+                  {selectedCommunity.memberCount.toLocaleString()} active members
+                </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsNewPostOpen(true)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow transition-all"
+                className="btn btn-sm btn-primary shrink-0"
               >
-                <Plus className="w-4 h-4" />
-                <span>New Reflection</span>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Write post</span>
               </button>
             </div>
 
-            {/* Posts List */}
+            {/* Posts list */}
             {posts.length === 0 ? (
-              <div className="bg-slate-900/60 rounded-xl p-8 border border-slate-800 text-center">
-                <p className="text-sm text-slate-400">No posts in this space yet. Be the first to share your thoughts.</p>
+              <div className="panel p-8 text-center text-sm text-slate-500">
+                No posts in this space yet. Share a thought or question.
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="bg-slate-900 rounded-xl p-5 border border-slate-800 space-y-3 hover:border-slate-750 transition-all">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-[10px]">
-                        {post.authorUsername.slice(0, 2).toUpperCase()}
-                      </div>
-                      <span className="font-medium text-slate-200">@{post.authorUsername}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded-full bg-teal-950/60 text-teal-400 border border-teal-800/40 text-[11px]">
-                        {post.problemTag}
+                <article key={post.id} className="panel space-y-3 p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-forest-100 text-[10px] font-bold text-forest-800" aria-hidden="true">
+                        {post.authorUsername.slice(0, 1).toUpperCase()}
                       </span>
-                      <span className="flex items-center text-slate-500">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <span className="font-semibold text-slate-700">@{post.authorUsername}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="chip">{post.problemTag}</span>
+                      <span className="flex items-center text-slate-400">
+                        <Clock className="mr-1 h-3 w-3" aria-hidden="true" />
+                        <time dateTime={post.createdAt}>
+                          {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </time>
                       </span>
                     </div>
                   </div>
 
-                  <h4 className="text-base font-semibold text-white">{post.title}</h4>
-                  <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{post.content}</p>
+                  <h3 className="text-base font-semibold">{post.title}</h3>
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{post.content}</p>
 
-                  <div className="pt-2 flex items-center justify-between border-t border-slate-800/70 text-xs">
-                    <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-4">
                       <button
+                        type="button"
                         onClick={() => handleUpvote(post.id)}
-                        className="flex items-center space-x-1 text-slate-400 hover:text-teal-400 transition-colors"
+                        className="flex items-center gap-1 hover:text-forest-700"
                       >
-                        <ThumbsUp className="w-3.5 h-3.5" />
-                        <span>{post.upvotes} found helpful</span>
+                        <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>{post.upvotes}</span>
+                        <span className="sr-only">upvotes</span>
                       </button>
                       <button
+                        type="button"
                         onClick={() => setReplyOpenPostId(replyOpenPostId === post.id ? null : post.id)}
-                        className="flex items-center space-x-1 text-slate-400 hover:text-teal-400 transition-colors"
+                        aria-expanded={replyOpenPostId === post.id}
+                        className="flex items-center gap-1 hover:text-forest-700"
                       >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>{post.replies?.length || 0} Replies</span>
+                        <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>{post.replies?.length || 0} replies</span>
                       </button>
                     </div>
-                    <span className="text-slate-500 text-[11px]">Pseudonymous Young Peer</span>
+                    <span className="text-[11px] text-slate-400">Anonymous post</span>
                   </div>
 
-                  {/* Replies section */}
+                  {/* Replies */}
                   {post.replies && post.replies.length > 0 && (
-                    <div className="mt-3 pl-3 sm:pl-4 border-l-2 border-slate-800 space-y-2">
+                    <div className="space-y-2 border-l-2 border-forest-200 pl-3 sm:pl-4">
                       {post.replies.map((reply) => (
-                        <div key={reply.id} className="bg-slate-850/80 p-2.5 rounded-lg text-xs space-y-1">
-                          <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                            <span className="font-semibold text-teal-300">@{reply.authorUsername}</span>
-                            <span>{new Date(reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <div key={reply.id} className="rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs">
+                          <div className="mb-1 flex items-center justify-between text-[11px] text-slate-500">
+                            <span className="font-semibold text-forest-700">@{reply.authorUsername}</span>
+                            <time dateTime={reply.createdAt}>
+                              {new Date(reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </time>
                           </div>
-                          <p className="text-slate-200">{reply.content}</p>
+                          <p className="text-slate-800">{reply.content}</p>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {/* Inline reply box */}
+                  {/* Reply input */}
                   {replyOpenPostId === post.id && (
-                    <div className="mt-2 pt-2 flex items-center space-x-2">
+                    <div className="flex items-center gap-2 border-t border-slate-100 pt-3">
+                      <label htmlFor={`reply-${post.id}`} className="sr-only">
+                        Reply to this post
+                      </label>
                       <input
+                        id={`reply-${post.id}`}
                         type="text"
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
-                        placeholder={`Reply as @${username}...`}
-                        className="flex-1 bg-slate-950 text-xs px-3 py-1.5 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+                        placeholder={`Reply as @${username}…`}
+                        className="field text-xs"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSendReply(post.id);
                         }}
                       />
                       <button
+                        type="button"
                         onClick={() => handleSendReply(post.id)}
-                        className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-medium"
+                        className="btn btn-sm btn-primary shrink-0"
                       >
-                        Reply
+                        Send
                       </button>
                     </div>
                   )}
-                </div>
+                </article>
               ))
             )}
           </div>
 
-          {/* Sidebar: Frequent Problems Tracker for this Community */}
-          <div className="space-y-4">
-            <div className="bg-slate-900 rounded-xl p-5 border border-slate-800">
-              <div className="flex items-center space-x-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-teal-400" />
-                <h3 className="font-bold text-sm text-white">Most Frequent Obstacles</h3>
-              </div>
-              <p className="text-xs text-slate-400 mb-4">
-                Sub-divided community tracking of what young adults in {selectedCommunity.name} are facing most often:
+          {/* Sidebar */}
+          <aside className="space-y-4 lg:col-span-4" aria-label="Community details">
+            <section className="panel p-5">
+              <h2 className="text-sm font-semibold">Frequent issues</h2>
+              <p className="mb-4 mt-1 text-xs text-slate-500">
+                What peers in {selectedCommunity.name} report dealing with most:
               </p>
 
               <div className="space-y-3">
@@ -354,13 +326,13 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
                   return (
                     <div key={idx} className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-300 font-medium line-clamp-1">{fp.problem}</span>
-                        <span className="text-teal-400 font-mono text-[11px] shrink-0 ml-2">{fp.count} logs</span>
+                      <div className="flex justify-between gap-2 text-xs">
+                        <span className="text-slate-700">{fp.problem}</span>
+                        <span className="shrink-0 font-mono text-[11px] text-forest-700">{fp.count}</span>
                       </div>
-                      <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className="bg-gradient-to-r from-teal-500 to-emerald-400 h-full rounded-full transition-all duration-500"
+                          className="h-full rounded-full bg-forest-600 transition-all duration-300"
                           style={{ width: `${percentage}%` }}
                         ></div>
                       </div>
@@ -368,111 +340,95 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                   );
                 })}
               </div>
+            </section>
 
-              <div className="mt-5 p-3 rounded-lg bg-teal-950/40 border border-teal-800/40 text-xs text-teal-200">
-                <span className="font-semibold block mb-0.5">Developmental Insight</span>
-                Over 70% of people experiencing this report feeling instant relief upon finding peers with the exact same doubt.
-              </div>
-            </div>
-
-            {/* Safety Reminder */}
-            <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-800/80 text-xs text-slate-400 space-y-2">
-              <span className="font-semibold text-slate-300 flex items-center space-x-1">
-                <Shield className="w-3.5 h-3.5 text-teal-400" />
-                <span>Safe & Anonymized</span>
+            <div className="rounded-lg border border-forest-200 bg-forest-50 p-4 text-xs">
+              <span className="mb-1 flex items-center gap-1.5 font-semibold text-forest-900">
+                <FlaticonIcon name="shield.png" className="h-3.5 w-3.5 text-forest-700" />
+                Safe community standards
               </span>
-              <p>
-                Your username is pseudonymous. No real names, phone numbers, or social handles are displayed publicly.
+              <p className="leading-relaxed text-forest-800">
+                Posts are anonymous. Real names and personal contact details are never attached to community logs.
               </p>
             </div>
-          </div>
+          </aside>
         </div>
       )}
 
-      {/* New Post Modal */}
-      {isNewPostOpen && selectedCommunity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-2xl max-w-lg w-full border border-slate-700 p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white">
-                Share to {selectedCommunity.name}
-              </h3>
-              <button
-                onClick={() => setIsNewPostOpen(false)}
-                className="text-slate-400 hover:text-white text-sm"
+      {/* New post modal */}
+      <Modal
+        isOpen={isNewPostOpen && !!selectedCommunity}
+        onClose={() => setIsNewPostOpen(false)}
+        title={selectedCommunity ? `Share in ${selectedCommunity.name}` : 'New post'}
+        description="Posting as an anonymous handle. Your real identity is never shown."
+        maxWidth="max-w-lg"
+        footer={
+          <>
+            <button type="button" onClick={() => setIsNewPostOpen(false)} className="btn btn-sm btn-outline">
+              Cancel
+            </button>
+            <button type="submit" form="new-post-form" className="btn btn-sm btn-primary">
+              Submit post
+            </button>
+          </>
+        }
+      >
+        {selectedCommunity && (
+          <form id="new-post-form" onSubmit={handleCreatePost} className="space-y-4">
+            <div>
+              <label htmlFor="post-tag" className="mb-1 block text-xs font-medium text-slate-700">
+                Tag the frequent obstacle
+              </label>
+              <select
+                id="post-tag"
+                value={selectedProblemTag}
+                onChange={(e) => setSelectedProblemTag(e.target.value)}
+                className="field"
               >
-                ✕
-              </button>
+                <option value="">Choose an issue…</option>
+                {selectedCommunity.frequentProblems.map((fp, i) => (
+                  <option key={i} value={fp.problem}>{fp.problem}</option>
+                ))}
+                <option value="General Discussion">General discussion</option>
+              </select>
             </div>
 
-            <form onSubmit={handleCreatePost} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Tag the Specific Obstacle
-                </label>
-                <select
-                  value={selectedProblemTag}
-                  onChange={(e) => setSelectedProblemTag(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
-                >
-                  <option value="">-- Choose Frequent Problem --</option>
-                  {selectedCommunity.frequentProblems.map((fp, i) => (
-                    <option key={i} value={fp.problem}>{fp.problem}</option>
-                  ))}
-                  <option value="General Question">General Question or Story</option>
-                </select>
-              </div>
+            <div>
+              <label htmlFor="post-title" className="mb-1 block text-xs font-medium text-slate-700">
+                Title
+              </label>
+              <input
+                id="post-title"
+                type="text"
+                required
+                placeholder="e.g. Dealing with Sunday night dread…"
+                value={postTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                className="field"
+              />
+            </div>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Dealing with weekend Slack anxiety..."
-                  value={postTitle}
-                  onChange={(e) => setPostTitle(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
-                />
-              </div>
+            <div>
+              <label htmlFor="post-content" className="mb-1 block text-xs font-medium text-slate-700">
+                Your thoughts
+              </label>
+              <textarea
+                id="post-content"
+                required
+                rows={5}
+                placeholder="Describe what you are navigating…"
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                className="field"
+              />
+            </div>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Reflection / Story
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  placeholder="What are you experiencing? Feel free to be completely candid."
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
-                ></textarea>
-              </div>
-
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Posting as: <strong className="text-teal-300">@{username}</strong></span>
-                <div className="flex space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsNewPostOpen(false)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium shadow"
-                  >
-                    Post Anonymously
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <p className="border-t border-slate-100 pt-3 text-xs text-slate-500">
+              Posting as <strong className="font-semibold text-forest-700">@{username}</strong>
+            </p>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 };

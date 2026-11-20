@@ -12,6 +12,7 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { EmergencyThresholdModal } from './components/EmergencyThresholdModal';
 import { TransparencyCenter } from './components/TransparencyCenter';
 import { SustainableProModal } from './components/SustainableProModal';
+import { PageHeader } from './components/ui/PageHeader';
 import { api } from './api';
 
 export const App: React.FC = () => {
@@ -39,7 +40,14 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-teal-500 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-800 selection:bg-forest-600 selection:text-white">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-forest-700 focus:shadow-sm"
+      >
+        Skip to content
+      </a>
+
       {/* Navigation */}
       <Navbar
         currentTab={currentTab}
@@ -52,12 +60,9 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         {currentTab === 'communities' && (
-          <Communities
-            username={username}
-            onTriggerThreshold={handleTriggerThreshold}
-          />
+          <Communities username={username} />
         )}
 
         {currentTab === 'checkups' && (
@@ -71,6 +76,11 @@ export const App: React.FC = () => {
 
         {currentTab === 'calm' && (
           <div className="space-y-6">
+            <PageHeader
+              eyebrow="Nervous system tools"
+              title="Breathing & sound"
+              description="Guided breath pacing and locally synthesized soundscapes you can start in one tap — no account, no downloads, no ads."
+            />
             <BreathingExercise />
             <SoundCalmer />
           </div>
@@ -91,35 +101,43 @@ export const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900 border-t border-slate-800/80 py-8 text-xs text-slate-400 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-white tracking-tight">Mental Beacon (MB)</span>
-            <span>• Built for Young Adult Development (15–35)</span>
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-slate-800">Mental Beacon</span>
+            <span aria-hidden="true">·</span>
+            <span>Built for ages 15–35</span>
+            <span aria-hidden="true">·</span>
+            <a
+              href="https://www.flaticon.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-slate-900 hover:underline"
+            >
+              Icons from Flaticon
+            </a>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <button
               onClick={() => setIsTransparencyOpen(true)}
-              className="hover:text-teal-400 transition-colors"
+              className="hover:text-slate-900 hover:underline"
             >
-              Data Transparency & Zero Ad Policy
+              Data privacy & zero-ads
             </button>
-            <span>•</span>
             <button
               onClick={() => setIsProOpen(true)}
-              className="hover:text-amber-400 transition-colors"
+              className="hover:text-slate-900 hover:underline"
             >
-              Financial Sustainability
+              How we stay funded
             </button>
-            <span>•</span>
             <button
               onClick={() => handleTriggerThreshold(5, 'footer_crisis')}
-              className="text-rose-400 hover:text-rose-300 transition-colors font-medium"
+              className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
             >
-              Crisis Helplines (988)
+              Crisis helplines (988)
             </button>
-          </div>
+          </nav>
         </div>
       </footer>
 

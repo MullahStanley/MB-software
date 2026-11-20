@@ -7,35 +7,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        beacon: {
-          50: '#f0fdf9',
-          100: '#ccfbef',
-          200: '#99f6df',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e',
+        forest: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+          950: '#052e16',
         },
-        slatebg: {
-          850: '#151f30',
-          900: '#0f172a',
-          950: '#080d1a',
-        }
       },
-      animation: {
-        'breathe-in-out': 'breathe 8s ease-in-out infinite',
-        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      fontFamily: {
+        // System stack: zero network requests, no layout shift, native feel.
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
-      keyframes: {
-        breathe: {
-          '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
-          '50%': { transform: 'scale(1.35)', opacity: '1' },
-        }
-      }
     },
   },
   plugins: [],

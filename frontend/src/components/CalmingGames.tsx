@@ -1,20 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Gamepad2, Sparkles, Wind, Eye, RotateCcw, Check, Plus, Cloud } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { RotateCcw, Plus, Cloud } from 'lucide-react';
+import { PageHeader } from './ui/PageHeader';
 
 export const CalmingGames: React.FC = () => {
   const [activeGame, setActiveGame] = useState<'pebbles' | 'clouds' | 'grounding'>('pebbles');
 
-  // Game 1: Zen Pebble Balancer State
+  // Game 1: Zen Pebble Balancer
   const [stones, setStones] = useState<{ id: number; width: number; height: number; x: number; y: number; color: string }[]>([]);
-  const [isStable, setIsStable] = useState(true);
 
-  const stoneColors = ['#0d9488', '#0f766e', '#115e59', '#14b8a6', '#2dd4bf', '#5eead4'];
+  const stoneColors = ['#15803d', '#166534', '#16a34a', '#22c55e', '#4ade80', '#86efac'];
 
   const resetPebbles = () => {
     setStones([
-      { id: 1, width: 140, height: 32, x: 100, y: 220, color: '#0d9488' }
+      { id: 1, width: 140, height: 32, x: 100, y: 220, color: '#166534' }
     ]);
-    setIsStable(true);
   };
 
   useEffect(() => {
@@ -25,8 +24,7 @@ export const CalmingGames: React.FC = () => {
     if (stones.length >= 7) return;
     const topStone = stones[stones.length - 1];
     const newWidth = Math.max(50, topStone.width - 16);
-    // Slight jitter to simulate delicate balance
-    const offset = (Math.random() - 0.5) * 18;
+    const offset = (Math.random() - 0.5) * 16;
     const newX = topStone.x + offset;
 
     const newStone = {
@@ -43,15 +41,15 @@ export const CalmingGames: React.FC = () => {
 
   // Game 2: Thought Unhooker (Cloud Pop)
   const [thoughtInput, setThoughtInput] = useState('');
-  const [clouds, setClouds] = useState<{ id: number; text: string; opacity: number }[]>([
-    { id: 1, text: "I'm late to my own life", opacity: 1 },
-    { id: 2, text: "Everyone on social media is happier than me", opacity: 0.9 }
+  const [clouds, setClouds] = useState<{ id: number; text: string }[]>([
+    { id: 1, text: "I'm behind everyone in my peer group" },
+    { id: 2, text: "What if I chose the wrong career path?" }
   ]);
 
   const handleAddCloudThought = (e: React.FormEvent) => {
     e.preventDefault();
     if (!thoughtInput.trim()) return;
-    setClouds([{ id: Date.now(), text: thoughtInput.trim(), opacity: 1 }, ...clouds]);
+    setClouds([{ id: Date.now(), text: thoughtInput.trim() }, ...clouds]);
     setThoughtInput('');
   };
 
@@ -59,234 +57,209 @@ export const CalmingGames: React.FC = () => {
     setClouds(clouds.filter(c => c.id !== id));
   };
 
-  // Game 3: 5-4-3-2-1 Sensory Grounding State
+  // Game 3: 5-4-3-2-1 Sensory Grounding
   const [groundingStep, setGroundingStep] = useState(0);
   const groundingSteps = [
-    { count: 5, prompt: "Acknowledge 5 things you can see around you right now", icon: "Look at a plant, a shadow, a cup, a pattern on the wall..." },
-    { count: 4, prompt: "Acknowledge 4 things you can physically feel", icon: "The chair under your legs, feet on the floor, texture of your shirt..." },
-    { count: 3, prompt: "Acknowledge 3 things you can hear", icon: "Hum of air conditioning, distant traffic, your own breathing..." },
-    { count: 2, prompt: "Acknowledge 2 things you can smell or love smelling", icon: "Coffee, fresh air, rain, soap, mint..." },
-    { count: 1, prompt: "Acknowledge 1 gentle thing you appreciate about yourself", icon: "You showed up today, you are resilient, you are evolving..." }
+    { count: 5, prompt: "Notice 5 things you can see around you", example: "A plant, light on the wall, a notebook, a door frame…" },
+    { count: 4, prompt: "Notice 4 things you can physically feel", example: "Your feet resting on the floor, the texture of your clothes…" },
+    { count: 3, prompt: "Notice 3 things you can hear", example: "A distant car, ventilation hum, your own breath…" },
+    { count: 2, prompt: "Notice 2 things you can smell", example: "Coffee, fresh air, paper, soap…" },
+    { count: 1, prompt: "Acknowledge 1 gentle truth about yourself", example: "You are doing your best, and that is sufficient for today." }
+  ];
+
+  const games = [
+    { id: 'pebbles' as const, label: 'Stone balancer' },
+    { id: 'clouds' as const, label: 'Thought clouds' },
+    { id: 'grounding' as const, label: '5-4-3-2-1 grounding' },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 rounded-2xl p-6 sm:p-8 border border-slate-800">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3">
-            <Gamepad2 className="w-3.5 h-3.5" />
-            <span>Cognitive Play & Somatic Grounding</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Calm Micro-Games for Mental De-escalation.
-          </h1>
-          <p className="mt-2 text-sm text-slate-300">
-            Gentle interactive tools designed to pull your attention away from catastrophic future loops and gently anchor it back in physical presence.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Grounding tools"
+        title="Small activities to anchor attention."
+        description="Simple interactive exercises for when your mind is stuck on future worst-cases — no scores, no timers, no winning."
+      />
 
-      {/* Game Selector Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-2">
-        <button
-          onClick={() => setActiveGame('pebbles')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeGame === 'pebbles'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          Zen Pebble Balancer
-        </button>
-        <button
-          onClick={() => setActiveGame('clouds')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeGame === 'clouds'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          Thought Cloud Unhooker
-        </button>
-        <button
-          onClick={() => setActiveGame('grounding')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeGame === 'grounding'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          5-4-3-2-1 Sensory Grounder
-        </button>
-      </div>
+      {/* Game selector */}
+      <nav aria-label="Grounding activities" className="flex gap-0.5 overflow-x-auto border-b border-slate-200">
+        {games.map((game) => (
+          <button
+            key={game.id}
+            type="button"
+            onClick={() => setActiveGame(game.id)}
+            aria-current={activeGame === game.id ? 'true' : undefined}
+            className={`tab ${activeGame === game.id ? 'tab-active' : ''}`}
+          >
+            {game.label}
+          </button>
+        ))}
+      </nav>
 
       {/* Game 1: Zen Pebble Balancer */}
       {activeGame === 'pebbles' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <section className="panel space-y-4 p-5 sm:p-6" aria-labelledby="stones-heading">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-lg font-bold text-white">Zen River Stone Tower</h3>
-              <p className="text-xs text-slate-400">
-                Stack smooth river stones one by one. Practice steady patience with every placement.
+              <h2 id="stones-heading" className="text-base font-semibold">River stone tower</h2>
+              <p className="text-xs text-slate-500">
+                Stack river stones one by one. Steady patience with every placement.
               </p>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <button
+                type="button"
                 onClick={handleAddStone}
                 disabled={stones.length >= 7}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white text-xs font-semibold"
+                className="btn btn-sm btn-primary"
               >
-                <Plus className="w-4 h-4" />
-                <span>Place Next Pebble ({stones.length}/7)</span>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Place stone ({stones.length}/7)</span>
               </button>
               <button
+                type="button"
                 onClick={resetPebbles}
-                className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-                title="Reset Tower"
+                className="btn btn-icon btn-outline"
+                title="Reset tower"
+                aria-label="Reset tower"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          {/* Stacking Canvas Area */}
-          <div className="h-72 bg-gradient-to-b from-slate-950 to-slate-900 rounded-xl border border-slate-800 flex flex-col justify-end items-center pb-6 relative overflow-hidden">
-            {/* Ambient Water Horizon Line */}
-            <div className="absolute bottom-6 w-full border-b border-teal-500/20"></div>
+          <div className="relative flex h-72 flex-col items-center justify-end overflow-hidden rounded-lg border border-slate-200 bg-slate-50 pb-6">
+            <div className="absolute bottom-6 w-full border-b border-slate-200"></div>
 
             <div className="relative z-10 flex flex-col items-center">
               {stones.map((s, idx) => (
                 <div
                   key={s.id}
-                  className="rounded-full shadow-lg transition-all duration-300 flex items-center justify-center my-0.5"
+                  className="my-0.5 flex items-center justify-center rounded-full transition-all duration-300"
                   style={{
                     width: `${s.width}px`,
                     height: `${s.height}px`,
                     backgroundColor: s.color,
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
                   }}
                 >
-                  <span className="text-[10px] text-white/50 font-mono select-none">
-                    {idx === 0 ? 'Foundation' : `Stone ${idx + 1}`}
+                  <span className="select-none font-mono text-[10px] text-white/90">
+                    {idx === 0 ? 'Base' : `${idx + 1}`}
                   </span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-teal-950/30 border border-teal-800/30 text-xs text-teal-300 text-center">
-            {stones.length >= 7 ? "✨ Tower complete. Take a deep, appreciative breath." : "Place another stone gently to test your focus."}
-          </div>
-        </div>
+          <p className="rounded-lg border border-forest-200 bg-forest-50 p-3 text-center text-sm font-medium text-forest-800">
+            {stones.length >= 7 ? "Tower complete. Take a slow, steady breath." : "Place another stone gently to test your focus."}
+          </p>
+        </section>
       )}
 
-      {/* Game 2: Thought Cloud Unhooker */}
+      {/* Game 2: Thought Cloud */}
       {activeGame === 'clouds' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-5">
+        <section className="panel space-y-4 p-5 sm:p-6" aria-labelledby="clouds-heading">
           <div>
-            <h3 className="text-lg font-bold text-white">Cognitive Defusion Cloud Dissolver</h3>
-            <p className="text-xs text-slate-400">
-              In Acceptance & Commitment Therapy (ACT), thoughts are not facts—they are passing mental weather. Enter any sticky anxiety, watch it become a cloud, and tap to release it.
+            <h2 id="clouds-heading" className="text-base font-semibold">Thought cloud dissolver</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-600">
+              In cognitive psychology, thoughts aren't permanent facts — they're passing mental weather.
+              Type a worry, watch it become a cloud, and tap to let it drift away.
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleAddCloudThought} className="flex space-x-2">
+          <form onSubmit={handleAddCloudThought} className="flex gap-2">
+            <label htmlFor="thought-input" className="sr-only">A worried thought</label>
             <input
+              id="thought-input"
               type="text"
               required
-              placeholder="e.g. What if I never find what I'm passionate about?"
+              placeholder="e.g. I have to figure out my whole 10-year plan right now…"
               value={thoughtInput}
               onChange={(e) => setThoughtInput(e.target.value)}
-              className="flex-1 bg-slate-950 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+              className="field"
             />
-            <button
-              type="submit"
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-sm font-semibold shadow"
-            >
-              Materialize Cloud
+            <button type="submit" className="btn btn-primary shrink-0">
+              Add cloud
             </button>
           </form>
 
-          {/* Sky Canvas with Floating Clouds */}
-          <div className="min-h-64 p-6 bg-gradient-to-b from-sky-950/60 via-slate-900 to-slate-950 rounded-xl border border-slate-800 flex flex-wrap gap-4 items-center justify-center">
+          <div className="flex min-h-56 flex-wrap items-center justify-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-6">
             {clouds.length === 0 ? (
-              <div className="text-center text-slate-400 text-xs">
-                <Sparkles className="w-6 h-6 mx-auto text-teal-400 mb-2" />
-                <span>The sky of your mind is clear right now.</span>
-              </div>
+              <p className="text-sm font-medium text-slate-400">Your sky is clear right now.</p>
             ) : (
               clouds.map((cloud) => (
-                <div
+                <button
                   key={cloud.id}
+                  type="button"
                   onClick={() => handleDissolveCloud(cloud.id)}
-                  className="cursor-pointer group relative p-4 rounded-3xl bg-slate-800/90 hover:bg-rose-950/40 border border-slate-700 hover:border-rose-500/50 text-xs text-slate-200 max-w-xs shadow-lg transition-all transform hover:-translate-y-1"
-                  title="Click to dissolve and unhook from this thought"
+                  className="max-w-xs rounded-xl border border-slate-200 bg-white p-3.5 text-left transition-all hover:border-rose-300 hover:bg-rose-50/50"
+                  title="Click to dissolve this thought"
                 >
-                  <div className="flex items-center space-x-2 mb-1 text-slate-400 group-hover:text-rose-400">
-                    <Cloud className="w-4 h-4" />
-                    <span className="text-[10px] font-semibold">Passing Thought (Click to Dissolve)</span>
-                  </div>
-                  <p className="font-medium text-white">{cloud.text}</p>
-                </div>
+                  <span className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold text-slate-400">
+                    <Cloud className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+                    Click to dissolve
+                  </span>
+                  <span className="block text-sm font-medium text-slate-900">{cloud.text}</span>
+                </button>
               ))
             )}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Game 3: 5-4-3-2-1 Sensory Grounding */}
+      {/* Game 3: 5-4-3-2-1 */}
       {activeGame === 'grounding' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+        <section className="panel space-y-4 p-5 sm:p-6" aria-labelledby="grounding-heading">
           <div>
-            <h3 className="text-lg font-bold text-white">5-4-3-2-1 Sensory Somatic Guide</h3>
-            <p className="text-xs text-slate-400">
-              The gold-standard psychological exercise to anchor a nervous system spiraling into panic.
+            <h2 id="grounding-heading" className="text-base font-semibold">5-4-3-2-1 sensory grounding</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              The classic grounding sequence for when your nervous system feels scattered.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-300 font-extrabold text-2xl flex items-center justify-center border border-teal-500/40">
+          <div className="flex flex-col items-center space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-forest-600 text-2xl font-bold text-white" aria-hidden="true">
               {groundingSteps[groundingStep].count}
-            </div>
+            </span>
 
-            <h4 className="text-lg font-bold text-white max-w-md">
+            <h3 className="max-w-md text-base font-semibold">
               {groundingSteps[groundingStep].prompt}
-            </h4>
+            </h3>
 
-            <p className="text-xs text-slate-400 italic max-w-sm">
-              "{groundingSteps[groundingStep].icon}"
+            <p className="max-w-sm text-sm italic text-slate-500">
+              “{groundingSteps[groundingStep].example}”
             </p>
 
-            <div className="pt-4 flex space-x-3">
+            <div className="flex gap-2 pt-3">
               {groundingStep > 0 && (
                 <button
+                  type="button"
                   onClick={() => setGroundingStep(groundingStep - 1)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+                  className="btn btn-sm btn-outline"
                 >
                   Previous
                 </button>
               )}
               {groundingStep < groundingSteps.length - 1 ? (
                 <button
+                  type="button"
                   onClick={() => setGroundingStep(groundingStep + 1)}
-                  className="px-6 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow"
+                  className="btn btn-sm btn-primary"
                 >
-                  I've Noticed These ({groundingStep + 1}/5)
+                  I've noticed ({groundingStep + 1}/5)
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={() => setGroundingStep(0)}
-                  className="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow"
+                  className="btn btn-sm btn-primary"
                 >
-                  Complete & Restart
+                  Restart grounding
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

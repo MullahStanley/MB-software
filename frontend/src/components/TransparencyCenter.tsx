@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Download, Trash2, Lock, EyeOff, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Download, Trash2, Lock, EyeOff, FileText, CheckCircle2 } from 'lucide-react';
 import { api } from '../api';
+import { Modal } from './ui/Modal';
 
 interface TransparencyCenterProps {
   isOpen: boolean;
@@ -10,8 +11,6 @@ interface TransparencyCenterProps {
 export const TransparencyCenter: React.FC<TransparencyCenterProps> = ({ isOpen, onClose }) => {
   const [clearing, setClearing] = useState(false);
   const [clearMessage, setClearMessage] = useState<string | null>(null);
-
-  if (!isOpen) return null;
 
   const handleExportData = () => {
     window.open('/api/analytics/export-user-data', '_blank');
@@ -34,92 +33,96 @@ export const TransparencyCenter: React.FC<TransparencyCenterProps> = ({ isOpen, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-slate-900 rounded-2xl max-w-2xl w-full border border-slate-700 shadow-2xl overflow-hidden my-8">
-        <div className="p-6 bg-gradient-to-r from-teal-950/60 via-slate-900 to-slate-900 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 border border-teal-500/40 flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-white">Transparent Data Architecture</h2>
-              <p className="text-xs text-slate-400">Your psychological safety requires absolute data sovereignty</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-sm">✕</button>
-        </div>
-
-        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-          {/* Plain-English Commitments */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-xl bg-slate-850 border border-slate-800 space-y-1">
-              <EyeOff className="w-4 h-4 text-teal-400" />
-              <span className="font-bold text-xs text-white block">No Ad Networks</span>
-              <p className="text-[11px] text-slate-400">Zero Meta, Google, or TikTok tracking pixels. We never sell behavior.</p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-850 border border-slate-800 space-y-1">
-              <Lock className="w-4 h-4 text-emerald-400" />
-              <span className="font-bold text-xs text-white block">Client Pseudonymity</span>
-              <p className="text-[11px] text-slate-400">Community posts are decoupled from real identities and emails.</p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-850 border border-slate-800 space-y-1">
-              <FileText className="w-4 h-4 text-indigo-400" />
-              <span className="font-bold text-xs text-white block">Export Anytime</span>
-              <p className="text-[11px] text-slate-400">Full GDPR/CCPA data export in standardized machine-readable JSON.</p>
-            </div>
-          </div>
-
-          {/* Detailed Policy Text */}
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-3">
-            <h3 className="font-bold text-white text-sm">How Mental Beacon (MB) Handles Your Information:</h3>
-            <p>
-              1. <strong>Check-up Patterns:</strong> Biometric and stress ratings are stored to help you recognize recurring burnout triggers and activate protective lower threshold protocols.
-            </p>
-            <p>
-              2. <strong>Emergency Contacts:</strong> Stored locally and on your isolated tenant. They are only queried when you explicitly request reach-out assistance or your distress triggers Level 6.
-            </p>
-            <p>
-              3. <strong>Community Posts:</strong> Shared publicly under your pseudonymous username to build peer solidarity and map frequent young-adult obstacles.
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Data privacy"
+      description="Your psychological safety requires real data sovereignty — here's exactly how ours works."
+      maxWidth="max-w-2xl"
+      footer={
+        <button type="button" onClick={onClose} className="btn btn-sm btn-outline">
+          Close
+        </button>
+      }
+    >
+      <div className="space-y-6">
+        {/* Plain-english commitments */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3.5">
+            <EyeOff className="h-4 w-4 text-forest-600" aria-hidden="true" />
+            <span className="block text-xs font-semibold text-slate-900">No ad networks</span>
+            <p className="text-xs leading-relaxed text-slate-500">
+              Zero Meta, Google or TikTok pixels. We never sell behaviour.
             </p>
           </div>
-
-          {clearMessage && (
-            <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{clearMessage}</span>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <button
-              onClick={handleExportData}
-              className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download My Complete Data (JSON)</span>
-            </button>
-
-            <button
-              onClick={handleClearData}
-              disabled={clearing}
-              className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs font-semibold"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>{clearing ? 'Wiping...' : 'Permanently Wipe My Patterns'}</span>
-            </button>
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3.5">
+            <Lock className="h-4 w-4 text-forest-600" aria-hidden="true" />
+            <span className="block text-xs font-semibold text-slate-900">Anonymous by default</span>
+            <p className="text-xs leading-relaxed text-slate-500">
+              Community posts are decoupled from your real identity and email.
+            </p>
+          </div>
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3.5">
+            <FileText className="h-4 w-4 text-forest-600" aria-hidden="true" />
+            <span className="block text-xs font-semibold text-slate-900">Export anytime</span>
+            <p className="text-xs leading-relaxed text-slate-500">
+              Full GDPR/CCPA export in standard machine-readable JSON.
+            </p>
           </div>
         </div>
 
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
+        {/* Detailed policy */}
+        <div className="space-y-3 text-sm leading-relaxed text-slate-700">
+          <h3 className="text-sm font-semibold text-slate-900">How Mental Beacon handles your information</h3>
+          <p>
+            <strong className="font-semibold">Check-in patterns:</strong> your stress and energy ratings are
+            stored only so you can see recurring burnout triggers — and so protective support can kick in
+            automatically.
+          </p>
+          <p>
+            <strong className="font-semibold">Emergency contacts:</strong> stored on your isolated account.
+            They're only used when you explicitly ask for reach-out help, or when you trigger level 6.
+          </p>
+          <p>
+            <strong className="font-semibold">Community posts:</strong> shared under your anonymous handle to
+            build peer solidarity and map the obstacles young adults actually face.
+          </p>
+        </div>
+
+        {clearMessage && (
+          <div className="flex items-center gap-2 rounded-lg border border-forest-200 bg-forest-50 p-3 text-sm text-forest-800" role="status">
+            <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{clearMessage}</span>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row">
           <button
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium"
+            type="button"
+            onClick={handleExportData}
+            className="btn btn-primary flex-1"
           >
-            Close
+            <Download className="h-4 w-4" aria-hidden="true" />
+            <span>Download my data (JSON)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearData}
+            disabled={clearing}
+            className="btn flex-1 border border-rose-200 bg-white text-rose-700 hover:bg-rose-50"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            <span>{clearing ? 'Wiping…' : 'Permanently wipe my data'}</span>
           </button>
         </div>
+
+        <p className="flex items-center gap-1.5 text-xs text-slate-400">
+          <ShieldCheck className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+          No ad tracking, ever — the full policy is one screen because it's genuinely simple.
+        </p>
       </div>
-    </div>
+    </Modal>
   );
 };

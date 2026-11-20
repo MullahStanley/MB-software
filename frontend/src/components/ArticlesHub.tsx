@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Clock, Tag, BookOpen, Sparkles, Search, ArrowRight, X } from 'lucide-react';
+import { Clock, Search, Check } from 'lucide-react';
 import { api, Article } from '../api';
+import { PageHeader } from './ui/PageHeader';
+import { Modal } from './ui/Modal';
 
 export const ArticlesHub: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -34,135 +36,118 @@ export const ArticlesHub: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-teal-950/40 rounded-2xl p-6 sm:p-8 border border-slate-800">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-semibold mb-3">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Youth Psychoeducation & Brain Architecture</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Practical Developmental Guides for Ages 15–35.
-          </h1>
-          <p className="mt-2 text-sm text-slate-300">
-            Evidence-based perspectives on neurobiology, executive dysfunction, establishing boundaries with family, handling early career panic, and somatic recovery.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Guides"
+        title="Clear reading for your 20s and early 30s."
+        description="Short, practical articles on boundaries, nervous-system resets, family expectations and quarter-life crossroads — written to be read in one sitting."
+      />
 
-      {/* Search Bar */}
-      <div className="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
-        <Search className="w-4 h-4 text-slate-400 ml-2" />
+      {/* Search */}
+      <div className="relative">
+        <label htmlFor="guide-search" className="sr-only">Search guides</label>
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
         <input
-          type="text"
+          id="guide-search"
+          type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by topic, e.g. quarter-life, burnout, vagus nerve, boundaries..."
-          className="w-full bg-transparent text-xs sm:text-sm text-slate-200 focus:outline-none"
+          placeholder="Search by keyword — quarter-life, burnout, vagus nerve, boundaries…"
+          className="field pl-9"
         />
-        {searchQuery && (
-          <button onClick={() => setSearchQuery('')} className="text-slate-400 hover:text-white text-xs mr-2">
-            Clear
-          </button>
-        )}
       </div>
 
-      {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredArticles.map((art) => (
-          <div
-            key={art.id}
-            onClick={() => setSelectedArticle(art)}
-            className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-850 cursor-pointer transition-all flex flex-col justify-between space-y-4 group"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span className="px-2 py-0.5 rounded-full bg-teal-950/60 text-teal-300 border border-teal-800/40 text-[11px] font-medium">
-                  {art.category}
-                </span>
-                <span className="flex items-center text-slate-500 text-[11px]">
-                  <Clock className="w-3 h-3 mr-1" />
-                  {art.readTime}
-                </span>
-              </div>
-              <h3 className="text-base font-bold text-white group-hover:text-teal-300 transition-colors">
-                {art.title}
-              </h3>
-              <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
-                {art.summary}
-              </p>
-            </div>
-
-            {/* Takeaways Preview */}
-            <div className="pt-3 border-t border-slate-800/80">
-              <span className="text-[11px] font-bold text-slate-400 block mb-1">Key Insight:</span>
-              <p className="text-xs text-teal-200/90 italic line-clamp-1">
-                • {art.takeaways[0]}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Full Article Reader Modal */}
-      {selectedArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-slate-900 rounded-2xl max-w-2xl w-full border border-slate-700 shadow-2xl overflow-hidden my-8">
-            <div className="p-6 border-b border-slate-800 flex items-start justify-between">
-              <div>
-                <span className="text-xs text-teal-400 font-semibold uppercase tracking-wider block mb-1">
-                  {selectedArticle.category} • {selectedArticle.readTime}
-                </span>
-                <h2 className="text-xl font-bold text-white leading-tight">
-                  {selectedArticle.title}
+      {/* Articles grid */}
+      {loading ? (
+        <div className="panel p-8 text-center text-sm text-slate-500" role="status">Loading guides…</div>
+      ) : filteredArticles.length === 0 ? (
+        <div className="panel p-8 text-center text-sm text-slate-500">
+          No guides match that search. Try a broader keyword.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {filteredArticles.map((art) => (
+            <article
+              key={art.id}
+              className="panel flex cursor-pointer flex-col justify-between gap-4 p-5 transition-colors hover:border-forest-400"
+            >
+              <button
+                type="button"
+                onClick={() => setSelectedArticle(art)}
+                className="text-left"
+              >
+                <div className="mb-2 flex items-center justify-between gap-2 text-xs text-slate-500">
+                  <span className="chip">{art.category}</span>
+                  <span className="flex items-center text-[11px]">
+                    <Clock className="mr-1 h-3 w-3 text-slate-400" aria-hidden="true" />
+                    {art.readTime}
+                  </span>
+                </div>
+                <h2 className="text-base font-semibold text-slate-900 hover:text-forest-700">
+                  {art.title}
                 </h2>
-              </div>
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors ml-4"
-              >
-                <X className="w-5 h-5" />
+                <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-slate-600">
+                  {art.summary}
+                </p>
               </button>
-            </div>
 
-            <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-              {/* Summary Callout */}
-              <div className="p-4 rounded-xl bg-teal-950/30 border border-teal-800/40 text-xs text-teal-200 leading-relaxed font-medium">
-                {selectedArticle.summary}
+              <div className="border-t border-slate-100 pt-3">
+                <span className="mb-0.5 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Core takeaway
+                </span>
+                <p className="line-clamp-1 text-sm text-forest-800">{art.takeaways[0]}</p>
               </div>
-
-              {/* Main Content */}
-              <div className="text-sm text-slate-200 leading-relaxed whitespace-pre-line space-y-4 font-sans">
-                {selectedArticle.content}
-              </div>
-
-              {/* Key Takeaways */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                <h4 className="text-xs font-bold text-teal-400 uppercase tracking-wider">
-                  Actionable Takeaways
-                </h4>
-                <ul className="space-y-1.5">
-                  {selectedArticle.takeaways.map((t, idx) => (
-                    <li key={idx} className="text-xs text-slate-300 flex items-start space-x-2">
-                      <span className="text-teal-400 font-bold shrink-0">✓</span>
-                      <span>{t}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold"
-              >
-                Finished Reading
-              </button>
-            </div>
-          </div>
+            </article>
+          ))}
         </div>
       )}
+
+      {/* Reader */}
+      <Modal
+        isOpen={!!selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        title={selectedArticle?.title || ''}
+        description={selectedArticle ? `${selectedArticle.category} · ${selectedArticle.readTime}` : undefined}
+        maxWidth="max-w-2xl"
+        footer={
+          <button type="button" onClick={() => setSelectedArticle(null)} className="btn btn-sm btn-primary">
+            Close guide
+          </button>
+        }
+      >
+        {selectedArticle && (
+          <div className="space-y-5">
+            <p className="rounded-lg border border-forest-200 bg-forest-50 p-4 text-sm leading-relaxed text-forest-900">
+              {selectedArticle.summary}
+            </p>
+
+            <div className="max-w-[65ch] space-y-4 whitespace-pre-line text-sm leading-7 text-slate-700">
+              {selectedArticle.content}
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-700">
+                Actionable steps
+              </h3>
+              <ul className="space-y-2">
+                {selectedArticle.takeaways.map((t, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-forest-600" aria-hidden="true" />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {selectedArticle.tags && selectedArticle.tags.length > 0 && (
+              <ul className="flex flex-wrap gap-1.5" aria-label="Topics">
+                {selectedArticle.tags.map((tag, i) => (
+                  <li key={i} className="chip">{tag}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

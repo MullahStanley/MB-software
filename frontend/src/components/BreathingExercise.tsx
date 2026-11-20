@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Sparkles, Volume2, VolumeX, Wind } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
 interface BreathingPattern {
   id: string;
@@ -12,45 +12,45 @@ interface BreathingPattern {
 const PATTERNS: BreathingPattern[] = [
   {
     id: '4-7-8',
-    name: '4-7-8 Deep Relaxation',
-    description: 'Dr. Andrew Weil’s classic natural tranquilizer for the nervous system.',
-    targetMood: 'Acute Panic, Chest Tightness & Bedtime Overwhelm',
+    name: '4-7-8 relaxation',
+    description: 'A natural tranquilizer for acute stress and bedtime restlessness.',
+    targetMood: 'For tight chest & anxiety',
     phases: [
-      { name: 'Inhale (Nose)', duration: 4 },
-      { name: 'Hold Gently', duration: 7 },
-      { name: 'Slow Exhale (Mouth)', duration: 8 }
+      { name: 'Inhale through nose', duration: 4 },
+      { name: 'Hold breath', duration: 7 },
+      { name: 'Exhale through mouth', duration: 8 }
     ]
   },
   {
     id: 'box',
-    name: 'Box Breathing (4-4-4-4)',
-    description: 'Used by high-stress professionals and first responders to clear cortisol surges.',
-    targetMood: 'Work Stress, Imposter Syndrome & Brain Fog',
+    name: 'Box breathing (4-4-4-4)',
+    description: 'Regulates the nervous system during intense work or study pressure.',
+    targetMood: 'For work stress & focus',
     phases: [
       { name: 'Inhale', duration: 4 },
-      { name: 'Hold Full', duration: 4 },
+      { name: 'Hold', duration: 4 },
       { name: 'Exhale', duration: 4 },
-      { name: 'Hold Empty', duration: 4 }
+      { name: 'Hold', duration: 4 }
     ]
   },
   {
     id: 'resonance',
-    name: 'Resonant Coherence (5.5s)',
-    description: 'Brings heart rate variability (HRV) into optimal 0.1Hz cardiovascular resonance.',
-    targetMood: 'Restlessness, Scatter & Sensory Fatigue',
+    name: 'Resonant breathing (5.5s)',
+    description: 'Aligns heart-rate variability into natural 0.1Hz coherence.',
+    targetMood: 'For mental fatigue',
     phases: [
-      { name: 'Smooth Inhale', duration: 5.5 },
-      { name: 'Smooth Exhale', duration: 5.5 }
+      { name: 'Smooth inhale', duration: 5.5 },
+      { name: 'Smooth exhale', duration: 5.5 }
     ]
   },
   {
     id: '7-11',
-    name: '7-11 Panic Release',
-    description: 'Longer exhale stimulates the vagus nerve and shuts down the fight-or-flight response.',
-    targetMood: 'Severe Spiraling, Overstimulation & Anxiety',
+    name: '7-11 calm',
+    description: 'A longer exhale stimulates the vagus nerve to slow heart rate.',
+    targetMood: 'For acute overwhelm',
     phases: [
-      { name: 'Deep Inhale', duration: 7 },
-      { name: 'Prolonged Exhale', duration: 11 }
+      { name: 'Inhale', duration: 7 },
+      { name: 'Long exhale', duration: 11 }
     ]
   }
 ];
@@ -63,7 +63,6 @@ export const BreathingExercise: React.FC = () => {
   const [cyclesCompleted, setCyclesCompleted] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Web Audio Context for soft chime
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   const playSoftChime = (freq = 440) => {
@@ -80,32 +79,28 @@ export const BreathingExercise: React.FC = () => {
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(0.04, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+      gain.gain.setValueAtTime(0.03, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.0);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 1.3);
-    } catch (e) {
-      // Audio autoplay restriction fallback
-    }
+      osc.stop(ctx.currentTime + 1.1);
+    } catch (e) {}
   };
 
   useEffect(() => {
     let timer: any = null;
 
     if (isActive) {
-      const currentPhase = selectedPattern.phases[currentPhaseIndex];
       timer = setInterval(() => {
         setTimeRemainingInPhase((prev) => {
           if (prev <= 0.1) {
-            // Next phase
             const nextPhaseIndex = (currentPhaseIndex + 1) % selectedPattern.phases.length;
             if (nextPhaseIndex === 0) {
               setCyclesCompleted((c) => c + 1);
             }
             setCurrentPhaseIndex(nextPhaseIndex);
-            playSoftChime(nextPhaseIndex === 0 ? 528 : 432);
+            playSoftChime(nextPhaseIndex === 0 ? 528 : 440);
             return selectedPattern.phases[nextPhaseIndex].duration;
           }
           return Math.max(0, +(prev - 0.1).toFixed(1));
@@ -136,132 +131,129 @@ export const BreathingExercise: React.FC = () => {
   const currentPhase = selectedPattern.phases[currentPhaseIndex];
   const phaseProgress = 1 - timeRemainingInPhase / currentPhase.duration;
 
-  // Calculate breathing scale for animation
   let scale = 1;
   if (currentPhase.name.toLowerCase().includes('inhale')) {
-    scale = 1 + phaseProgress * 0.45;
+    scale = 1 + phaseProgress * 0.35;
   } else if (currentPhase.name.toLowerCase().includes('hold')) {
-    scale = currentPhaseIndex === 1 ? 1.45 : 1.0;
+    scale = currentPhaseIndex === 1 ? 1.35 : 1.0;
   } else {
-    // Exhale
-    scale = 1.45 - phaseProgress * 0.45;
+    scale = 1.35 - phaseProgress * 0.35;
   }
 
   return (
-    <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <section className="panel p-5 sm:p-6" aria-labelledby="pacer-heading">
+      <div className="mb-5 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center space-x-1.5 text-xs text-teal-400 font-semibold mb-1">
-            <Wind className="w-3.5 h-3.5" />
-            <span>Somatic Vagus Nerve Regulation</span>
-          </div>
-          <h2 className="text-xl font-bold text-white">Visual Breathing Pacer</h2>
-          <p className="text-xs text-slate-400">
-            Suggested based on your stress level to drop heart rate within 3 minutes
+          <p className="eyebrow mb-1">Breathing pacer</p>
+          <h2 id="pacer-heading" className="text-lg font-semibold tracking-tight">Guided visual pacer</h2>
+          <p className="text-xs text-slate-500">
+            Follow the rhythm to lower your heart rate within three minutes.
           </p>
         </div>
 
-        {/* Mute Chime Toggle */}
         <button
+          type="button"
           onClick={() => setSoundEnabled(!soundEnabled)}
-          className="flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 self-start sm:self-auto"
+          className="btn btn-sm btn-outline self-start sm:self-auto"
+          aria-pressed={soundEnabled}
         >
-          {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-teal-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
-          <span>{soundEnabled ? 'Chime Active' : 'Muted'}</span>
+          {soundEnabled ? <Volume2 className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" /> : <VolumeX className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />}
+          <span>{soundEnabled ? 'Chime on' : 'Muted'}</span>
         </button>
       </div>
 
-      {/* Pattern Selector Chips */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-        {PATTERNS.map((p) => {
-          const isSelected = selectedPattern.id === p.id;
-          return (
-            <button
-              key={p.id}
-              onClick={() => handleSelectPattern(p)}
-              className={`p-3 rounded-xl border text-left transition-all ${
-                isSelected
-                  ? 'bg-teal-500/15 border-teal-500 text-white shadow-md shadow-teal-500/10 ring-1 ring-teal-500/40'
-                  : 'bg-slate-850/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-              }`}
-            >
-              <span className="font-bold text-xs block text-teal-300">{p.name}</span>
-              <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">{p.targetMood}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* Pattern selector */}
+      <fieldset>
+        <legend className="sr-only">Choose a breathing pattern</legend>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {PATTERNS.map((p) => {
+            const isSelected = selectedPattern.id === p.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => handleSelectPattern(p)}
+                aria-pressed={isSelected}
+                className={`rounded-lg border p-3 text-left transition-colors ${
+                  isSelected
+                    ? 'border-forest-600 bg-forest-50'
+                    : 'border-slate-200 bg-white hover:bg-slate-50'
+                }`}
+              >
+                <span className="block text-xs font-semibold text-slate-900">{p.name}</span>
+                <span className="mt-0.5 block line-clamp-1 text-[11px] text-slate-500">{p.targetMood}</span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
 
-      {/* Breathing Visual Canvas Center */}
-      <div className="flex flex-col items-center justify-center py-8">
-        <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
-          {/* Outer Ripple Wave */}
+      {/* Visual breathing orb */}
+      <div className="flex flex-col items-center justify-center py-6">
+        <div className="relative flex h-64 w-64 items-center justify-center">
+          {/* Outer ring */}
           <div
-            className="absolute rounded-full border border-teal-500/20 transition-all duration-300 ease-out"
+            className="absolute rounded-full border border-forest-200 transition-all duration-300"
             style={{
               width: `${scale * 170}px`,
               height: `${scale * 170}px`,
-              opacity: isActive ? 0.6 : 0.2
             }}
           ></div>
 
-          {/* Core Breathing Orb */}
+          {/* Central orb */}
           <div
-            className="relative rounded-full flex flex-col items-center justify-center transition-all duration-200 ease-out shadow-2xl"
+            className="relative flex flex-col items-center justify-center rounded-full border border-forest-300 transition-all duration-200"
             style={{
-              width: `${scale * 130}px`,
-              height: `${scale * 130}px`,
-              background: currentPhase.name.toLowerCase().includes('inhale')
-                ? 'radial-gradient(circle, rgba(45,212,191,0.6) 0%, rgba(13,148,136,0.3) 70%, transparent 100%)'
+              width: `${scale * 135}px`,
+              height: `${scale * 135}px`,
+              backgroundColor: currentPhase.name.toLowerCase().includes('inhale')
+                ? '#dcfce7'
                 : currentPhase.name.toLowerCase().includes('hold')
-                ? 'radial-gradient(circle, rgba(99,102,241,0.6) 0%, rgba(67,56,202,0.3) 70%, transparent 100%)'
-                : 'radial-gradient(circle, rgba(16,185,129,0.5) 0%, rgba(5,150,105,0.2) 70%, transparent 100%)',
-              border: '2px solid rgba(45, 212, 191, 0.4)'
+                ? '#f0fdf4'
+                : '#bbf7d0',
             }}
           >
-            <span className="text-sm sm:text-base font-extrabold text-white tracking-wide text-center px-4">
+            <span className="px-4 text-center text-xs font-semibold tracking-wide text-forest-900">
               {currentPhase.name}
             </span>
-            <span className="text-3xl sm:text-4xl font-mono font-extrabold text-teal-200 mt-1">
+            <span className="mt-1 font-mono text-3xl font-bold text-forest-900">
               {Math.ceil(timeRemainingInPhase)}s
             </span>
           </div>
         </div>
 
-        {/* Phase Details & Cycle Progress */}
-        <div className="mt-4 text-center space-y-1">
-          <p className="text-xs text-slate-300">{selectedPattern.description}</p>
-          <span className="text-xs font-mono text-teal-400 block">
-            Cycles Completed: <strong>{cyclesCompleted}</strong> / 4 Recommended
+        <div className="mt-4 space-y-1 text-center">
+          <p className="text-sm text-slate-600">{selectedPattern.description}</p>
+          <span className="block font-mono text-xs font-semibold text-forest-700">
+            Cycles completed: {cyclesCompleted} / 4 recommended
           </span>
         </div>
 
         {/* Controls */}
-        <div className="mt-6 flex items-center space-x-3">
+        <div className="mt-6 flex items-center gap-3">
           <button
+            type="button"
             onClick={() => {
               if (!isActive) playSoftChime(440);
               setIsActive(!isActive);
             }}
-            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-all ${
-              isActive
-                ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                : 'bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/20'
-            }`}
+            className={`btn ${isActive ? 'bg-slate-800 text-white hover:bg-slate-700' : 'btn-primary'}`}
           >
-            {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            <span>{isActive ? 'Pause Pacer' : 'Begin Breathing Session'}</span>
+            {isActive ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
+            <span>{isActive ? 'Pause' : 'Start pacer'}</span>
           </button>
 
           <button
+            type="button"
             onClick={handleReset}
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
-            title="Reset Pacer"
+            className="btn btn-icon btn-outline"
+            title="Reset pacer"
+            aria-label="Reset pacer"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

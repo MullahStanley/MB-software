@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BookOpen, 
-  Sparkles, 
   Lock, 
   Trash2, 
-  Plus, 
   Calendar, 
-  Smile, 
-  Tag, 
   Shuffle, 
   CheckCircle2, 
-  ShieldCheck 
+  ShieldCheck,
+  Feather
 } from 'lucide-react';
 import { api, JournalEntry } from '../api';
+import { PageHeader } from './ui/PageHeader';
 
-const JOURNAL_MOODS = ['Reflective', 'Vulnerable', 'Grateful', 'Relieved', 'Exhausted', 'Uncertain'];
+const JOURNAL_MOODS = ['Reflective', 'Vulnerable', 'Grateful', 'Relieved', 'Fatigued', 'Uncertain'];
 
 export const PrivateJournal: React.FC = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -59,7 +56,7 @@ export const PrivateJournal: React.FC = () => {
     const currentPrompt = prompts[activePromptIndex];
     if (currentPrompt) {
       setTitle(currentPrompt.slice(0, 50) + '...');
-      setContent((prev) => (prev ? `${prev}\n\n[Prompt Reflection: ${currentPrompt}]\n` : `[Prompt Reflection: ${currentPrompt}]\n`));
+      setContent((prev) => (prev ? `${prev}\n\n[Prompt: ${currentPrompt}]\n` : `[Prompt: ${currentPrompt}]\n`));
     }
   };
 
@@ -74,7 +71,7 @@ export const PrivateJournal: React.FC = () => {
         .filter(Boolean);
 
       const saved = await api.addJournalEntry({
-        title: title.trim() || 'Untitled Journal Note',
+        title: title.trim() || 'Untitled reflection',
         content: content.trim(),
         promptUsed: prompts[activePromptIndex],
         mood: selectedMood,
@@ -103,104 +100,95 @@ export const PrivateJournal: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-emerald-950/40 rounded-2xl p-6 sm:p-8 border border-slate-800">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold mb-3">
-            <Lock className="w-3.5 h-3.5" />
-            <span>Encrypted & Private to Your Device</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Private Journal: Safe Unpacking of the Unfiltered Mind.
-          </h1>
-          <p className="mt-2 text-sm text-slate-300">
-            No followers, no likes, and zero performance pressure. Regular expressive writing downregulates chronic amygdala activation and releases intrusive thought loops.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Private journal"
+        title="Write without being watched."
+        description="A quiet space with no scores, streaks or audience. Expressive writing unloads mental chatter and brings perspective to heavy weeks — entries stay yours alone."
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Col: Prompt & Editor (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          {/* Rotating Prompt Card */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Editor column */}
+        <div className="space-y-4 lg:col-span-7">
+          {/* Prompt suggestion */}
           {prompts.length > 0 && (
-            <div className="p-4 rounded-xl bg-slate-900 border border-teal-500/30 shadow-sm relative overflow-hidden">
-              <div className="flex items-center justify-between mb-2">
-                <span className="flex items-center space-x-1.5 text-xs font-bold text-teal-400">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Grounding Journal Prompt</span>
+            <div className="rounded-xl border border-forest-200 bg-forest-50 p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-forest-800">
+                  <Feather className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+                  Writing prompt
                 </span>
                 <button
                   type="button"
                   onClick={handleShufflePrompt}
-                  className="flex items-center space-x-1 text-xs text-slate-400 hover:text-teal-300 transition-colors"
+                  className="flex items-center gap-1 text-xs font-medium text-forest-700 hover:text-forest-900"
                 >
-                  <Shuffle className="w-3 h-3" />
-                  <span>Next Prompt</span>
+                  <Shuffle className="h-3 w-3" aria-hidden="true" />
+                  Next prompt
                 </button>
               </div>
 
-              <p className="text-sm font-medium text-slate-200 italic my-2">
-                "{prompts[activePromptIndex]}"
+              <p className="text-sm italic leading-relaxed text-slate-800">
+                “{prompts[activePromptIndex]}”
               </p>
 
               <button
                 type="button"
                 onClick={handleUsePromptInEditor}
-                className="text-xs px-2.5 py-1 rounded bg-teal-500/20 text-teal-300 hover:bg-teal-500/30 transition-all font-medium"
+                className="btn btn-sm btn-outline mt-3"
               >
-                Use this prompt in entry
+                Use this prompt
               </button>
             </div>
           )}
 
-          {/* Journal Editor */}
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-white flex items-center space-x-2">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
-                <span>Write New Reflection</span>
-              </h3>
+          {/* Editor */}
+          <section className="panel p-5 sm:p-6" aria-labelledby="new-entry-heading">
+            <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+              <h2 id="new-entry-heading" className="text-sm font-semibold">New reflection</h2>
               {isSavedNotice && (
-                <span className="flex items-center space-x-1 text-xs text-emerald-400 font-semibold animate-fade-in">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Saved privately!</span>
+                <span className="flex items-center gap-1 text-xs font-semibold text-forest-700" role="status">
+                  <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                  Saved
                 </span>
               )}
             </div>
 
             <form onSubmit={handleSaveEntry} className="space-y-4">
               <div>
+                <label htmlFor="entry-title" className="sr-only">Reflection title</label>
                 <input
+                  id="entry-title"
                   type="text"
-                  placeholder="Title of this reflection..."
+                  placeholder="Reflection title…"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-slate-950 text-sm px-3.5 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-emerald-500 font-medium"
+                  className="field font-medium"
                 />
               </div>
 
               <div>
+                <label htmlFor="entry-content" className="sr-only">Your reflection</label>
                 <textarea
+                  id="entry-content"
                   required
-                  rows={8}
-                  placeholder="Let your thoughts flow freely. Do not edit or self-censor..."
+                  rows={9}
+                  placeholder="Start writing freely…"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full bg-slate-950 text-xs sm:text-sm px-3.5 py-2.5 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
+                  className="field leading-relaxed"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                {/* Mood Tag */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                    Felt Tone
+                  <label htmlFor="entry-mood" className="mb-1 block text-xs font-medium text-slate-700">
+                    Tone / mood
                   </label>
                   <select
+                    id="entry-mood"
                     value={selectedMood}
                     onChange={(e) => setSelectedMood(e.target.value)}
-                    className="w-full bg-slate-950 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-emerald-500"
+                    className="field"
                   >
                     {JOURNAL_MOODS.map((m) => (
                       <option key={m} value={m}>{m}</option>
@@ -208,93 +196,100 @@ export const PrivateJournal: React.FC = () => {
                   </select>
                 </div>
 
-                {/* Tags */}
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                    Themes (comma separated)
+                  <label htmlFor="entry-tags" className="mb-1 block text-xs font-medium text-slate-700">
+                    Keywords (comma separated)
                   </label>
                   <input
+                    id="entry-tags"
                     type="text"
-                    placeholder="e.g. Boundaries, Career, Family"
+                    placeholder="e.g. work, sleep, boundaries"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
-                    className="w-full bg-slate-950 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-emerald-500"
+                    className="field"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-                <span className="flex items-center space-x-1 text-[11px] text-slate-500">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Zero public visibility</span>
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                <span className="flex items-center gap-1 text-xs text-slate-500">
+                  <Lock className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+                  Stored securely, never shared
                 </span>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold shadow-md transition-all"
-                >
-                  Save to Vault
+                <button type="submit" className="btn btn-sm btn-primary">
+                  Save entry
                 </button>
               </div>
             </form>
-          </div>
+          </section>
         </div>
 
-        {/* Right Col: Past Journal Entries (5 cols) */}
-        <div className="lg:col-span-5 space-y-3">
+        {/* Entries column */}
+        <section className="space-y-3 lg:col-span-5" aria-labelledby="entries-heading">
           <div className="flex items-center justify-between pb-1">
-            <h3 className="text-sm font-bold text-white">Your Past Entries ({entries.length})</h3>
-            <span className="text-xs text-slate-400">Personal Archive</span>
+            <h2 id="entries-heading" className="text-sm font-semibold">
+              Your entries ({entries.length})
+            </h2>
+            <span className="flex items-center gap-1 text-xs text-slate-500">
+              <ShieldCheck className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+              Private
+            </span>
           </div>
 
-          {entries.length === 0 ? (
-            <div className="p-8 rounded-xl bg-slate-900 border border-slate-800 text-center">
-              <p className="text-xs text-slate-400">Your journal vault is waiting for your first entry.</p>
+          {loading ? (
+            <div className="panel p-8 text-center text-sm text-slate-500" role="status">
+              Loading your entries…
+            </div>
+          ) : entries.length === 0 ? (
+            <div className="panel p-8 text-center text-sm text-slate-500">
+              No journal entries yet.
             </div>
           ) : (
-            <div className="space-y-3 max-h-[750px] overflow-y-auto pr-1">
+            <ul className="max-h-[700px] space-y-3 overflow-y-auto pr-1">
               {entries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 hover:border-slate-750 transition-all"
-                >
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span className="flex items-center text-[11px]">
-                      <Calendar className="w-3 h-3 mr-1 text-slate-500" />
-                      {new Date(entry.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                    <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-emerald-300 border border-slate-700">
-                        {entry.mood}
+                <li key={entry.id}>
+                  <article className="panel p-4 transition-colors hover:border-slate-300">
+                    <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
+                      <span className="flex items-center text-[11px]">
+                        <Calendar className="mr-1 h-3 w-3 text-slate-400" aria-hidden="true" />
+                        <time dateTime={entry.createdAt}>
+                          {new Date(entry.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </time>
                       </span>
-                      <button
-                        onClick={() => handleDeleteEntry(entry.id)}
-                        className="text-slate-500 hover:text-rose-400 p-0.5"
-                        title="Delete entry"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="chip">{entry.mood}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteEntry(entry.id)}
+                          className="p-0.5 text-slate-400 hover:text-rose-600"
+                          title="Delete entry"
+                          aria-label={`Delete entry: ${entry.title}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  <h4 className="font-semibold text-sm text-white">{entry.title}</h4>
-                  <p className="text-xs text-slate-300 whitespace-pre-line line-clamp-4 leading-relaxed">
-                    {entry.content}
-                  </p>
+                    <h3 className="text-sm font-semibold">{entry.title}</h3>
+                    <p className="mt-1 line-clamp-3 whitespace-pre-line text-xs leading-relaxed text-slate-600">
+                      {entry.content}
+                    </p>
 
-                  {entry.tags && entry.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pt-1">
-                      {entry.tags.map((tag, i) => (
-                        <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-850 text-slate-400 border border-slate-800">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                    {entry.tags && entry.tags.length > 0 && (
+                      <ul className="mt-2 flex flex-wrap gap-1" aria-label="Tags">
+                        {entry.tags.map((tag, i) => (
+                          <li key={i} className="rounded bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">
+                            #{tag}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </article>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );

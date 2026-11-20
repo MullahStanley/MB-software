@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BarChart3, 
   Users, 
   Repeat, 
   TrendingUp, 
   Smile, 
   Globe, 
-  ShieldCheck, 
   Layers, 
-  Activity, 
-  Clock, 
-  Zap,
-  Sparkles
+  Activity 
 } from 'lucide-react';
 import { api } from '../api';
+import { PageHeader } from './ui/PageHeader';
 
 export const AnalyticsDashboard: React.FC = () => {
   const [data, setData] = useState<any>(null);
@@ -37,9 +33,9 @@ export const AnalyticsDashboard: React.FC = () => {
 
   if (loading || !data) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center space-y-3">
-        <div className="w-10 h-10 border-4 border-teal-500/30 border-t-teal-400 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-400">Loading live impact metrics & usage data...</p>
+      <div className="flex flex-col items-center justify-center space-y-3 py-20" role="status">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-forest-600 border-t-transparent"></div>
+        <p className="text-sm text-slate-500">Loading live impact metrics…</p>
       </div>
     );
   }
@@ -47,112 +43,87 @@ export const AnalyticsDashboard: React.FC = () => {
   const problemEntries: [string, number][] = Object.entries(data.frequentProblemDistribution || {});
   const maxProblemCount = Math.max(...problemEntries.map(([_, count]) => count), 1);
 
+  const kpis = [
+    {
+      label: 'Total registered',
+      value: data.totalUsers.toLocaleString(),
+      sub: `Active today: ${data.activeUsersToday.toLocaleString()}`,
+      icon: Users
+    },
+    {
+      label: 'Repeat users',
+      value: `${data.repeatUserRate}%`,
+      sub: 'Consistent return visits',
+      icon: Repeat
+    },
+    {
+      label: '30-day retention',
+      value: `${data.retentionRate30Day}%`,
+      sub: 'vs. 12% mood-tracker average',
+      icon: TrendingUp
+    },
+    {
+      label: 'Satisfaction',
+      value: `${data.satisfactionScore} / 5`,
+      sub: '97.8% positive feedback',
+      icon: Smile
+    }
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-teal-950/40 rounded-2xl p-6 sm:p-8 border border-slate-800">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-semibold mb-3">
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Impact & Operations Telemetry</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Success Metrics & Young Adult Community Health.
-          </h1>
-          <p className="mt-2 text-sm text-slate-300">
-            Real-time verification of user retention, repeat engagement, community problem tracking, app uptime, and privacy compliance.
-          </p>
-        </div>
+      <PageHeader
+        eyebrow="Impact metrics"
+        title="Community health at a glance."
+        description="An honest look at retention, repeat engagement, what young adults are reporting most often, and how reliably the platform runs."
+      />
+
+      {/* KPI row */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {kpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div key={kpi.label} className="panel p-4">
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span className="font-medium">{kpi.label}</span>
+                <Icon className="h-4 w-4 text-forest-600" aria-hidden="true" />
+              </div>
+              <div className="mt-1.5 font-mono text-2xl font-semibold text-slate-900">{kpi.value}</div>
+              <span className="mt-1 block text-[11px] text-slate-500">{kpi.sub}</span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Core KPIs Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Users */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>Total Registered</span>
-            <Users className="w-4 h-4 text-teal-400" />
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-extrabold text-white">
-            {data.totalUsers.toLocaleString()}
-          </div>
-          <span className="text-[11px] text-teal-400 block font-medium">
-            Active today: {data.activeUsersToday.toLocaleString()}
-          </span>
-        </div>
-
-        {/* Repeat Users Rate */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>Repeat Users Rate</span>
-            <Repeat className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-extrabold text-emerald-400">
-            {data.repeatUserRate}%
-          </div>
-          <span className="text-[11px] text-slate-400 block">
-            Consistent return visits
-          </span>
-        </div>
-
-        {/* 30-Day Retention */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>30-Day Retention</span>
-            <TrendingUp className="w-4 h-4 text-indigo-400" />
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-extrabold text-indigo-300">
-            {data.retentionRate30Day}%
-          </div>
-          <span className="text-[11px] text-slate-400 block">
-            vs 12% industry mood tracker avg
-          </span>
-        </div>
-
-        {/* User Satisfaction CSAT */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>User Satisfaction</span>
-            <Smile className="w-4 h-4 text-amber-400" />
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-extrabold text-amber-300">
-            {data.satisfactionScore} <span className="text-sm font-normal text-slate-500">/ 5.0</span>
-          </div>
-          <span className="text-[11px] text-amber-400/90 block font-medium">
-            97.8% positive feedback
-          </span>
-        </div>
-      </div>
-
-      {/* 2-Column: Problem Distribution & Feature App Usage */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Most Frequent Problems Across Sub-divided Communities (7 cols) */}
-        <div className="lg:col-span-7 bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {/* Problem distribution + usage */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* Frequent problems */}
+        <section className="panel p-5 lg:col-span-7" aria-labelledby="problems-heading">
+          <div className="mb-4 flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
             <div>
-              <h3 className="font-bold text-sm sm:text-base text-white flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-teal-400" />
-                <span>Aggregated Frequent Problems Tracker</span>
-              </h3>
-              <p className="text-xs text-slate-400">
-                Mapped across all 6 communities to prioritize developmental interventions
+              <h2 id="problems-heading" className="flex items-center gap-2 text-sm font-semibold">
+                <Layers className="h-4 w-4 text-forest-600" aria-hidden="true" />
+                Most-reported problems
+              </h2>
+              <p className="text-xs text-slate-500">
+                Aggregated across all six communities to prioritize what help is built next
               </p>
             </div>
-            <span className="text-xs font-mono text-teal-400">{problemEntries.length} Unique Issues</span>
+            <span className="shrink-0 font-mono text-xs text-forest-700">{problemEntries.length} issues</span>
           </div>
 
-          <div className="space-y-3.5 max-h-[360px] overflow-y-auto pr-1">
+          <div className="max-h-[360px] space-y-3.5 overflow-y-auto pr-1">
             {problemEntries.map(([problem, count], idx) => {
               const pct = Math.round((count / maxProblemCount) * 100);
               return (
                 <div key={idx} className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-200 font-medium line-clamp-1">{problem}</span>
-                    <span className="text-teal-400 font-mono text-[11px] shrink-0 ml-3">{count} youth reports</span>
+                  <div className="flex justify-between gap-3 text-xs">
+                    <span className="font-medium text-slate-700">{problem}</span>
+                    <span className="shrink-0 font-mono text-[11px] text-slate-500">{count} reports</span>
                   </div>
-                  <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500 h-full rounded-full transition-all duration-700"
+                      className="h-full rounded-full bg-forest-600 transition-all duration-700"
                       style={{ width: `${pct}%` }}
                     ></div>
                   </div>
@@ -160,50 +131,49 @@ export const AnalyticsDashboard: React.FC = () => {
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* Feature Usage & App Reliability (5 cols) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h3 className="font-bold text-sm text-white flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <span>Feature Usage Breakdown</span>
-            </h3>
+        {/* Usage + reliability */}
+        <div className="space-y-4 lg:col-span-5">
+          <section className="panel p-5" aria-labelledby="usage-heading">
+            <h2 id="usage-heading" className="mb-3 flex items-center gap-2 text-sm font-semibold">
+              <Activity className="h-4 w-4 text-forest-600" aria-hidden="true" />
+              Feature usage
+            </h2>
 
-            <div className="space-y-2.5 text-xs">
+            <div className="space-y-2 text-xs">
               {Object.entries(data.pageViews || {}).map(([key, views]: any) => (
-                <div key={key} className="flex items-center justify-between p-2.5 rounded-lg bg-slate-850">
-                  <span className="capitalize text-slate-300 font-medium">
+                <div key={key} className="flex items-center justify-between rounded-lg bg-slate-50 p-2.5">
+                  <span className="font-medium capitalize text-slate-700">
                     {key.replace('_', ' ')}
                   </span>
-                  <span className="font-mono text-teal-300">{Number(views).toLocaleString()} hits</span>
+                  <span className="font-mono text-slate-500">{Number(views).toLocaleString()} views</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* SEO & Reliability Audit Score */}
-          <div className="bg-slate-900 rounded-2xl p-5 border border-slate-800 space-y-3">
-            <h3 className="font-bold text-sm text-white flex items-center space-x-2">
-              <Globe className="w-4 h-4 text-indigo-400" />
-              <span>SEO & App Reliability Health</span>
-            </h3>
+          <section className="panel p-5" aria-labelledby="reliability-heading">
+            <h2 id="reliability-heading" className="mb-3 flex items-center gap-2 text-sm font-semibold">
+              <Globe className="h-4 w-4 text-forest-600" aria-hidden="true" />
+              Reliability
+            </h2>
 
             <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="p-2.5 rounded-lg bg-slate-850">
-                <span className="text-emerald-400 font-mono font-bold text-lg block">99.9%</span>
-                <span className="text-[10px] text-slate-400">Uptime</span>
+              <div className="rounded-lg bg-slate-50 p-2.5">
+                <span className="block font-mono font-semibold text-slate-900">99.9%</span>
+                <span className="text-[10px] text-slate-500">Uptime</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-850">
-                <span className="text-teal-400 font-mono font-bold text-lg block">100</span>
-                <span className="text-[10px] text-slate-400">SEO Score</span>
+              <div className="rounded-lg bg-slate-50 p-2.5">
+                <span className="block font-mono font-semibold text-slate-900">Zero</span>
+                <span className="text-[10px] text-slate-500">Ad trackers</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-850">
-                <span className="text-indigo-400 font-mono font-bold text-lg block">120ms</span>
-                <span className="text-[10px] text-slate-400">P95 Latency</span>
+              <div className="rounded-lg bg-slate-50 p-2.5">
+                <span className="block font-mono font-semibold text-slate-900">120ms</span>
+                <span className="text-[10px] text-slate-500">P95 latency</span>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>

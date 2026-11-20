@@ -489,6 +489,74 @@
       },
       "id": "msg-1793554881601",
       "timestamp": "2026-11-01T17:41:21.601Z"
+    },
+    {
+      "sender": "user",
+      "text": "Heyy",
+      "id": "msg-1793556465907",
+      "timestamp": "2026-11-01T18:07:45.907Z"
+    },
+    {
+      "sender": "assistant",
+      "text": "I noticed your last check-in recorded a Energized state. Thank you for sharing that with me. When you look at what's currently on your plate, what feels like the single heaviest brick you are trying to lift? We can break it down, or just sit with it quietly.",
+      "distressLevel": 1,
+      "suggestedAction": {
+        "type": "breathing",
+        "label": "Try 2 Minutes of Box Breathing"
+      },
+      "id": "msg-1793556465908",
+      "timestamp": "2026-11-01T18:07:45.908Z"
+    },
+    {
+      "sender": "user",
+      "text": "I'm feeling intense imposter syndrome today.",
+      "id": "msg-1793564959417",
+      "timestamp": "2026-11-01T20:29:19.418Z"
+    },
+    {
+      "sender": "assistant",
+      "text": "That sense of being behind or isolated is the single most common feeling among people in their 20s and early 30s. Our culture feeds us curated highlight reels, but if you look inside our peer communities, thousands of people are wrestling with the exact same transition. Would you like to read how others are dealing with this?",
+      "distressLevel": 2,
+      "suggestedAction": {
+        "type": "community",
+        "label": "Read Peer Stories in Quarter-Life Community"
+      },
+      "id": "msg-1793564959418",
+      "timestamp": "2026-11-01T20:29:19.418Z"
+    },
+    {
+      "sender": "user",
+      "text": "Give me a 2-minute nervous system reset.",
+      "id": "msg-1793564970608",
+      "timestamp": "2026-11-01T20:29:30.608Z"
+    },
+    {
+      "sender": "assistant",
+      "text": "I noticed your last check-in recorded a Energized state. Thank you for sharing that with me. When you look at what's currently on your plate, what feels like the single heaviest brick you are trying to lift? We can break it down, or just sit with it quietly.",
+      "distressLevel": 1,
+      "suggestedAction": {
+        "type": "breathing",
+        "label": "Try 2 Minutes of Box Breathing"
+      },
+      "id": "msg-1793564970609",
+      "timestamp": "2026-11-01T20:29:30.609Z"
+    },
+    {
+      "sender": "user",
+      "text": "Work stress is leaking into my Sunday night.",
+      "id": "msg-1793564975808",
+      "timestamp": "2026-11-01T20:29:35.808Z"
+    },
+    {
+      "sender": "assistant",
+      "text": "I noticed your last check-in recorded a Energized state. Work stress can easily bleed into every hour of the evening. Remember: your professional output is an agreement between you and an employer, not your identity or self-worth. Have you had a chance to disconnect from work devices today?",
+      "distressLevel": 1,
+      "suggestedAction": {
+        "type": "breathing",
+        "label": "Try 2 Minutes of Box Breathing"
+      },
+      "id": "msg-1793564975808",
+      "timestamp": "2026-11-01T20:29:35.808Z"
     }
   ],
   "analytics": {
@@ -499,13 +567,17 @@
     "avgSessionMinutes": 14.5,
     "satisfactionScore": 4.85,
     "pageViews": {
-      "communities": 18452,
+      "communities": 18456,
       "checkup_patterns": 12300,
-      "journal": 8920,
+      "journal": 8921,
       "breathing_sound": 15600,
-      "articles": 10210,
-      "games": 7480,
-      "chatbot": 9150
+      "articles": 10213,
+      "games": 7482,
+      "chatbot": 9150,
+      "checkups": 2,
+      "calm": 2,
+      "chat": 2,
+      "analytics": 1
     }
   }
 }

@@ -6,17 +6,14 @@ import {
   UserPlus, 
   Trash2, 
   Send, 
-  ExternalLink, 
   CheckCircle2, 
-  AlertTriangle, 
   Compass, 
   FileText, 
   HeartHandshake, 
-  X,
-  Radio,
-  Clock
+  Radio
 } from 'lucide-react';
 import { api, TrustedContact, AlertLog } from '../api';
+import { Modal } from './ui/Modal';
 
 interface EmergencyThresholdModalProps {
   isOpen: boolean;
@@ -73,7 +70,7 @@ export const EmergencyThresholdModal: React.FC<EmergencyThresholdModalProps> = (
     try {
       const created = await api.addContact({
         name: newName.trim(),
-        relationship: newRelationship.trim() || 'Trusted Friend',
+        relationship: newRelationship.trim() || 'Trusted friend',
         phone: newPhone.trim(),
         email: newEmail.trim(),
         notes: newNotes.trim(),
@@ -103,12 +100,12 @@ export const EmergencyThresholdModal: React.FC<EmergencyThresholdModalProps> = (
   const handleTriggerLevel = async (lvl: number) => {
     setCurrentLevel(lvl);
     try {
-      const res = await api.triggerThresholdLevel(lvl, 'safety_modal');
+      await api.triggerThresholdLevel(lvl, 'safety_modal');
       loadEmergencyData();
       if (lvl === 6) {
         setDispatchNotice(`Simulated SOS alert dispatched to ${contacts.length} trusted contacts.`);
       } else {
-        setDispatchNotice(`Lower threshold Level ${lvl} active.`);
+        setDispatchNotice(`Level ${lvl} support active.`);
       }
       setTimeout(() => setDispatchNotice(null), 6000);
     } catch (e) {
@@ -116,406 +113,408 @@ export const EmergencyThresholdModal: React.FC<EmergencyThresholdModalProps> = (
     }
   };
 
-  if (!isOpen) return null;
+  const levelTone = (lvl: number) => {
+    if (lvl >= 5) return 'rose';
+    if (lvl >= 3) return 'amber';
+    return 'forest';
+  };
+
+  const activeTone = levelTone(currentLevel);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-slate-900 rounded-2xl max-w-3xl w-full border border-slate-700 shadow-2xl overflow-hidden my-8">
-        {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-rose-950/60 via-slate-900 to-slate-900 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center">
-              <ShieldAlert className="w-6 h-6 animate-pulse" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-                <span>Emergency Threshold & Trusted Circle</span>
-              </h2>
-              <p className="text-xs text-slate-400">
-                Multi-level safety escalation when distress reaches acute limits
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Safety circle"
+      description="Step-up support, from a gentle nudge to contacting people you trust."
+      footer={
+        <>
+          <span className="mr-auto hidden text-[11px] text-slate-500 sm:block">
+            Safety tools are never used for advertising or tracking.
+          </span>
+          <button type="button" onClick={onClose} className="btn btn-sm btn-outline">
+            Close
           </button>
-        </div>
-
-        {/* Dispatch Notification Toast */}
+        </>
+      }
+    >
+      <div className="space-y-5">
+        {/* Dispatch notification */}
         {dispatchNotice && (
-          <div className="bg-rose-900/60 border-y border-rose-600/50 px-6 py-2.5 flex items-center space-x-2 text-xs text-rose-200">
-            <Radio className="w-4 h-4 animate-ping text-rose-400" />
-            <span className="font-semibold">{dispatchNotice}</span>
+          <div className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-4 py-2.5 text-xs font-medium text-rose-700" role="status">
+            <Radio className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{dispatchNotice}</span>
           </div>
         )}
 
-        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-          {/* Level Selector Tabs */}
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-              6-Tier Lower Threshold Escalation
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-              {[
-                { lvl: 1, label: 'L1: Community', desc: 'Join peer group' },
-                { lvl: 2, label: 'L2: Articles', desc: 'Grounding guide' },
-                { lvl: 3, label: 'L3: Breath/Audio', desc: 'Somatic calm' },
-                { lvl: 4, label: 'L4: Prompt Reachout', desc: 'Suggested text' },
-                { lvl: 5, label: 'L5: MB Specialist', desc: 'Youth helplines' },
-                { lvl: 6, label: 'L6: Auto-Alert', desc: 'SOS to contacts' },
-              ].map((item) => {
-                const isActive = currentLevel === item.lvl;
-                return (
-                  <button
-                    key={item.lvl}
-                    type="button"
-                    onClick={() => handleTriggerLevel(item.lvl)}
-                    className={`p-2.5 rounded-xl border text-left transition-all ${
-                      isActive
-                        ? item.lvl >= 5
-                          ? 'bg-rose-500/20 border-rose-500 text-rose-200 ring-1 ring-rose-500 shadow-md'
-                          : item.lvl >= 3
-                          ? 'bg-amber-500/20 border-amber-500 text-amber-200 ring-1 ring-amber-500 shadow-md'
-                          : 'bg-teal-500/20 border-teal-500 text-teal-200 ring-1 ring-teal-500 shadow-md'
-                        : 'bg-slate-850/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
-                    }`}
-                  >
-                    <span className="font-bold text-xs block">{item.label}</span>
-                    <span className="text-[10px] text-slate-500 block truncate">{item.desc}</span>
-                  </button>
-                );
-              })}
-            </div>
+        {/* Level selector */}
+        <div>
+          <span className="eyebrow mb-2 block">Six levels of support</span>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              { lvl: 1, label: 'L1 · Community', desc: 'Join a peer group' },
+              { lvl: 2, label: 'L2 · Guides', desc: 'Grounding reading' },
+              { lvl: 3, label: 'L3 · Breath & sound', desc: 'Somatic calm' },
+              { lvl: 4, label: 'L4 · Reach out', desc: 'Suggested text' },
+              { lvl: 5, label: 'L5 · Helplines', desc: '24/7 professionals' },
+              { lvl: 6, label: 'L6 · Auto-alert', desc: 'SOS to contacts' },
+            ].map((item) => {
+              const isActive = currentLevel === item.lvl;
+              const tone = levelTone(item.lvl);
+              const activeClasses =
+                tone === 'rose'
+                  ? 'border-rose-500 bg-rose-50 text-rose-800'
+                  : tone === 'amber'
+                  ? 'border-amber-500 bg-amber-50 text-amber-800'
+                  : 'border-forest-600 bg-forest-50 text-forest-900';
+              return (
+                <button
+                  key={item.lvl}
+                  type="button"
+                  onClick={() => handleTriggerLevel(item.lvl)}
+                  aria-pressed={isActive}
+                  className={`rounded-lg border p-2.5 text-left transition-colors ${
+                    isActive ? activeClasses : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <span className="block text-xs font-semibold">{item.label}</span>
+                  <span className="mt-0.5 block truncate text-[10px] text-slate-500">{item.desc}</span>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Level Details View */}
-          <div className="bg-slate-850 rounded-xl p-5 border border-slate-800 space-y-4">
-            {currentLevel === 1 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-teal-400">
-                  <Compass className="w-5 h-5" />
-                  <h3 className="font-bold text-sm text-white">Level 1: Prompt to Join an Authentic Peer Community</h3>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  When you feel initial isolation or stress creep, connecting with peers who have walked the same path prevents shame and cognitive spiraling.
-                </p>
-                <div className="flex space-x-2 pt-2">
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onNavigateTab('communities');
-                    }}
-                    className="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold"
-                  >
-                    Explore Sub-divided Communities
-                  </button>
-                </div>
+        {/* Level details */}
+        <div className={`rounded-lg border p-4 sm:p-5 ${
+          activeTone === 'rose' ? 'border-rose-200 bg-rose-50/50' :
+          activeTone === 'amber' ? 'border-amber-200 bg-amber-50/50' :
+          'border-forest-200 bg-forest-50/50'
+        }`}>
+          {currentLevel === 1 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-forest-700">
+                <Compass className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">Join an authentic peer community</h3>
               </div>
-            )}
+              <p className="text-sm leading-relaxed text-slate-700">
+                When isolation or stress first creeps in, connecting with peers who have walked the same path
+                prevents shame from spiralling.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onNavigateTab('communities');
+                }}
+                className="btn btn-sm btn-primary"
+              >
+                Explore communities
+              </button>
+            </div>
+          )}
 
-            {currentLevel === 2 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-teal-400">
-                  <FileText className="w-5 h-5" />
-                  <h3 className="font-bold text-sm text-white">Level 2: Suggested Psychoeducational Articles</h3>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Recommended for moderate cognitive fatigue. Learn the neuroscience of quarter-life transitions and how to reset an overloaded nervous system.
-                </p>
-                <div className="flex space-x-2 pt-2">
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onNavigateTab('articles');
-                    }}
-                    className="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold"
-                  >
-                    Read Cortisol Reset & Life Guides
-                  </button>
-                </div>
+          {currentLevel === 2 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-forest-700">
+                <FileText className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">Read a grounding guide</h3>
               </div>
-            )}
+              <p className="text-sm leading-relaxed text-slate-700">
+                Recommended for moderate cognitive fatigue — short reads on quarter-life transitions and
+                resetting an overloaded nervous system.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onNavigateTab('articles');
+                }}
+                className="btn btn-sm btn-primary"
+              >
+                Open the guides
+              </button>
+            </div>
+          )}
 
-            {currentLevel === 3 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-amber-400">
-                  <Radio className="w-5 h-5" />
-                  <h3 className="font-bold text-sm text-white">Level 3: Visual Breathing & Brown/White Noise Calming</h3>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Before logical thinking works, downregulate sympathetic nervous arousal with real-time synthesized brown noise and guided 4-7-8 breathwork.
-                </p>
-                <div className="flex space-x-2 pt-2">
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onNavigateTab('calm');
-                    }}
-                    className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold"
-                  >
-                    Open Calming Audio & Breath Guide
-                  </button>
-                </div>
+          {currentLevel === 3 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-amber-700">
+                <Radio className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">Breathing & sound calming</h3>
               </div>
-            )}
+              <p className="text-sm leading-relaxed text-slate-700">
+                Before logical thinking works, downregulate the nervous system first — guided breath pacing
+                and locally synthesized brown noise.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onNavigateTab('calm');
+                }}
+                className="btn btn-sm btn-primary"
+              >
+                Open breathing & sound
+              </button>
+            </div>
+          )}
 
-            {currentLevel === 4 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-amber-400">
-                  <HeartHandshake className="w-5 h-5" />
-                  <h3 className="font-bold text-sm text-white">Level 4: Suggest Reaching Out to Trusted Contacts</h3>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  You do not have to explain everything. We generated a gentle, low-pressure message you can copy and text right now:
-                </p>
-                <div className="p-3 bg-slate-950 rounded-lg border border-slate-700 text-xs text-slate-200 italic">
-                  "Hey, things have been feeling heavy and loud today. No need to fix anything, but could use a quick low-pressure text or chat when you have 5 minutes."
-                </div>
-                <div className="pt-2">
-                  <span className="text-xs font-semibold text-slate-400 block mb-2">One-tap Reach Out:</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {currentLevel === 4 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-amber-700">
+                <HeartHandshake className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">Reach out to someone you trust</h3>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-700">
+                You don't have to explain everything. Here's a gentle, low-pressure message you can copy and
+                send right now:
+              </p>
+              <p className="rounded-lg border border-slate-200 bg-white p-3 text-sm italic text-slate-700">
+                “Hey, things have been feeling heavy and loud today. No need to fix anything — but I could use
+                a quick low-pressure text or chat when you have five minutes.”
+              </p>
+
+              {contacts.length > 0 && (
+                <div>
+                  <span className="mb-2 block text-xs font-semibold text-slate-600">One-tap reach out</span>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {contacts.map((c) => (
                       <a
                         key={c.id}
                         href={`sms:${c.phone}?body=Hey%2C%20feeling%20a%20bit%20overwhelmed%20today%2C%20would%20love%20a%20quick%20check-in.`}
-                        className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs hover:border-teal-400"
+                        className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-2.5 text-sm transition-colors hover:border-forest-400"
                       >
-                        <div>
-                          <span className="font-bold text-white block">{c.name}</span>
-                          <span className="text-[11px] text-slate-400">{c.relationship} • {c.phone}</span>
-                        </div>
-                        <Send className="w-4 h-4 text-teal-400" />
+                        <span className="min-w-0">
+                          <span className="block truncate font-semibold text-slate-900">{c.name}</span>
+                          <span className="block truncate text-xs text-slate-500">{c.relationship} · {c.phone}</span>
+                        </span>
+                        <Send className="h-4 w-4 shrink-0 text-forest-600" aria-hidden="true" />
                       </a>
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
-
-            {currentLevel === 5 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-rose-400">
-                  <ShieldAlert className="w-5 h-5" />
-                  <h3 className="font-bold text-sm text-white">Level 5: Recommend MB Specialist & 24/7 Professional Resources</h3>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  When stress exceeds everyday coping, connecting with a professional counselor or 24/7 anonymous crisis responder provides critical grounding:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-700 text-xs">
-                    <span className="font-bold text-white block">Crisis Text Line (Free & Confidential)</span>
-                    <span className="text-teal-400 font-mono block mt-1">Text HOME to 741741</span>
-                    <span className="text-[11px] text-slate-400 block mt-1">24/7 texting with a trained crisis counselor</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-700 text-xs">
-                    <span className="font-bold text-white block">988 Suicide & Crisis Lifeline</span>
-                    <span className="text-teal-400 font-mono block mt-1">Call or Text 988</span>
-                    <span className="text-[11px] text-slate-400 block mt-1">24/7 free support across the US & Canada</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-700 text-xs">
-                    <span className="font-bold text-white block">The Trevor Project (LGBTQ+ Youth)</span>
-                    <span className="text-teal-400 font-mono block mt-1">1-866-488-7386 or Text START to 678-678</span>
-                    <span className="text-[11px] text-slate-400 block mt-1">Specialized young adult advocates</span>
-                  </div>
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-700 text-xs">
-                    <span className="font-bold text-white block">MB Specialist Referral Concierge</span>
-                    <span className="text-teal-400 font-mono block mt-1">support@mentalbeacon.org</span>
-                    <span className="text-[11px] text-slate-400 block mt-1">Matched sliding-scale youth therapists</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentLevel === 6 && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-rose-400">
-                  <Radio className="w-5 h-5 animate-pulse" />
-                  <h3 className="font-bold text-sm text-white">Level 6: Safe Automated Messaging Dispatched to Trusted Contacts</h3>
-                </div>
-                <p className="text-xs text-rose-200 leading-relaxed font-medium">
-                  Your safety protocol has dispatched a gentle, automated alert to your designated emergency contacts, asking them to check in on you.
-                </p>
-                <div className="p-3 bg-slate-950 rounded-lg border border-rose-900/60 text-xs space-y-1">
-                  <span className="text-slate-400 block font-semibold">Simulated Dispatch Output:</span>
-                  <p className="text-slate-300 italic">
-                    "[MB Safety Protocol] Gentle alert: Your contact triggered their Level 6 distress threshold on Mental Beacon. Please give them a warm call or check-in."
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-emerald-400 font-semibold pt-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Notified: {contacts.map(c => c.name).join(', ')}</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Trusted Contacts Management */}
-          <div className="space-y-4 pt-2 border-t border-slate-800">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-white">Your Configured Trusted Contacts</h3>
-                <p className="text-xs text-slate-400">
-                  People you trust to be notified when you reach Level 4 or Level 6 distress
-                </p>
-              </div>
-              <button
-                onClick={() => setShowAddContact(!showAddContact)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700"
-              >
-                <UserPlus className="w-3.5 h-3.5 text-teal-400" />
-                <span>{showAddContact ? 'Cancel' : 'Add Contact'}</span>
-              </button>
+              )}
             </div>
+          )}
 
-            {/* Add Contact Form */}
-            {showAddContact && (
-              <form onSubmit={handleAddContact} className="p-4 rounded-xl bg-slate-950 border border-slate-700 space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Jordan Smith"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="w-full bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Relationship</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Roommate, Sibling, Partner"
-                      value={newRelationship}
-                      onChange={(e) => setNewRelationship(e.target.value)}
-                      className="w-full bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Phone Number</label>
-                    <input
-                      type="text"
-                      placeholder="+1 (555) 000-0000"
-                      value={newPhone}
-                      onChange={(e) => setNewPhone(e.target.value)}
-                      className="w-full bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Email</label>
-                    <input
-                      type="email"
-                      placeholder="contact@example.com"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      className="w-full bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200"
-                    />
-                  </div>
+          {currentLevel === 5 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-rose-700">
+                <ShieldAlert className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">24/7 professional resources</h3>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-700">
+                When stress exceeds everyday coping, a trained counsellor or crisis responder can provide
+                critical grounding — free and confidential:
+              </p>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                  <span className="block font-semibold text-slate-900">988 Suicide & Crisis Lifeline</span>
+                  <span className="mt-0.5 block font-mono text-sm font-semibold text-rose-600">Call or text 988</span>
+                  <span className="mt-1 block text-xs text-slate-500">24/7 free support across the US & Canada</span>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-slate-300 mb-1">Grounding Note</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Knows how to help me ground when sensory overload hits."
-                    value={newNotes}
-                    onChange={(e) => setNewNotes(e.target.value)}
-                    className="w-full bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200"
-                  />
+                <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                  <span className="block font-semibold text-slate-900">Crisis Text Line</span>
+                  <span className="mt-0.5 block font-mono text-sm font-semibold text-rose-600">Text HOME to 741741</span>
+                  <span className="mt-1 block text-xs text-slate-500">24/7 texting with a trained counsellor</span>
                 </div>
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold"
-                  >
-                    Save Trusted Contact
-                  </button>
+                <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                  <span className="block font-semibold text-slate-900">The Trevor Project (LGBTQ+ youth)</span>
+                  <span className="mt-0.5 block font-mono text-xs font-semibold text-rose-600">1-866-488-7386 · text START to 678-678</span>
+                  <span className="mt-1 block text-xs text-slate-500">Specialized young-adult advocates</span>
                 </div>
-              </form>
-            )}
-
-            {/* Contacts Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {contacts.map((c) => (
-                <div key={c.id} className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-xs text-white">{c.name}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-teal-400 border border-slate-700">
-                        {c.relationship}
-                      </span>
-                    </div>
-                    {c.phone && (
-                      <span className="flex items-center text-[11px] text-slate-400">
-                        <Phone className="w-3 h-3 mr-1 text-slate-500" />
-                        {c.phone}
-                      </span>
-                    )}
-                    {c.email && (
-                      <span className="flex items-center text-[11px] text-slate-400">
-                        <Mail className="w-3 h-3 mr-1 text-slate-500" />
-                        {c.email}
-                      </span>
-                    )}
-                    {c.notes && (
-                      <p className="text-[10px] text-slate-500 italic mt-1">{c.notes}</p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleDeleteContact(c.id)}
-                    className="text-slate-500 hover:text-rose-400 p-1"
-                    title="Remove Contact"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                  <span className="block font-semibold text-slate-900">MB specialist referral</span>
+                  <span className="mt-0.5 block font-mono text-xs font-semibold text-forest-700">support@mentalbeacon.org</span>
+                  <span className="mt-1 block text-xs text-slate-500">Matched sliding-scale youth therapists</span>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Audit / Alert History Logs */}
-          {logs.length > 0 && (
-            <div className="pt-2 border-t border-slate-800">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                Recent Safety Logs
-              </span>
-              <div className="space-y-1.5 max-h-28 overflow-y-auto">
-                {logs.slice(0, 5).map((l) => (
-                  <div key={l.id} className="text-[11px] p-2 rounded bg-slate-950/80 border border-slate-800 flex justify-between items-center text-slate-300">
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                        l.level >= 5 ? 'bg-rose-500/20 text-rose-300' : 'bg-teal-500/20 text-teal-300'
-                      }`}>
-                        Level {l.level}
-                      </span>
-                      <span className="truncate max-w-[280px]">{l.message}</span>
-                    </div>
-                    <span className="text-slate-500 text-[10px] font-mono">
-                      {new Date(l.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                ))}
+          {currentLevel === 6 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-rose-700">
+                <Radio className="h-5 w-5" aria-hidden="true" />
+                <h3 className="text-sm font-semibold text-slate-900">Alert dispatched to your trusted contacts</h3>
+              </div>
+              <p className="text-sm font-medium leading-relaxed text-rose-700">
+                Your safety protocol has sent a gentle, automated alert to your designated contacts, asking
+                them to check in on you.
+              </p>
+              <div className="space-y-1 rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                <span className="block text-xs font-semibold text-slate-500">Dispatched message</span>
+                <p className="italic text-slate-700">
+                  “[MB safety protocol] Gentle alert: someone you're trusted by has asked for a check-in.
+                  A warm call or message would mean a lot.”
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-forest-700">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                <span>Notified: {contacts.map(c => c.name).join(', ') || 'no contacts configured yet'}</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Modal Footer */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-[11px] text-slate-500">
-            Mental Beacon Safety Protocol is designed with zero commercial tracking.
-          </span>
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium"
-          >
-            Close
-          </button>
-        </div>
+        {/* Trusted contacts management */}
+        <section className="space-y-4 border-t border-slate-200 pt-5" aria-labelledby="contacts-heading">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 id="contacts-heading" className="text-sm font-semibold">Trusted contacts</h3>
+              <p className="text-xs text-slate-500">
+                People you want notified when you reach level 4 or 6 distress.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAddContact(!showAddContact)}
+              className="btn btn-sm btn-outline shrink-0"
+            >
+              <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>{showAddContact ? 'Cancel' : 'Add contact'}</span>
+            </button>
+          </div>
+
+          {/* Add contact form */}
+          {showAddContact && (
+            <form onSubmit={handleAddContact} className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="contact-name" className="mb-1 block text-xs font-medium text-slate-700">Name</label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    required
+                    placeholder="e.g. Jordan Smith"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className="field"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-relationship" className="mb-1 block text-xs font-medium text-slate-700">Relationship</label>
+                  <input
+                    id="contact-relationship"
+                    type="text"
+                    placeholder="e.g. roommate, sibling, partner"
+                    value={newRelationship}
+                    onChange={(e) => setNewRelationship(e.target.value)}
+                    className="field"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-phone" className="mb-1 block text-xs font-medium text-slate-700">Phone</label>
+                  <input
+                    id="contact-phone"
+                    type="tel"
+                    placeholder="+1 (555) 000-0000"
+                    value={newPhone}
+                    onChange={(e) => setNewPhone(e.target.value)}
+                    className="field"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-email" className="mb-1 block text-xs font-medium text-slate-700">Email</label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    placeholder="contact@example.com"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className="field"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="contact-notes" className="mb-1 block text-xs font-medium text-slate-700">Grounding note</label>
+                <input
+                  id="contact-notes"
+                  type="text"
+                  placeholder="e.g. knows how to help me ground when sensory overload hits."
+                  value={newNotes}
+                  onChange={(e) => setNewNotes(e.target.value)}
+                  className="field"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button type="submit" className="btn btn-sm btn-primary">
+                  Save contact
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Contact cards */}
+          {contacts.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-center text-sm text-slate-500">
+              No trusted contacts yet. Add someone you'd want a check-in from on a hard day.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {contacts.map((c) => (
+                <div key={c.id} className="flex items-start justify-between gap-2 rounded-lg border border-slate-200 bg-white p-3.5">
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm font-semibold text-slate-900">{c.name}</span>
+                      <span className="chip shrink-0">{c.relationship}</span>
+                    </div>
+                    {c.phone && (
+                      <span className="flex items-center gap-1 text-xs text-slate-500">
+                        <Phone className="h-3 w-3 text-slate-400" aria-hidden="true" />
+                        {c.phone}
+                      </span>
+                    )}
+                    {c.email && (
+                      <span className="flex items-center gap-1 text-xs text-slate-500">
+                        <Mail className="h-3 w-3 text-slate-400" aria-hidden="true" />
+                        {c.email}
+                      </span>
+                    )}
+                    {c.notes && (
+                      <p className="text-xs italic text-slate-500">{c.notes}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteContact(c.id)}
+                    className="p-1 text-slate-400 hover:text-rose-600"
+                    title="Remove contact"
+                    aria-label={`Remove contact ${c.name}`}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Alert history */}
+        {logs.length > 0 && (
+          <section className="border-t border-slate-200 pt-4" aria-labelledby="logs-heading">
+            <h3 id="logs-heading" className="eyebrow mb-2">Recent safety logs</h3>
+            <div className="max-h-32 space-y-1.5 overflow-y-auto">
+              {logs.slice(0, 5).map((l) => (
+                <div key={l.id} className="flex items-center justify-between gap-2 rounded border border-slate-100 bg-slate-50 p-2 text-xs text-slate-600">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                      l.level >= 5 ? 'bg-rose-100 text-rose-700' : 'bg-forest-100 text-forest-800'
+                    }`}>
+                      Level {l.level}
+                    </span>
+                    <span className="truncate">{l.message}</span>
+                  </div>
+                  <time className="shrink-0 font-mono text-[10px] text-slate-400">
+                    {new Date(l.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </time>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
-    </div>
+    </Modal>
   );
 };

@@ -1,19 +1,6 @@
-import React from 'react';
-import { 
-  Compass, 
-  Activity, 
-  BookOpen, 
-  Wind, 
-  Headphones, 
-  FileText, 
-  Gamepad2, 
-  MessageSquareHeart, 
-  ShieldAlert, 
-  Lock, 
-  Sparkles,
-  BarChart3,
-  User
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldAlert, Lock, User } from 'lucide-react';
+import { FlaticonIcon } from './ui/FlaticonIcon';
 
 interface NavbarProps {
   currentTab: string;
@@ -34,18 +21,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenTransparency,
   onOpenPro
 }) => {
-  const [isEditingUser, setIsEditingUser] = React.useState(false);
-  const [tempUser, setTempUser] = React.useState(username);
+  const [isEditingUser, setIsEditingUser] = useState(false);
+  const [tempUser, setTempUser] = useState(username);
 
   const navItems = [
-    { id: 'communities', label: 'Communities', icon: Compass },
-    { id: 'checkups', label: 'Patterns & Check-up', icon: Activity },
-    { id: 'journal', label: 'Private Journal', icon: BookOpen },
-    { id: 'calm', label: 'Breath & Sounds', icon: Wind },
-    { id: 'articles', label: 'Articles', icon: FileText },
-    { id: 'games', label: 'Calm Games', icon: Gamepad2 },
-    { id: 'chat', label: 'Beacon AI', icon: MessageSquareHeart },
-    { id: 'analytics', label: 'Impact & Metrics', icon: BarChart3 },
+    { id: 'communities', label: 'Communities' },
+    { id: 'checkups', label: 'Daily patterns' },
+    { id: 'journal', label: 'Journal' },
+    { id: 'calm', label: 'Breathing & sound' },
+    { id: 'articles', label: 'Guides' },
+    { id: 'games', label: 'Grounding' },
+    { id: 'chat', label: 'Companion' },
+    { id: 'analytics', label: 'Metrics' },
   ];
 
   const handleSaveUser = () => {
@@ -56,104 +43,105 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentTab('communities')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/20">
-              <Sparkles className="w-6 h-6 text-slate-950 font-bold" />
-            </div>
-            <div>
-              <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-teal-300 via-emerald-200 to-teal-400 bg-clip-text text-transparent">
-                Mental Beacon
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                Youth Space 15–35
-              </span>
-            </div>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex h-14 items-center justify-between gap-3">
+          {/* Brand */}
+          <button
+            type="button"
+            onClick={() => setCurrentTab('communities')}
+            className="flex items-center gap-2"
+            aria-label="Mental Beacon — go to communities"
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-forest-600 text-white">
+              <FlaticonIcon name="lighthouse.png" className="h-5 w-5 text-white" />
+            </span>
+            <span className="text-[15px] font-semibold tracking-tight text-slate-900">
+              Mental Beacon
+            </span>
+          </button>
 
-          {/* Quick Support & User Profile */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Emergency Contacts / Threshold Button */}
+          {/* Action buttons */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Safety Circle Trigger */}
             <button
+              type="button"
               onClick={onOpenEmergency}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 transition-all shadow-sm"
-              title="Trusted Contacts & Safety Escalation"
+              className="btn btn-sm btn-danger-outline"
+              title="Trusted contacts & safety escalation"
             >
-              <ShieldAlert className="w-4 h-4 text-rose-400 animate-pulse" />
+              <ShieldAlert className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Safety Circle</span>
             </button>
 
             {/* Privacy Transparency */}
             <button
+              type="button"
               onClick={onOpenTransparency}
-              className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700"
-              title="Data Transparency & Privacy"
+              className="btn btn-sm btn-quiet hidden sm:inline-flex"
             >
-              <Lock className="w-3.5 h-3.5 text-teal-400" />
-              <span className="hidden md:inline">Data Privacy</span>
+              <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Data privacy</span>
             </button>
 
             {/* Sustainability / Pro */}
             <button
+              type="button"
               onClick={onOpenPro}
-              className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 text-xs font-medium rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all"
+              className="btn btn-sm btn-quiet hidden md:inline-flex"
             >
-              <span>Impact Model</span>
+              <span>How we stay funded</span>
             </button>
 
-            {/* User Pseudonym handle */}
+            {/* Anonymous username handle */}
             <div className="relative">
               {isEditingUser ? (
-                <div className="flex items-center space-x-1 bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <div className="flex items-center gap-1 rounded-lg border border-slate-300 bg-white p-1">
                   <input
                     type="text"
                     value={tempUser}
                     onChange={(e) => setTempUser(e.target.value)}
-                    className="w-28 px-2 py-0.5 text-xs bg-slate-900 text-teal-300 rounded border border-slate-700 focus:outline-none"
+                    className="field w-24 px-2 py-1 text-xs"
                     placeholder="Username"
+                    aria-label="Anonymous username"
                     autoFocus
                   />
                   <button
+                    type="button"
                     onClick={handleSaveUser}
-                    className="px-2 py-0.5 text-xs bg-teal-600 hover:bg-teal-500 text-white rounded font-medium"
+                    className="btn btn-sm btn-primary"
                   >
                     Save
                   </button>
                 </div>
               ) : (
                 <button
+                  type="button"
                   onClick={() => setIsEditingUser(true)}
-                  className="flex items-center space-x-1.5 px-2.5 py-1.5 text-xs rounded-lg bg-slate-800 text-slate-300 hover:text-teal-300 hover:bg-slate-750 border border-slate-700/80 transition-all"
-                  title="Click to change anonymous username"
+                  className="btn btn-sm btn-quiet"
+                  title="Click to change your anonymous username"
                 >
-                  <User className="w-3.5 h-3.5 text-teal-400" />
-                  <span className="max-w-[100px] truncate font-medium">@{username}</span>
+                  <User className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
+                  <span>@{username}</span>
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation Row */}
-        <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none border-t border-slate-800/60">
+        {/* Section tabs */}
+        <nav aria-label="Sections" className="flex gap-0.5 overflow-x-auto border-t border-slate-100">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = currentTab === item.id;
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => setCurrentTab(item.id)}
-                className={`flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                }`}
+                aria-current={isActive ? 'page' : undefined}
+                className={`tab ${isActive ? 'tab-active' : ''}`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-teal-400' : 'text-slate-500'}`} />
-                <span>{item.label}</span>
+                {item.label}
               </button>
             );
           })}

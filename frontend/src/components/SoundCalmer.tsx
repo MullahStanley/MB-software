@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Headphones, Volume2, VolumeX, Play, Pause, Clock, Sparkles } from 'lucide-react';
+import { Volume2, Play, Pause, Clock } from 'lucide-react';
 
 type NoiseType = 'brown' | 'white' | 'pink' | 'binaural';
 
@@ -15,7 +15,6 @@ export const SoundCalmer: React.FC = () => {
   const sourceNodeRef = useRef<AudioNode | null>(null);
   const secondSourceRef = useRef<AudioNode | null>(null);
 
-  // Initialize or resume AudioContext
   const getAudioContext = () => {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -48,12 +47,11 @@ export const SoundCalmer: React.FC = () => {
     const ctx = getAudioContext();
 
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(volume * 0.4, ctx.currentTime);
+    gain.gain.setValueAtTime(volume * 0.35, ctx.currentTime);
     gain.connect(ctx.destination);
     gainNodeRef.current = gain;
 
     if (type === 'white') {
-      // White Noise synthesis
       const bufferSize = ctx.sampleRate * 2;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -67,7 +65,6 @@ export const SoundCalmer: React.FC = () => {
       whiteSource.start();
       sourceNodeRef.current = whiteSource;
     } else if (type === 'brown') {
-      // Brown Noise synthesis (integrating white noise for 1/f^2 warm rumble)
       const bufferSize = ctx.sampleRate * 2;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -76,7 +73,7 @@ export const SoundCalmer: React.FC = () => {
         const white = Math.random() * 2 - 1;
         data[i] = (lastOut + 0.02 * white) / 1.02;
         lastOut = data[i];
-        data[i] *= 3.5; // Compensate for low amplitude
+        data[i] *= 3.5;
       }
       const brownSource = ctx.createBufferSource();
       brownSource.buffer = buffer;
@@ -85,7 +82,6 @@ export const SoundCalmer: React.FC = () => {
       brownSource.start();
       sourceNodeRef.current = brownSource;
     } else if (type === 'pink') {
-      // Pink Noise synthesis (Paul Kellet's filter method)
       const bufferSize = ctx.sampleRate * 2;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -109,13 +105,12 @@ export const SoundCalmer: React.FC = () => {
       pinkSource.start();
       sourceNodeRef.current = pinkSource;
     } else if (type === 'binaural') {
-      // 432Hz ambient harmonic drone
       const osc1 = ctx.createOscillator();
       const osc2 = ctx.createOscillator();
       osc1.type = 'sine';
       osc2.type = 'sine';
       osc1.frequency.setValueAtTime(216, ctx.currentTime);
-      osc2.frequency.setValueAtTime(220, ctx.currentTime); // 4Hz delta wave beat
+      osc2.frequency.setValueAtTime(220, ctx.currentTime);
 
       const merger = ctx.createChannelMerger(2);
       osc1.connect(merger, 0, 0);
@@ -140,14 +135,12 @@ export const SoundCalmer: React.FC = () => {
     };
   }, [isPlaying, activeNoise]);
 
-  // Handle Volume change
   useEffect(() => {
     if (gainNodeRef.current && audioCtxRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(volume * 0.4, audioCtxRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(volume * 0.35, audioCtxRef.current.currentTime);
     }
   }, [volume]);
 
-  // Timer countdown
   useEffect(() => {
     let interval: any = null;
     if (isPlaying && timerSecondsLeft !== null && timerSecondsLeft > 0) {
@@ -186,128 +179,121 @@ export const SoundCalmer: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <section className="panel p-5 sm:p-6" aria-labelledby="sound-heading">
+      <div className="mb-5 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center space-x-1.5 text-xs text-indigo-400 font-semibold mb-1">
-            <Headphones className="w-3.5 h-3.5" />
-            <span>Pure Web Audio Neuro-Synthesizer</span>
-          </div>
-          <h2 className="text-xl font-bold text-white">Brown & White Noise Calmer</h2>
-          <p className="text-xs text-slate-400">
-            Synthesized directly in your browser. Masks intrusive thoughts, ADHD chatter, and external office/city din.
+          <p className="eyebrow mb-1">Soundscapes</p>
+          <h2 id="sound-heading" className="text-lg font-semibold tracking-tight">Noise generator</h2>
+          <p className="text-xs text-slate-500">
+            Synthesized locally in your browser — nothing streams, nothing is tracked.
           </p>
         </div>
 
-        {/* Master Play/Pause Header */}
         <button
+          type="button"
           onClick={() => setIsPlaying(!isPlaying)}
-          className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-all ${
-            isPlaying
-              ? 'bg-rose-600 hover:bg-rose-500 text-white'
-              : 'bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/20'
-          }`}
+          className={`btn self-start sm:self-auto ${isPlaying ? 'bg-slate-800 text-white hover:bg-slate-700' : 'btn-primary'}`}
         >
-          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-          <span>{isPlaying ? 'Mute Soundscape' : 'Play Soundscape'}</span>
+          {isPlaying ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
+          <span>{isPlaying ? 'Stop audio' : 'Play audio'}</span>
         </button>
       </div>
 
-      {/* Sound Type Selection */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          {
-            type: 'brown' as NoiseType,
-            title: 'Deep Brown Noise',
-            subtitle: 'Warm, low-frequency rumble like a heavy waterfall. Deeply calming for ADHD & high cortisol.'
-          },
-          {
-            type: 'white' as NoiseType,
-            title: 'Crisp White Noise',
-            subtitle: 'Full-spectrum static mask for tinnitus, chatty roommates, and sleep initiation.'
-          },
-          {
-            type: 'pink' as NoiseType,
-            title: 'Rain Pink Noise',
-            subtitle: 'Balanced acoustic slope reminiscent of rustling leaves and steady gentle rainfall.'
-          },
-          {
-            type: 'binaural' as NoiseType,
-            title: '432Hz Delta Drone',
-            subtitle: 'Subtle harmonic binaural pulsation promoting restorative parasympathetic states.'
-          }
-        ].map((item) => {
-          const isCurrent = activeNoise === item.type;
-          return (
-            <div
-              key={item.type}
-              onClick={() => handleSelectNoise(item.type)}
-              className={`p-4 rounded-xl cursor-pointer border transition-all ${
-                isCurrent && isPlaying
-                  ? 'bg-slate-850 border-teal-500 shadow-md shadow-teal-500/10 ring-1 ring-teal-500/40'
-                  : 'bg-slate-850/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-white">{item.title}</span>
-                {isCurrent && isPlaying && (
-                  <span className="flex space-x-0.5">
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce"></span>
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">{item.subtitle}</p>
-            </div>
-          );
-        })}
-      </div>
+      {/* Noise types */}
+      <fieldset>
+        <legend className="sr-only">Choose a soundscape</legend>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              type: 'brown' as NoiseType,
+              title: 'Deep brown noise',
+              subtitle: 'Warm waterfall rumble. Calms focus jitter and nervous tension.'
+            },
+            {
+              type: 'white' as NoiseType,
+              title: 'Crisp white noise',
+              subtitle: 'Standard background static for masking conversation and sleep.'
+            },
+            {
+              type: 'pink' as NoiseType,
+              title: 'Gentle pink noise',
+              subtitle: 'Balanced frequencies resembling steady falling rain.'
+            },
+            {
+              type: 'binaural' as NoiseType,
+              title: '432Hz calm drone',
+              subtitle: 'Subtle harmonic tone for grounding meditation.'
+            }
+          ].map((item) => {
+            const isCurrent = activeNoise === item.type;
+            return (
+              <button
+                key={item.type}
+                type="button"
+                onClick={() => handleSelectNoise(item.type)}
+                aria-pressed={isCurrent && isPlaying}
+                className={`rounded-lg border p-4 text-left transition-colors ${
+                  isCurrent && isPlaying
+                    ? 'border-forest-600 bg-forest-50'
+                    : 'border-slate-200 bg-white hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-900">{item.title}</span>
+                  {isCurrent && isPlaying && (
+                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-forest-600" aria-hidden="true"></span>
+                  )}
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{item.subtitle}</p>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
 
-      {/* Volume Slider & Session Timer */}
-      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-        {/* Volume Control */}
+      {/* Sliders */}
+      <div className="mt-4 grid grid-cols-1 items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2">
+        {/* Volume */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-slate-300">
-            <span className="flex items-center space-x-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-teal-400" />
-              <span>Acoustic Output Level</span>
-            </span>
-            <span className="font-mono text-teal-400 font-bold">{Math.round(volume * 100)}%</span>
+          <div className="flex justify-between text-xs font-medium text-slate-700">
+            <label htmlFor="volume-range" className="flex items-center gap-1.5">
+              <Volume2 className="h-3.5 w-3.5 text-forest-600" aria-hidden="true" />
+              <span>Volume</span>
+            </label>
+            <span className="font-mono text-forest-700">{Math.round(volume * 100)}%</span>
           </div>
           <input
+            id="volume-range"
             type="range"
             min="0"
             max="1"
             step="0.05"
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-full accent-teal-400 cursor-pointer"
+            className="w-full cursor-pointer accent-forest-600"
           />
         </div>
 
-        {/* Timer Presets */}
+        {/* Timer */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-slate-300">
-            <span className="flex items-center space-x-1.5">
-              <Clock className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex justify-between text-xs font-medium text-slate-700">
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
               <span>Timer</span>
             </span>
-            <span className="font-mono text-indigo-400 font-bold">
-              {formatTimer(timerSecondsLeft)}
-            </span>
+            <span className="font-mono font-semibold text-slate-700">{formatTimer(timerSecondsLeft)}</span>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex gap-1.5" role="group" aria-label="Sleep timer">
             {[5, 15, 30, null].map((mins) => {
               const selected = timerMinutes === mins;
               return (
                 <button
                   key={mins === null ? 'inf' : mins}
+                  type="button"
                   onClick={() => handleSelectTimer(mins)}
-                  className={`flex-1 py-1 text-xs rounded border transition-all ${
-                    selected
-                      ? 'bg-indigo-600/30 text-indigo-300 border-indigo-500 font-bold'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                  aria-pressed={selected}
+                  className={`btn btn-sm flex-1 ${
+                    selected ? 'border border-forest-600 bg-forest-600 text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   {mins === null ? 'Continuous' : `${mins}m`}
@@ -317,6 +303,6 @@ export const SoundCalmer: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

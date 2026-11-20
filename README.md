@@ -89,3 +89,21 @@ bun run dev # runs on http://localhost:3000
 ```
 
 Visit **http://localhost:3000** in your web browser.
+
+---
+
+## 🎨 Icon Credits
+
+The six community topic icons, the navbar logo and the favicon are free icons from [Flaticon](https://www.flaticon.com/), used under the [Flaticon Free License](https://www.flaticon.com/license) (attribution required):
+
+| Icon | Author | Source |
+|------|--------|--------|
+| Compass | Magnific | https://www.flaticon.com/free-icon/compass_114369 |
+| Briefcase | Dimitry Miroliubov | https://www.flaticon.com/free-icon/briefcase_639394 |
+| Coins | Those Icons | https://www.flaticon.com/free-icon/coins_482506 |
+| Hand shake | Pixel perfect | https://www.flaticon.com/free-icon/hand-shake_493808 |
+| Shield (verified) | Magnific | https://www.flaticon.com/free-icon/verified_2438078 |
+| Moon | Good Ware | https://www.flaticon.com/free-icon/moon_606807 |
+| Lighthouse (logo & favicon) | Magnific | https://www.flaticon.com/free-icon/lighthouse_906644 |
+
+A visible credit also sits in the site footer. All other interface glyphs (buttons, chat, forms) are [lucide](https://lucide.dev) icons.

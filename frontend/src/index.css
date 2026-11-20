@@ -3,27 +3,119 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 font-sans;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply bg-slate-50 text-slate-700 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-slate-900;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.forest.600');
+    outline-offset: 2px;
   }
 }
 
-/* Custom scrollbar for soothing UI */
+@layer components {
+  .panel {
+    @apply rounded-xl border border-slate-200 bg-white;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wider text-slate-500;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .btn-icon {
+    @apply p-1.5;
+  }
+
+  .btn-primary {
+    @apply bg-forest-600 text-white hover:bg-forest-700;
+  }
+
+  .btn-outline {
+    @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+  }
+
+  .btn-quiet {
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .btn-danger {
+    @apply bg-rose-600 text-white hover:bg-rose-700;
+  }
+
+  .btn-danger-outline {
+    @apply border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-forest-500 focus:outline-none focus:ring-1 focus:ring-forest-500/40;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600;
+  }
+
+  .tab {
+    @apply whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium text-slate-500 transition-colors;
+  }
+
+  .tab:hover {
+    @apply border-slate-300 text-slate-800;
+  }
+
+  .tab-active {
+    @apply border-forest-600 font-semibold text-forest-700;
+  }
+
+  .tab-active:hover {
+    @apply border-forest-600 text-forest-700;
+  }
+}
+
+/* Minimal clean scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
