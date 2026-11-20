@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
+import { LandingPage } from './components/LandingPage';
 import { Communities } from './components/Communities';
 import { CheckupPatterns } from './components/CheckupPatterns';
 import { PrivateJournal } from './components/PrivateJournal';
@@ -15,8 +16,9 @@ import { SustainableProModal } from './components/SustainableProModal';
 import { api } from './api';
 
 export const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = useState<string>('communities');
-  const [username, setUsername] = useState<string>('Wanderer24');
+  // Start on the Landing Page
+  const [currentTab, setCurrentTab] = useState<string>('landing');
+  const [username, setUsername] = useState<string>('QuietWanderer24');
   
   // Emergency Modal State
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
@@ -39,8 +41,8 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-teal-500 selection:text-white">
-      {/* Navigation */}
+    <div className="min-h-screen bg-[#F4F1EA] text-[#2B2E2B] flex flex-col selection:bg-[#B9D2B9] selection:text-[#1B4326]">
+      {/* Navigation Bar */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -52,76 +54,102 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {currentTab === 'communities' && (
-          <Communities
-            username={username}
-            onTriggerThreshold={handleTriggerThreshold}
+      {currentTab === 'landing' ? (
+        <main className="flex-1 w-full">
+          <LandingPage
+            onNavigate={setCurrentTab}
+            onOpenEmergency={() => handleTriggerThreshold(4, 'landing_action')}
+            onOpenTransparency={() => setIsTransparencyOpen(true)}
+            onOpenPro={() => setIsProOpen(true)}
           />
-        )}
-
-        {currentTab === 'checkups' && (
-          <CheckupPatterns
-            onTriggerThreshold={handleTriggerThreshold}
-            onNavigateTab={setCurrentTab}
-          />
-        )}
-
-        {currentTab === 'journal' && <PrivateJournal />}
-
-        {currentTab === 'calm' && (
-          <div className="space-y-6">
-            <BreathingExercise />
-            <SoundCalmer />
-          </div>
-        )}
-
-        {currentTab === 'articles' && <ArticlesHub />}
-
-        {currentTab === 'games' && <CalmingGames />}
-
-        {currentTab === 'chat' && (
-          <ChatBotCompanion
-            onTriggerThreshold={handleTriggerThreshold}
-            onNavigateTab={setCurrentTab}
-          />
-        )}
-
-        {currentTab === 'analytics' && <AnalyticsDashboard />}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 border-t border-slate-800/80 py-8 text-xs text-slate-400 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-white tracking-tight">Mental Beacon (MB)</span>
-            <span>• Built for Young Adult Development (15–35)</span>
+        </main>
+      ) : (
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Breadcrumb / Back to Landing shortcut */}
+          <div className="mb-4 flex items-center justify-between">
+            <button
+              onClick={() => setCurrentTab('landing')}
+              className="text-xs font-semibold text-[#2E6F40] hover:text-[#1B4326] flex items-center space-x-1"
+            >
+              <span>← Back to Sanctuary Overview</span>
+            </button>
+            <span className="text-xs text-[#2B2E2B]/60 font-medium">
+              Logged in anonymously as <strong className="text-[#1B4326]">@{username}</strong>
+            </span>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsTransparencyOpen(true)}
-              className="hover:text-teal-400 transition-colors"
-            >
-              Data Transparency & Zero Ad Policy
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => setIsProOpen(true)}
-              className="hover:text-amber-400 transition-colors"
-            >
-              Financial Sustainability
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => handleTriggerThreshold(5, 'footer_crisis')}
-              className="text-rose-400 hover:text-rose-300 transition-colors font-medium"
-            >
-              Crisis Helplines (988)
-            </button>
+          {currentTab === 'communities' && (
+            <Communities
+              username={username}
+              onTriggerThreshold={handleTriggerThreshold}
+            />
+          )}
+
+          {currentTab === 'checkups' && (
+            <CheckupPatterns
+              onTriggerThreshold={handleTriggerThreshold}
+              onNavigateTab={setCurrentTab}
+            />
+          )}
+
+          {currentTab === 'journal' && <PrivateJournal />}
+
+          {currentTab === 'calm' && (
+            <div className="space-y-6">
+              <BreathingExercise />
+              <SoundCalmer />
+            </div>
+          )}
+
+          {currentTab === 'articles' && <ArticlesHub />}
+
+          {currentTab === 'games' && <CalmingGames />}
+
+          {currentTab === 'chat' && (
+            <ChatBotCompanion
+              onTriggerThreshold={handleTriggerThreshold}
+              onNavigateTab={setCurrentTab}
+            />
+          )}
+
+          {currentTab === 'analytics' && <AnalyticsDashboard />}
+        </main>
+      )}
+
+      {/* App Workspace Footer (Shown when inside specific modules) */}
+      {currentTab !== 'landing' && (
+        <footer className="bg-[#1B4326] text-[#F4F1EA] border-t-2 border-[#1B4326] py-8 text-xs mt-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center space-x-2">
+              <span className="font-serif font-bold text-base text-[#F4F1EA] tracking-tight">Mental Beacon (MB)</span>
+              <span className="text-[#C8B87E]">• Youth Wellbeing & Grounding (15–35)</span>
+            </div>
+
+            <div className="flex items-center space-x-4 text-[#F4F1EA]/80">
+              <button
+                onClick={() => setIsTransparencyOpen(true)}
+                className="hover:text-[#F4F1EA] transition-colors"
+              >
+                Data Sovereignty & Zero Ads
+              </button>
+              <span>•</span>
+              <button
+                onClick={() => setIsProOpen(true)}
+                className="hover:text-[#C8B87E] transition-colors"
+              >
+                Sustainability Model
+              </button>
+              <span>•</span>
+              <button
+                onClick={() => handleTriggerThreshold(5, 'footer_crisis')}
+                className="text-rose-300 hover:text-white transition-colors font-bold"
+              >
+                Crisis Helplines (988)
+              </button>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* Modals */}
       <EmergencyThresholdModal

@@ -139,8 +139,8 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-3">
-        <div className="w-10 h-10 border-4 border-teal-500/30 border-t-teal-400 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-400">Loading authentic peer communities...</p>
+        <div className="w-10 h-10 border-4 border-[#B9D2B9] border-t-[#1B4326] rounded-full animate-spin"></div>
+        <p className="text-sm text-[#2B2E2B]/80 font-medium">Loading authentic peer communities...</p>
       </div>
     );
   }
@@ -148,41 +148,41 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
   return (
     <div className="space-y-6">
       {/* Community Banner / Young Adult Context */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-teal-950/40 p-6 sm:p-8 border border-slate-800">
+      <div className="relative overflow-hidden rounded-2xl bg-[#1B4326] text-[#F4F1EA] p-6 sm:p-8 border-2 border-[#1B4326] shadow-md">
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-semibold mb-3">
-            <Users className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B9D2B9] text-[#1B4326] text-xs font-bold mb-3 border border-[#2E6F40]/30">
+            <Users className="w-3.5 h-3.5 text-[#1B4326]" />
             <span>Sub-divided Peer Spaces for Young Adults (15–35)</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-serif font-normal text-[#F4F1EA] tracking-tight">
             You are not late, defective, or alone in this transition.
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-300">
+          <p className="mt-2 text-sm sm:text-base text-[#F4F1EA]/85 leading-relaxed font-normal">
             Real peer communities tracking the most frequent developmental obstacles—from quarter-life panic and first-job burnout to modern loneliness and rent anxiety. Post pseudonymously with zero social judgment.
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2 items-center">
-            <span className="text-xs text-slate-400">Feeling at your limit?</span>
+            <span className="text-xs text-[#C8B87E] font-medium">Feeling at your limit?</span>
             <button
               onClick={() => onTriggerThreshold(1)}
-              className="text-xs px-2.5 py-1 rounded-md bg-teal-500/15 text-teal-300 border border-teal-500/30 hover:bg-teal-500/25"
+              className="text-xs px-2.5 py-1 rounded-md bg-[#FFFFFF]/15 text-[#F4F1EA] border border-[#F4F1EA]/30 hover:bg-[#FFFFFF]/25 font-medium transition-all"
             >
               Level 1: Community Connection
             </button>
             <button
               onClick={() => onTriggerThreshold(4)}
-              className="text-xs px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25"
+              className="text-xs px-2.5 py-1 rounded-md bg-rose-500/20 text-rose-200 border border-rose-400/40 hover:bg-rose-500/30 font-medium transition-all"
             >
               Level 4: Contact Circle
             </button>
           </div>
         </div>
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-[#B9D2B9]/10 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
       {/* Community Channels Grid */}
       <div>
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+        <h2 className="text-xs font-bold text-[#2E6F40] uppercase tracking-wider mb-3">
           Select A Topic Community
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -197,27 +197,27 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                 onClick={() => handleSelectCommunity(comm)}
                 className={`p-4 rounded-xl cursor-pointer transition-all border ${
                   isSelected
-                    ? 'bg-slate-850 border-teal-500 shadow-md shadow-teal-500/10 ring-1 ring-teal-500/30'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-850/80'
+                    ? 'bg-[#FFFFFF] border-2 border-[#1B4326] shadow-md ring-2 ring-[#2E6F40]/20'
+                    : 'bg-[#FFFFFF] border border-[#D8D4C9] hover:border-[#1B4326]'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                      isSelected ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-teal-400'
+                      isSelected ? 'bg-[#1B4326] text-[#F4F1EA]' : 'bg-[#B9D2B9]/50 text-[#1B4326]'
                     }`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm text-white">{comm.name}</h3>
-                      <span className="text-xs text-slate-400">{comm.memberCount.toLocaleString()} peers active</span>
+                      <h3 className="font-serif font-bold text-sm text-[#1B4326]">{comm.name}</h3>
+                      <span className="text-xs text-[#2B2E2B]/70">{comm.memberCount.toLocaleString()} peers active</span>
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 mt-2 line-clamp-2">{comm.description}</p>
+                <p className="text-xs text-[#2B2E2B]/80 mt-2 line-clamp-2 leading-relaxed">{comm.description}</p>
                 {topProblem && (
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center space-x-1.5 text-xs text-amber-300/90 font-medium">
-                    <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <div className="mt-3 pt-2.5 border-t border-[#D8D4C9] flex items-center space-x-1.5 text-xs text-[#2E6F40] font-semibold">
+                    <TrendingUp className="w-3.5 h-3.5 text-[#2E6F40] shrink-0" />
                     <span className="truncate">Top issue: {topProblem}</span>
                   </div>
                 )}
@@ -232,14 +232,14 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Feed: 2 Cols */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div className="flex items-center justify-between bg-[#FFFFFF] p-4 rounded-xl border border-[#D8D4C9] shadow-sm">
               <div>
-                <h3 className="text-lg font-bold text-white">{selectedCommunity.name}</h3>
-                <p className="text-xs text-slate-400">Share your experiences or offer perspective</p>
+                <h3 className="text-lg font-serif font-bold text-[#1B4326]">{selectedCommunity.name}</h3>
+                <p className="text-xs text-[#2B2E2B]/75">Share your experiences or offer perspective</p>
               </div>
               <button
                 onClick={() => setIsNewPostOpen(true)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow transition-all"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs font-semibold shadow transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Reflection</span>
@@ -248,63 +248,63 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
             {/* Posts List */}
             {posts.length === 0 ? (
-              <div className="bg-slate-900/60 rounded-xl p-8 border border-slate-800 text-center">
-                <p className="text-sm text-slate-400">No posts in this space yet. Be the first to share your thoughts.</p>
+              <div className="bg-[#FFFFFF] rounded-xl p-8 border border-[#D8D4C9] text-center shadow-sm">
+                <p className="text-sm text-[#2B2E2B]/75">No posts in this space yet. Be the first to share your thoughts.</p>
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="bg-slate-900 rounded-xl p-5 border border-slate-800 space-y-3 hover:border-slate-750 transition-all">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
+                <div key={post.id} className="bg-[#FFFFFF] rounded-xl p-5 border border-[#D8D4C9] space-y-3 hover:border-[#1B4326] transition-all shadow-sm">
+                  <div className="flex items-center justify-between text-xs text-[#2B2E2B]/70">
                     <div className="flex items-center space-x-2">
-                      <div className="w-6 h-6 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-[10px]">
+                      <div className="w-6 h-6 rounded-full bg-[#B9D2B9] text-[#1B4326] flex items-center justify-center font-bold text-[10px]">
                         {post.authorUsername.slice(0, 2).toUpperCase()}
                       </div>
-                      <span className="font-medium text-slate-200">@{post.authorUsername}</span>
+                      <span className="font-semibold text-[#1B4326]">@{post.authorUsername}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded-full bg-teal-950/60 text-teal-400 border border-teal-800/40 text-[11px]">
+                      <span className="px-2 py-0.5 rounded-full bg-[#B9D2B9]/60 text-[#1B4326] border border-[#2E6F40]/20 text-[11px] font-medium">
                         {post.problemTag}
                       </span>
-                      <span className="flex items-center text-slate-500">
+                      <span className="flex items-center text-[#2B2E2B]/60">
                         <Clock className="w-3 h-3 mr-1" />
                         {new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </div>
 
-                  <h4 className="text-base font-semibold text-white">{post.title}</h4>
-                  <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{post.content}</p>
+                  <h4 className="text-base font-serif font-bold text-[#1B4326]">{post.title}</h4>
+                  <p className="text-sm text-[#2B2E2B] leading-relaxed whitespace-pre-line">{post.content}</p>
 
-                  <div className="pt-2 flex items-center justify-between border-t border-slate-800/70 text-xs">
+                  <div className="pt-2 flex items-center justify-between border-t border-[#D8D4C9] text-xs">
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => handleUpvote(post.id)}
-                        className="flex items-center space-x-1 text-slate-400 hover:text-teal-400 transition-colors"
+                        className="flex items-center space-x-1 text-[#2B2E2B]/80 hover:text-[#1B4326] transition-colors"
                       >
                         <ThumbsUp className="w-3.5 h-3.5" />
                         <span>{post.upvotes} found helpful</span>
                       </button>
                       <button
                         onClick={() => setReplyOpenPostId(replyOpenPostId === post.id ? null : post.id)}
-                        className="flex items-center space-x-1 text-slate-400 hover:text-teal-400 transition-colors"
+                        className="flex items-center space-x-1 text-[#2B2E2B]/80 hover:text-[#1B4326] transition-colors"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         <span>{post.replies?.length || 0} Replies</span>
                       </button>
                     </div>
-                    <span className="text-slate-500 text-[11px]">Pseudonymous Young Peer</span>
+                    <span className="text-[#2E6F40] font-medium text-[11px]">Pseudonymous Young Peer</span>
                   </div>
 
                   {/* Replies section */}
                   {post.replies && post.replies.length > 0 && (
-                    <div className="mt-3 pl-3 sm:pl-4 border-l-2 border-slate-800 space-y-2">
+                    <div className="mt-3 pl-3 sm:pl-4 border-l-2 border-[#B9D2B9] space-y-2">
                       {post.replies.map((reply) => (
-                        <div key={reply.id} className="bg-slate-850/80 p-2.5 rounded-lg text-xs space-y-1">
-                          <div className="flex items-center justify-between text-slate-400 text-[11px]">
-                            <span className="font-semibold text-teal-300">@{reply.authorUsername}</span>
+                        <div key={reply.id} className="bg-[#F4F1EA] p-2.5 rounded-lg text-xs space-y-1 border border-[#D8D4C9]">
+                          <div className="flex items-center justify-between text-[#2B2E2B]/70 text-[11px]">
+                            <span className="font-semibold text-[#1B4326]">@{reply.authorUsername}</span>
                             <span>{new Date(reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
-                          <p className="text-slate-200">{reply.content}</p>
+                          <p className="text-[#2B2E2B]">{reply.content}</p>
                         </div>
                       ))}
                     </div>
@@ -318,14 +318,14 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder={`Reply as @${username}...`}
-                        className="flex-1 bg-slate-950 text-xs px-3 py-1.5 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+                        className="flex-1 bg-[#FFFFFF] text-xs px-3 py-1.5 rounded-lg border border-[#D8D4C9] text-[#2B2E2B] focus:outline-none focus:border-[#1B4326]"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSendReply(post.id);
                         }}
                       />
                       <button
                         onClick={() => handleSendReply(post.id)}
-                        className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-medium"
+                        className="px-3 py-1.5 bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] rounded-lg text-xs font-semibold"
                       >
                         Reply
                       </button>
@@ -338,12 +338,12 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
           {/* Sidebar: Frequent Problems Tracker for this Community */}
           <div className="space-y-4">
-            <div className="bg-slate-900 rounded-xl p-5 border border-slate-800">
+            <div className="bg-[#FFFFFF] rounded-xl p-5 border border-[#D8D4C9] shadow-sm">
               <div className="flex items-center space-x-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-teal-400" />
-                <h3 className="font-bold text-sm text-white">Most Frequent Obstacles</h3>
+                <TrendingUp className="w-4 h-4 text-[#2E6F40]" />
+                <h3 className="font-serif font-bold text-sm text-[#1B4326]">Most Frequent Obstacles</h3>
               </div>
-              <p className="text-xs text-slate-400 mb-4">
+              <p className="text-xs text-[#2B2E2B]/80 mb-4 leading-relaxed">
                 Sub-divided community tracking of what young adults in {selectedCommunity.name} are facing most often:
               </p>
 
@@ -355,12 +355,12 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                   return (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between text-xs">
-                        <span className="text-slate-300 font-medium line-clamp-1">{fp.problem}</span>
-                        <span className="text-teal-400 font-mono text-[11px] shrink-0 ml-2">{fp.count} logs</span>
+                        <span className="text-[#2B2E2B] font-medium line-clamp-1">{fp.problem}</span>
+                        <span className="text-[#2E6F40] font-mono text-[11px] shrink-0 ml-2 font-bold">{fp.count} logs</span>
                       </div>
-                      <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[#F4F1EA] h-2 rounded-full overflow-hidden border border-[#D8D4C9]">
                         <div
-                          className="bg-gradient-to-r from-teal-500 to-emerald-400 h-full rounded-full transition-all duration-500"
+                          className="bg-[#2E6F40] h-full rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         ></div>
                       </div>
@@ -369,19 +369,19 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                 })}
               </div>
 
-              <div className="mt-5 p-3 rounded-lg bg-teal-950/40 border border-teal-800/40 text-xs text-teal-200">
-                <span className="font-semibold block mb-0.5">Developmental Insight</span>
+              <div className="mt-5 p-3 rounded-lg bg-[#B9D2B9]/30 border border-[#2E6F40]/30 text-xs text-[#1B4326]">
+                <span className="font-bold block mb-0.5">Developmental Insight</span>
                 Over 70% of people experiencing this report feeling instant relief upon finding peers with the exact same doubt.
               </div>
             </div>
 
             {/* Safety Reminder */}
-            <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-800/80 text-xs text-slate-400 space-y-2">
-              <span className="font-semibold text-slate-300 flex items-center space-x-1">
-                <Shield className="w-3.5 h-3.5 text-teal-400" />
+            <div className="bg-[#FFFFFF] rounded-xl p-4 border border-[#D8D4C9] text-xs text-[#2B2E2B]/80 space-y-2 shadow-sm">
+              <span className="font-bold text-[#1B4326] flex items-center space-x-1">
+                <Shield className="w-3.5 h-3.5 text-[#2E6F40]" />
                 <span>Safe & Anonymized</span>
               </span>
-              <p>
+              <p className="leading-relaxed">
                 Your username is pseudonymous. No real names, phone numbers, or social handles are displayed publicly.
               </p>
             </div>
@@ -391,15 +391,15 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
       {/* New Post Modal */}
       {isNewPostOpen && selectedCommunity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-2xl max-w-lg w-full border border-slate-700 p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#FFFFFF] rounded-2xl max-w-lg w-full border-2 border-[#1B4326] p-6 space-y-4 shadow-2xl text-[#2B2E2B]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#D8D4C9]">
+              <h3 className="text-base font-serif font-bold text-[#1B4326]">
                 Share to {selectedCommunity.name}
               </h3>
               <button
                 onClick={() => setIsNewPostOpen(false)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="text-[#2B2E2B]/60 hover:text-[#1B4326] text-sm"
               >
                 ✕
               </button>
@@ -407,13 +407,13 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
 
             <form onSubmit={handleCreatePost} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-[#1B4326] mb-1">
                   Tag the Specific Obstacle
                 </label>
                 <select
                   value={selectedProblemTag}
                   onChange={(e) => setSelectedProblemTag(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+                  className="w-full bg-[#F4F1EA] text-xs px-3 py-2 rounded-lg border border-[#D8D4C9] text-[#2B2E2B] focus:outline-none focus:border-[#1B4326]"
                 >
                   <option value="">-- Choose Frequent Problem --</option>
                   {selectedCommunity.frequentProblems.map((fp, i) => (
@@ -424,7 +424,7 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-[#1B4326] mb-1">
                   Title
                 </label>
                 <input
@@ -433,12 +433,12 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                   placeholder="e.g. Dealing with weekend Slack anxiety..."
                   value={postTitle}
                   onChange={(e) => setPostTitle(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+                  className="w-full bg-[#F4F1EA] text-xs px-3 py-2 rounded-lg border border-[#D8D4C9] text-[#2B2E2B] focus:outline-none focus:border-[#1B4326]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-[#1B4326] mb-1">
                   Reflection / Story
                 </label>
                 <textarea
@@ -447,23 +447,23 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
                   placeholder="What are you experiencing? Feel free to be completely candid."
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
-                  className="w-full bg-slate-950 text-xs px-3 py-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+                  className="w-full bg-[#F4F1EA] text-xs px-3 py-2 rounded-lg border border-[#D8D4C9] text-[#2B2E2B] focus:outline-none focus:border-[#1B4326]"
                 ></textarea>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Posting as: <strong className="text-teal-300">@{username}</strong></span>
+              <div className="flex items-center justify-between text-xs text-[#2B2E2B]/80">
+                <span>Posting as: <strong className="text-[#1B4326]">@{username}</strong></span>
                 <div className="flex space-x-2">
                   <button
                     type="button"
                     onClick={() => setIsNewPostOpen(false)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
+                    className="px-3 py-1.5 rounded-lg bg-[#F4F1EA] text-[#2B2E2B] border border-[#D8D4C9] hover:bg-[#D8D4C9]/50 font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium shadow"
+                    className="px-4 py-1.5 rounded-lg bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] font-semibold shadow"
                   >
                     Post Anonymously
                   </button>

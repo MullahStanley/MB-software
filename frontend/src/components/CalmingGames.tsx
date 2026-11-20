@@ -8,11 +8,11 @@ export const CalmingGames: React.FC = () => {
   const [stones, setStones] = useState<{ id: number; width: number; height: number; x: number; y: number; color: string }[]>([]);
   const [isStable, setIsStable] = useState(true);
 
-  const stoneColors = ['#0d9488', '#0f766e', '#115e59', '#14b8a6', '#2dd4bf', '#5eead4'];
+  const stoneColors = ['#1B4326', '#2E6F40', '#5F996F', '#B9D2B9', '#C8B87E', '#8B7B42'];
 
   const resetPebbles = () => {
     setStones([
-      { id: 1, width: 140, height: 32, x: 100, y: 220, color: '#0d9488' }
+      { id: 1, width: 140, height: 32, x: 100, y: 220, color: '#1B4326' }
     ]);
     setIsStable(true);
   };
@@ -72,29 +72,29 @@ export const CalmingGames: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 rounded-2xl p-6 sm:p-8 border border-slate-800">
+      <div className="bg-[#1B4326] text-[#F4F1EA] rounded-2xl p-6 sm:p-8 border-2 border-[#1B4326] shadow-md">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3">
-            <Gamepad2 className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B9D2B9] text-[#1B4326] text-xs font-bold mb-3 border border-[#2E6F40]/30">
+            <Gamepad2 className="w-3.5 h-3.5 text-[#1B4326]" />
             <span>Cognitive Play & Somatic Grounding</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h1 className="text-2xl sm:text-4xl font-serif font-normal text-[#F4F1EA]">
             Calm Micro-Games for Mental De-escalation.
           </h1>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-[#F4F1EA]/85 leading-relaxed font-normal">
             Gentle interactive tools designed to pull your attention away from catastrophic future loops and gently anchor it back in physical presence.
           </p>
         </div>
       </div>
 
       {/* Game Selector Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-2">
+      <div className="flex space-x-2 border-b border-[#D8D4C9] pb-2">
         <button
           onClick={() => setActiveGame('pebbles')}
           className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
             activeGame === 'pebbles'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#1B4326] text-[#F4F1EA] shadow'
+              : 'text-[#2B2E2B]/80 hover:text-[#1B4326] hover:bg-[#B9D2B9]/30'
           }`}
         >
           Zen Pebble Balancer
@@ -103,8 +103,8 @@ export const CalmingGames: React.FC = () => {
           onClick={() => setActiveGame('clouds')}
           className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
             activeGame === 'clouds'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#1B4326] text-[#F4F1EA] shadow'
+              : 'text-[#2B2E2B]/80 hover:text-[#1B4326] hover:bg-[#B9D2B9]/30'
           }`}
         >
           Thought Cloud Unhooker
@@ -113,8 +113,8 @@ export const CalmingGames: React.FC = () => {
           onClick={() => setActiveGame('grounding')}
           className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
             activeGame === 'grounding'
-              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40 shadow'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-[#1B4326] text-[#F4F1EA] shadow'
+              : 'text-[#2B2E2B]/80 hover:text-[#1B4326] hover:bg-[#B9D2B9]/30'
           }`}
         >
           5-4-3-2-1 Sensory Grounder
@@ -123,11 +123,11 @@ export const CalmingGames: React.FC = () => {
 
       {/* Game 1: Zen Pebble Balancer */}
       {activeGame === 'pebbles' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-5">
+        <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#D8D4C9] shadow-sm space-y-5 text-[#2B2E2B]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="text-lg font-bold text-white">Zen River Stone Tower</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-lg font-serif font-bold text-[#1B4326]">Zen River Stone Tower</h3>
+              <p className="text-xs text-[#2B2E2B]/75">
                 Stack smooth river stones one by one. Practice steady patience with every placement.
               </p>
             </div>
@@ -135,14 +135,14 @@ export const CalmingGames: React.FC = () => {
               <button
                 onClick={handleAddStone}
                 disabled={stones.length >= 7}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white text-xs font-semibold"
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-[#1B4326] hover:bg-[#2E6F40] disabled:opacity-50 text-[#F4F1EA] text-xs font-semibold"
               >
                 <Plus className="w-4 h-4" />
                 <span>Place Next Pebble ({stones.length}/7)</span>
               </button>
               <button
                 onClick={resetPebbles}
-                className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                className="p-2 rounded-lg bg-[#F4F1EA] text-[#2B2E2B] border border-[#D8D4C9] hover:text-[#1B4326]"
                 title="Reset Tower"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -151,24 +151,23 @@ export const CalmingGames: React.FC = () => {
           </div>
 
           {/* Stacking Canvas Area */}
-          <div className="h-72 bg-gradient-to-b from-slate-950 to-slate-900 rounded-xl border border-slate-800 flex flex-col justify-end items-center pb-6 relative overflow-hidden">
+          <div className="h-72 bg-[#F4F1EA] rounded-xl border border-[#D8D4C9] flex flex-col justify-end items-center pb-6 relative overflow-hidden">
             {/* Ambient Water Horizon Line */}
-            <div className="absolute bottom-6 w-full border-b border-teal-500/20"></div>
+            <div className="absolute bottom-6 w-full border-b border-[#2E6F40]/20"></div>
 
             <div className="relative z-10 flex flex-col items-center">
               {stones.map((s, idx) => (
                 <div
                   key={s.id}
-                  className="rounded-full shadow-lg transition-all duration-300 flex items-center justify-center my-0.5"
+                  className="rounded-full shadow-md transition-all duration-300 flex items-center justify-center my-0.5"
                   style={{
                     width: `${s.width}px`,
                     height: `${s.height}px`,
                     backgroundColor: s.color,
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  <span className="text-[10px] text-white/50 font-mono select-none">
+                  <span className="text-[10px] text-[#F4F1EA] font-mono select-none font-medium">
                     {idx === 0 ? 'Foundation' : `Stone ${idx + 1}`}
                   </span>
                 </div>
@@ -176,7 +175,7 @@ export const CalmingGames: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-teal-950/30 border border-teal-800/30 text-xs text-teal-300 text-center">
+          <div className="p-3 rounded-lg bg-[#B9D2B9]/30 border border-[#2E6F40]/30 text-xs text-[#1B4326] text-center font-medium">
             {stones.length >= 7 ? "✨ Tower complete. Take a deep, appreciative breath." : "Place another stone gently to test your focus."}
           </div>
         </div>
@@ -184,10 +183,10 @@ export const CalmingGames: React.FC = () => {
 
       {/* Game 2: Thought Cloud Unhooker */}
       {activeGame === 'clouds' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-5">
+        <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#D8D4C9] shadow-sm space-y-5 text-[#2B2E2B]">
           <div>
-            <h3 className="text-lg font-bold text-white">Cognitive Defusion Cloud Dissolver</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-lg font-serif font-bold text-[#1B4326]">Cognitive Defusion Cloud Dissolver</h3>
+            <p className="text-xs text-[#2B2E2B]/75">
               In Acceptance & Commitment Therapy (ACT), thoughts are not facts—they are passing mental weather. Enter any sticky anxiety, watch it become a cloud, and tap to release it.
             </p>
           </div>
@@ -200,36 +199,36 @@ export const CalmingGames: React.FC = () => {
               placeholder="e.g. What if I never find what I'm passionate about?"
               value={thoughtInput}
               onChange={(e) => setThoughtInput(e.target.value)}
-              className="flex-1 bg-slate-950 text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-500"
+              className="flex-1 bg-[#F4F1EA] text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-[#D8D4C9] text-[#2B2E2B] focus:outline-none focus:border-[#1B4326]"
             />
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-sm font-semibold shadow"
+              className="px-5 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold shadow"
             >
               Materialize Cloud
             </button>
           </form>
 
           {/* Sky Canvas with Floating Clouds */}
-          <div className="min-h-64 p-6 bg-gradient-to-b from-sky-950/60 via-slate-900 to-slate-950 rounded-xl border border-slate-800 flex flex-wrap gap-4 items-center justify-center">
+          <div className="min-h-64 p-6 bg-[#F4F1EA] rounded-xl border border-[#D8D4C9] flex flex-wrap gap-4 items-center justify-center">
             {clouds.length === 0 ? (
-              <div className="text-center text-slate-400 text-xs">
-                <Sparkles className="w-6 h-6 mx-auto text-teal-400 mb-2" />
-                <span>The sky of your mind is clear right now.</span>
+              <div className="text-center text-[#2B2E2B]/70 text-xs">
+                <Sparkles className="w-6 h-6 mx-auto text-[#2E6F40] mb-2" />
+                <span className="font-serif italic text-sm text-[#1B4326]">The sky of your mind is clear right now.</span>
               </div>
             ) : (
               clouds.map((cloud) => (
                 <div
                   key={cloud.id}
                   onClick={() => handleDissolveCloud(cloud.id)}
-                  className="cursor-pointer group relative p-4 rounded-3xl bg-slate-800/90 hover:bg-rose-950/40 border border-slate-700 hover:border-rose-500/50 text-xs text-slate-200 max-w-xs shadow-lg transition-all transform hover:-translate-y-1"
+                  className="cursor-pointer group relative p-4 rounded-3xl bg-[#FFFFFF] hover:bg-rose-50 border-2 border-[#D8D4C9] hover:border-rose-400 text-xs text-[#2B2E2B] max-w-xs shadow transition-all transform hover:-translate-y-1"
                   title="Click to dissolve and unhook from this thought"
                 >
-                  <div className="flex items-center space-x-2 mb-1 text-slate-400 group-hover:text-rose-400">
+                  <div className="flex items-center space-x-2 mb-1 text-[#2E6F40] group-hover:text-rose-600">
                     <Cloud className="w-4 h-4" />
-                    <span className="text-[10px] font-semibold">Passing Thought (Click to Dissolve)</span>
+                    <span className="text-[10px] font-bold">Passing Thought (Click to Dissolve)</span>
                   </div>
-                  <p className="font-medium text-white">{cloud.text}</p>
+                  <p className="font-medium text-[#1B4326] font-serif">{cloud.text}</p>
                 </div>
               ))
             )}
@@ -239,24 +238,24 @@ export const CalmingGames: React.FC = () => {
 
       {/* Game 3: 5-4-3-2-1 Sensory Grounding */}
       {activeGame === 'grounding' && (
-        <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+        <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#D8D4C9] shadow-sm space-y-6 text-[#2B2E2B]">
           <div>
-            <h3 className="text-lg font-bold text-white">5-4-3-2-1 Sensory Somatic Guide</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-lg font-serif font-bold text-[#1B4326]">5-4-3-2-1 Sensory Somatic Guide</h3>
+            <p className="text-xs text-[#2B2E2B]/75">
               The gold-standard psychological exercise to anchor a nervous system spiraling into panic.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-300 font-extrabold text-2xl flex items-center justify-center border border-teal-500/40">
+          <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#D8D4C9] flex flex-col items-center text-center space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-[#B9D2B9] text-[#1B4326] font-serif font-extrabold text-2xl flex items-center justify-center border-2 border-[#1B4326]">
               {groundingSteps[groundingStep].count}
             </div>
 
-            <h4 className="text-lg font-bold text-white max-w-md">
+            <h4 className="text-lg font-serif font-bold text-[#1B4326] max-w-md">
               {groundingSteps[groundingStep].prompt}
             </h4>
 
-            <p className="text-xs text-slate-400 italic max-w-sm">
+            <p className="text-xs text-[#2B2E2B]/75 italic max-w-sm">
               "{groundingSteps[groundingStep].icon}"
             </p>
 
@@ -264,7 +263,7 @@ export const CalmingGames: React.FC = () => {
               {groundingStep > 0 && (
                 <button
                   onClick={() => setGroundingStep(groundingStep - 1)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+                  className="px-4 py-2 rounded-lg bg-[#FFFFFF] hover:bg-[#D8D4C9]/40 text-[#2B2E2B] text-xs border border-[#D8D4C9]"
                 >
                   Previous
                 </button>
@@ -272,14 +271,14 @@ export const CalmingGames: React.FC = () => {
               {groundingStep < groundingSteps.length - 1 ? (
                 <button
                   onClick={() => setGroundingStep(groundingStep + 1)}
-                  className="px-6 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow"
+                  className="px-6 py-2 rounded-lg bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs font-semibold shadow"
                 >
                   I've Noticed These ({groundingStep + 1}/5)
                 </button>
               ) : (
                 <button
                   onClick={() => setGroundingStep(0)}
-                  className="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow"
+                  className="px-6 py-2 rounded-lg bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs font-semibold shadow"
                 >
                   Complete & Restart
                 </button>

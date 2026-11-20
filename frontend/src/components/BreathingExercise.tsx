@@ -148,15 +148,15 @@ export const BreathingExercise: React.FC = () => {
   }
 
   return (
-    <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#D8D4C9] shadow-sm space-y-6 text-[#2B2E2B]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D8D4C9] pb-4">
         <div>
-          <div className="inline-flex items-center space-x-1.5 text-xs text-teal-400 font-semibold mb-1">
+          <div className="inline-flex items-center space-x-1.5 text-xs text-[#2E6F40] font-semibold mb-1">
             <Wind className="w-3.5 h-3.5" />
             <span>Somatic Vagus Nerve Regulation</span>
           </div>
-          <h2 className="text-xl font-bold text-white">Visual Breathing Pacer</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-xl font-serif font-bold text-[#1B4326]">Visual Breathing Pacer</h2>
+          <p className="text-xs text-[#2B2E2B]/75">
             Suggested based on your stress level to drop heart rate within 3 minutes
           </p>
         </div>
@@ -164,9 +164,9 @@ export const BreathingExercise: React.FC = () => {
         {/* Mute Chime Toggle */}
         <button
           onClick={() => setSoundEnabled(!soundEnabled)}
-          className="flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 self-start sm:self-auto"
+          className="flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-lg bg-[#F4F1EA] text-[#2B2E2B] hover:text-[#1B4326] border border-[#D8D4C9] self-start sm:self-auto font-medium"
         >
-          {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-teal-400" /> : <VolumeX className="w-3.5 h-3.5 text-slate-500" />}
+          {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#2E6F40]" /> : <VolumeX className="w-3.5 h-3.5 text-[#2B2E2B]/50" />}
           <span>{soundEnabled ? 'Chime Active' : 'Muted'}</span>
         </button>
       </div>
@@ -181,12 +181,12 @@ export const BreathingExercise: React.FC = () => {
               onClick={() => handleSelectPattern(p)}
               className={`p-3 rounded-xl border text-left transition-all ${
                 isSelected
-                  ? 'bg-teal-500/15 border-teal-500 text-white shadow-md shadow-teal-500/10 ring-1 ring-teal-500/40'
-                  : 'bg-slate-850/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  ? 'bg-[#B9D2B9] border-[#1B4326] text-[#1B4326] shadow-sm font-bold ring-1 ring-[#1B4326]/40'
+                  : 'bg-[#F4F1EA] border-[#D8D4C9] text-[#2B2E2B]/80 hover:text-[#1B4326] hover:border-[#1B4326]'
               }`}
             >
-              <span className="font-bold text-xs block text-teal-300">{p.name}</span>
-              <span className="text-[10px] text-slate-400 block line-clamp-1 mt-0.5">{p.targetMood}</span>
+              <span className="font-bold text-xs block text-[#1B4326]">{p.name}</span>
+              <span className="text-[10px] text-[#2B2E2B]/70 block line-clamp-1 mt-0.5">{p.targetMood}</span>
             </button>
           );
         })}
@@ -197,7 +197,7 @@ export const BreathingExercise: React.FC = () => {
         <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
           {/* Outer Ripple Wave */}
           <div
-            className="absolute rounded-full border border-teal-500/20 transition-all duration-300 ease-out"
+            className="absolute rounded-full border border-[#2E6F40]/30 transition-all duration-300 ease-out"
             style={{
               width: `${scale * 170}px`,
               height: `${scale * 170}px`,
@@ -207,22 +207,22 @@ export const BreathingExercise: React.FC = () => {
 
           {/* Core Breathing Orb */}
           <div
-            className="relative rounded-full flex flex-col items-center justify-center transition-all duration-200 ease-out shadow-2xl"
+            className="relative rounded-full flex flex-col items-center justify-center transition-all duration-200 ease-out shadow-lg"
             style={{
               width: `${scale * 130}px`,
               height: `${scale * 130}px`,
               background: currentPhase.name.toLowerCase().includes('inhale')
-                ? 'radial-gradient(circle, rgba(45,212,191,0.6) 0%, rgba(13,148,136,0.3) 70%, transparent 100%)'
+                ? 'radial-gradient(circle, rgba(185,210,185,0.9) 0%, rgba(46,111,64,0.6) 70%, transparent 100%)'
                 : currentPhase.name.toLowerCase().includes('hold')
-                ? 'radial-gradient(circle, rgba(99,102,241,0.6) 0%, rgba(67,56,202,0.3) 70%, transparent 100%)'
-                : 'radial-gradient(circle, rgba(16,185,129,0.5) 0%, rgba(5,150,105,0.2) 70%, transparent 100%)',
-              border: '2px solid rgba(45, 212, 191, 0.4)'
+                ? 'radial-gradient(circle, rgba(200,184,126,0.9) 0%, rgba(139,115,50,0.6) 70%, transparent 100%)'
+                : 'radial-gradient(circle, rgba(27,67,38,0.85) 0%, rgba(19,50,28,0.7) 70%, transparent 100%)',
+              border: '2px solid #1B4326'
             }}
           >
-            <span className="text-sm sm:text-base font-extrabold text-white tracking-wide text-center px-4">
+            <span className="text-sm sm:text-base font-serif font-bold text-[#F4F1EA] tracking-wide text-center px-4">
               {currentPhase.name}
             </span>
-            <span className="text-3xl sm:text-4xl font-mono font-extrabold text-teal-200 mt-1">
+            <span className="text-3xl sm:text-4xl font-mono font-extrabold text-[#F4F1EA] mt-1">
               {Math.ceil(timeRemainingInPhase)}s
             </span>
           </div>
@@ -230,8 +230,8 @@ export const BreathingExercise: React.FC = () => {
 
         {/* Phase Details & Cycle Progress */}
         <div className="mt-4 text-center space-y-1">
-          <p className="text-xs text-slate-300">{selectedPattern.description}</p>
-          <span className="text-xs font-mono text-teal-400 block">
+          <p className="text-xs text-[#2B2E2B]/80 font-medium">{selectedPattern.description}</p>
+          <span className="text-xs font-mono text-[#2E6F40] block font-semibold">
             Cycles Completed: <strong>{cyclesCompleted}</strong> / 4 Recommended
           </span>
         </div>
@@ -243,10 +243,10 @@ export const BreathingExercise: React.FC = () => {
               if (!isActive) playSoftChime(440);
               setIsActive(!isActive);
             }}
-            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-all ${
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow transition-all ${
               isActive
-                ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                : 'bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/20'
+                ? 'bg-amber-700 hover:bg-amber-800 text-white'
+                : 'bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA]'
             }`}
           >
             {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -255,10 +255,10 @@ export const BreathingExercise: React.FC = () => {
 
           <button
             onClick={handleReset}
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+            className="p-2.5 rounded-xl bg-[#F4F1EA] hover:bg-[#B9D2B9]/40 text-[#2B2E2B] border border-[#D8D4C9] transition-colors"
             title="Reset Pacer"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4 text-[#1B4326]" />
           </button>
         </div>
       </div>

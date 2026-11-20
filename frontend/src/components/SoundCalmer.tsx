@@ -186,15 +186,15 @@ export const SoundCalmer: React.FC = () => {
   };
 
   return (
-    <div className="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#D8D4C9] shadow-sm space-y-6 text-[#2B2E2B]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D8D4C9] pb-4">
         <div>
-          <div className="inline-flex items-center space-x-1.5 text-xs text-indigo-400 font-semibold mb-1">
-            <Headphones className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-1.5 text-xs text-[#2E6F40] font-semibold mb-1">
+            <Headphones className="w-3.5 h-3.5 text-[#2E6F40]" />
             <span>Pure Web Audio Neuro-Synthesizer</span>
           </div>
-          <h2 className="text-xl font-bold text-white">Brown & White Noise Calmer</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-xl font-serif font-bold text-[#1B4326]">Brown & White Noise Calmer</h2>
+          <p className="text-xs text-[#2B2E2B]/75">
             Synthesized directly in your browser. Masks intrusive thoughts, ADHD chatter, and external office/city din.
           </p>
         </div>
@@ -202,10 +202,10 @@ export const SoundCalmer: React.FC = () => {
         {/* Master Play/Pause Header */}
         <button
           onClick={() => setIsPlaying(!isPlaying)}
-          className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-all ${
+          className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow transition-all ${
             isPlaying
-              ? 'bg-rose-600 hover:bg-rose-500 text-white'
-              : 'bg-teal-600 hover:bg-teal-500 text-white shadow-teal-500/20'
+              ? 'bg-rose-700 hover:bg-rose-800 text-white'
+              : 'bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA]'
           }`}
         >
           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -244,36 +244,36 @@ export const SoundCalmer: React.FC = () => {
               onClick={() => handleSelectNoise(item.type)}
               className={`p-4 rounded-xl cursor-pointer border transition-all ${
                 isCurrent && isPlaying
-                  ? 'bg-slate-850 border-teal-500 shadow-md shadow-teal-500/10 ring-1 ring-teal-500/40'
-                  : 'bg-slate-850/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
+                  ? 'bg-[#B9D2B9] border-[#1B4326] shadow-sm ring-1 ring-[#1B4326]/30 text-[#1B4326]'
+                  : 'bg-[#F4F1EA] border-[#D8D4C9] hover:border-[#1B4326]'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-white">{item.title}</span>
+                <span className="font-serif font-bold text-xs text-[#1B4326]">{item.title}</span>
                 {isCurrent && isPlaying && (
                   <span className="flex space-x-0.5">
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce"></span>
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-1 h-3 bg-teal-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                    <span className="w-1 h-3 bg-[#1B4326] rounded-full animate-bounce"></span>
+                    <span className="w-1 h-3 bg-[#1B4326] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span className="w-1 h-3 bg-[#1B4326] rounded-full animate-bounce [animation-delay:0.4s]"></span>
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">{item.subtitle}</p>
+              <p className="text-[11px] text-[#2B2E2B]/80 mt-1.5 leading-relaxed">{item.subtitle}</p>
             </div>
           );
         })}
       </div>
 
       {/* Volume Slider & Session Timer */}
-      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+      <div className="p-4 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9] grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
         {/* Volume Control */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-slate-300">
-            <span className="flex items-center space-x-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-teal-400" />
+          <div className="flex justify-between text-xs text-[#2B2E2B]">
+            <span className="flex items-center space-x-1.5 font-medium">
+              <Volume2 className="w-3.5 h-3.5 text-[#2E6F40]" />
               <span>Acoustic Output Level</span>
             </span>
-            <span className="font-mono text-teal-400 font-bold">{Math.round(volume * 100)}%</span>
+            <span className="font-mono text-[#2E6F40] font-bold">{Math.round(volume * 100)}%</span>
           </div>
           <input
             type="range"
@@ -282,18 +282,18 @@ export const SoundCalmer: React.FC = () => {
             step="0.05"
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            className="w-full accent-teal-400 cursor-pointer"
+            className="w-full accent-[#2E6F40] cursor-pointer"
           />
         </div>
 
         {/* Timer Presets */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-slate-300">
-            <span className="flex items-center space-x-1.5">
-              <Clock className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex justify-between text-xs text-[#2B2E2B]">
+            <span className="flex items-center space-x-1.5 font-medium">
+              <Clock className="w-3.5 h-3.5 text-[#2E6F40]" />
               <span>Timer</span>
             </span>
-            <span className="font-mono text-indigo-400 font-bold">
+            <span className="font-mono text-[#2E6F40] font-bold">
               {formatTimer(timerSecondsLeft)}
             </span>
           </div>
@@ -306,8 +306,8 @@ export const SoundCalmer: React.FC = () => {
                   onClick={() => handleSelectTimer(mins)}
                   className={`flex-1 py-1 text-xs rounded border transition-all ${
                     selected
-                      ? 'bg-indigo-600/30 text-indigo-300 border-indigo-500 font-bold'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      ? 'bg-[#1B4326] text-[#F4F1EA] border-[#1B4326] font-bold'
+                      : 'bg-[#FFFFFF] text-[#2B2E2B]/80 border-[#D8D4C9] hover:text-[#1B4326]'
                   }`}
                 >
                   {mins === null ? 'Continuous' : `${mins}m`}
