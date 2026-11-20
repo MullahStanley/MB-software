@@ -9,7 +9,6 @@ import {
   FileText, 
   Gamepad2, 
   MessageSquareHeart, 
-  ShieldAlert, 
   BarChart3,
   User,
   Check
@@ -20,7 +19,7 @@ interface NavbarProps {
   setCurrentTab: (tab: string) => void;
   username: string;
   setUsername: (name: string) => void;
-  onOpenEmergency: () => void;
+  onOpenEmergency: () => void;  // kept in interface for future use — not currently rendered
   onOpenTransparency: () => void;
   onOpenPro: () => void;
 }
@@ -30,9 +29,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   setCurrentTab,
   username,
   setUsername,
-  onOpenEmergency,
+  // onOpenEmergency — safety circle removed for now; re-enable when crisis features ship
 }) => {
-  const isLanding = currentTab === 'landing';
+  const isLanding = currentTab === 'landing' || currentTab === 'service_in_progress';
   const [isEditingUser, setIsEditingUser] = React.useState(false);
   const [tempUser, setTempUser] = React.useState(username);
 
@@ -70,23 +69,25 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
 
-            {/* Right side action: No items in navbar, just clean CTA */}
-            <div className="flex items-center space-x-4">
-              <a
-                href="#join-sanctuary"
-                className="hidden sm:inline-block text-xs font-semibold text-[#1B4326] hover:text-[#2E6F40] transition-colors underline-offset-4 hover:underline"
-              >
-                Join Community
-              </a>
+            {/* Right side action: only show on landing page, not on in-progress page */}
+            {currentTab === 'landing' && (
+              <div className="flex items-center space-x-4">
+                <a
+                  href="#join-sanctuary"
+                  className="hidden sm:inline-block text-xs font-semibold text-[#1B4326] hover:text-[#2E6F40] transition-colors underline-offset-4 hover:underline"
+                >
+                  Join Community
+                </a>
 
-              <button
-                onClick={() => setCurrentTab('service_in_progress')}
-                className="px-5 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow flex items-center space-x-2 border border-[#1B4326]"
-              >
-                <span>View our online service</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+                <button
+                  onClick={() => setCurrentTab('service_in_progress')}
+                  className="px-5 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow flex items-center space-x-2 border border-[#1B4326]"
+                >
+                  <span>View our online service</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -116,19 +117,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Quick Support & User Profile */}
+          {/* User Profile */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Crisis Safety Button */}
-            <button
-              onClick={onOpenEmergency}
-              className="flex items-center space-x-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-50 text-rose-800 border border-rose-300 hover:bg-rose-100 transition-all shadow-sm"
-              title="Emergency & Safety Circle"
-            >
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
-              <span className="hidden sm:inline">Safety Circle (988)</span>
-            </button>
-
-            {/* Pseudonym handle */}
             <div className="relative">
               {isEditingUser ? (
                 <div className="flex items-center space-x-1 bg-[#F4F1EA] p-1 rounded-lg border border-[#D8D4C9]">
