@@ -1,174 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Sparkles,
-  Compass,
-  Activity,
-  Wind,
-  Headphones,
-  BookOpen,
-  Gamepad2,
-  MessageSquareHeart,
-  ShieldAlert,
-  Lock,
   ArrowRight,
-  CheckCircle2,
-  Heart,
+  Wind,
   Volume2,
   VolumeX,
   Play,
   Pause,
   RotateCcw,
-  Users,
-  ChevronDown,
-  ChevronUp,
-  ExternalLink,
-  Zap,
-  TrendingUp,
-  Brain,
+  CheckCircle2,
+  Lock,
+  Heart,
   Shield,
-  Clock,
-  Quote
+  Smile,
+  Shuffle,
+  Compass,
+  Headphones,
+  BookOpen,
+  Send,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface LandingPageProps {
-  onNavigate: (tab: string) => void;
+  onViewService: (tab?: string) => void;
+  onSetUsername?: (name: string) => void;
   onOpenEmergency: () => void;
   onOpenTransparency: () => void;
   onOpenPro: () => void;
 }
 
-const COMMUNITIES_PREVIEW = [
-  {
-    id: 'quarter-life',
-    title: 'Quarter-Life & Navigating the Unknown',
-    tagline: 'Post-grad shock, feeling behind peers, and redefining success',
-    stats: '94% report comparison anxiety',
-    topTopic: 'Comparing my 23yo progress to LinkedIn influencers',
-    sampleHandle: '@QuietWanderer24',
-    icon: Compass,
-    color: 'border-[#1B4326]'
-  },
-  {
-    id: 'career-burnout',
-    title: 'Early Career, Grind Culture & Burnout',
-    tagline: 'First jobs, imposter syndrome, and boundary guilt',
-    stats: '89% experience Sunday scaries & Slack dread',
-    topTopic: 'How to shut off notifications without getting fired',
-    sampleHandle: '@OverthinkingDev',
-    icon: Zap,
-    color: 'border-[#2E6F40]'
-  },
-  {
-    id: 'financial-dread',
-    title: 'Cost of Living & Financial Dread',
-    tagline: 'Rent spikes, student loans, and social spending guilt',
-    stats: '96% stress over emergency savings buffer',
-    topTopic: 'Turning down dinners because rent jumped 18%',
-    sampleHandle: '@BudgetSurvivalist',
-    icon: Activity,
-    color: 'border-[#1B4326]'
-  },
-  {
-    id: 'social-loneliness',
-    title: 'Social Shifts, Modern Dating & Loneliness',
-    tagline: 'Making adult friends, ghosting fatigue, and empty weekends',
-    stats: '82% report lack of physical third spaces',
-    topTopic: 'Why does adult friend-making feel like job interviews?',
-    sampleHandle: '@CalmRiver',
-    icon: Users,
-    color: 'border-[#2E6F40]'
-  },
-  {
-    id: 'family-boundaries',
-    title: 'Family Boundaries & Breaking Cycles',
-    tagline: 'Parental expectations, cultural guilt, and emotional maturity',
-    stats: '87% struggle saying no to family demands',
-    topTopic: 'Navigating guilt when moving 300 miles away',
-    sampleHandle: '@CycleBreaker',
-    icon: Heart,
-    color: 'border-[#1B4326]'
-  },
-  {
-    id: 'sensory-overload',
-    title: 'Sensory Overload & Doomscroll Detox',
-    tagline: 'Screen fatigue, algorithmic rage, and revenge bedtime delay',
-    stats: '91% average 5+ hours of late-night doomscrolling',
-    topTopic: 'Revenge bedtime procrastination breaking my 8am meetings',
-    sampleHandle: '@OfflineSeeker',
-    icon: Wind,
-    color: 'border-[#2E6F40]'
-  }
-];
-
-const SAFETY_TIERS = [
-  {
-    tier: 'Tier 1',
-    name: 'Gentle Peer Connection',
-    desc: 'Automatic suggestions to relate with peers facing identical developmental friction, breaking isolation.',
-    action: 'Join Peer Space'
-  },
-  {
-    tier: 'Tier 2',
-    name: 'Psychoeducation & Somatic Guides',
-    desc: 'Targeted ACT/CBT cognitive defusion micro-articles and nervous system down-regulation guides.',
-    action: 'Read Grounding Tools'
-  },
-  {
-    tier: 'Tier 3',
-    name: 'Somatic Breath & Noise Synthesizer',
-    desc: 'Visual vagus nerve breath pacing (4-7-8, Box) combined with browser-generated acoustic brown/pink noise.',
-    action: 'Regulate Vagus Nerve'
-  },
-  {
-    tier: 'Tier 4',
-    name: 'Trusted Contacts Reconnection',
-    desc: 'Pre-composed, zero-shame micro-texts dispatched to your chosen inner circle to break silent spirals.',
-    action: 'Low-Pressure SMS'
-  },
-  {
-    tier: 'Tier 5',
-    name: 'Crisis Lifelines & Specialists',
-    desc: 'Immediate 1-tap direct access to 988 Suicide & Crisis Lifeline, Crisis Text Line (741741), and vetted specialists.',
-    action: 'Direct 988 Escalation'
-  },
-  {
-    tier: 'Tier 6',
-    name: 'Automated Circle Safeguard',
-    desc: 'Optional high-threshold automated safety check dispatched to emergency circle when self-escalation stalls.',
-    action: 'Automated Safeguard'
-  }
+const NATURE_MONIKERS = [
+  'QuietFern',
+  'StillCedar',
+  'GentleStream',
+  'MorningMist',
+  'CalmRiver',
+  'EarthyPine',
+  'OpenHorizon',
+  'SilverBirch',
+  'WildSage',
+  'DuskWanderer'
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({
-  onNavigate,
+  onViewService,
+  onSetUsername,
   onOpenEmergency,
   onOpenTransparency,
   onOpenPro
 }) => {
-  // Live Breathwork Demo State
+  // 1. Live Interactive Grounding Widget State
   const [breathActive, setBreathActive] = useState(false);
   const [breathPhase, setBreathPhase] = useState<'Inhale' | 'Hold' | 'Exhale'>('Inhale');
   const [breathCountdown, setBreathCountdown] = useState(4);
   const [audioChime, setAudioChime] = useState(true);
 
-  // Web Audio Noise Synthesizer State
-  const [synthNoisePlaying, setSynthNoisePlaying] = useState<string | null>(null);
-  const [synthVolume, setSynthVolume] = useState(0.25);
+  // Brown noise synthesizer state
+  const [brownNoisePlaying, setBrownNoisePlaying] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const noiseSourceRef = useRef<AudioNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  // FAQ Accordion State
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  // 2. Interactive & Engaging Calm Intake Form State
+  const [formStep, setFormStep] = useState<number>(1);
+  const [selectedFeeling, setSelectedFeeling] = useState<string>('Grounded & Seeking Connection');
+  const [selectedSupport, setSelectedSupport] = useState<string>('Daily Calm, Grounding & Breathwork');
+  const [userHandle, setUserHandle] = useState<string>('QuietFern');
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [userIntention, setUserIntention] = useState<string>('');
+  const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Breathwork 4-7-8 Timer Loop
+  // 3. FAQ Accordion State
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Breathwork loop
   useEffect(() => {
     let timer: any;
     if (breathActive) {
       timer = setInterval(() => {
         setBreathCountdown((prev) => {
           if (prev <= 1) {
-            // Transition phase
             if (breathPhase === 'Inhale') {
               setBreathPhase('Hold');
               playSoftTone(330, 0.4);
@@ -190,7 +104,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     return () => clearInterval(timer);
   }, [breathActive, breathPhase, audioChime]);
 
-  // Audio tone helper
   const playSoftTone = (freq: number, dur: number) => {
     if (!audioChime) return;
     try {
@@ -200,25 +113,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       const g = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      g.gain.setValueAtTime(0.04, ctx.currentTime);
+      g.gain.setValueAtTime(0.035, ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
       osc.connect(g);
       g.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + dur);
-    } catch (e) {
-      // Audio autoplay policy
-    }
+    } catch (e) {}
   };
 
-  // Acoustic noise synthesis generator (Brown and Pink noise)
-  const toggleNoise = (type: 'brown' | 'pink') => {
-    if (synthNoisePlaying === type) {
+  const toggleBrownNoise = () => {
+    if (brownNoisePlaying) {
       stopNoise();
       return;
     }
-    stopNoise();
-
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = new AudioCtx();
@@ -228,47 +136,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
 
-      if (type === 'brown') {
-        let lastOut = 0.0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          data[i] = (lastOut + 0.02 * white) / 1.02;
-          lastOut = data[i];
-          data[i] *= 3.5;
-        }
-      } else {
-        // Pink noise (Paul Kellet's filtered method)
-        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + white * 0.0555179;
-          b1 = 0.99332 * b1 + white * 0.0750759;
-          b2 = 0.96900 * b2 + white * 0.1538520;
-          b3 = 0.86650 * b3 + white * 0.3104856;
-          b4 = 0.55000 * b4 + white * 0.5329522;
-          b5 = -0.7616 * b5 - white * 0.0168980;
-          data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-          data[i] *= 0.11;
-          b6 = white * 0.115926;
-        }
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        data[i] = (lastOut + 0.02 * white) / 1.02;
+        lastOut = data[i];
+        data[i] *= 3.5;
       }
 
-      const whiteNoiseNode = ctx.createBufferSource();
-      whiteNoiseNode.buffer = buffer;
-      whiteNoiseNode.loop = true;
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(synthVolume, ctx.currentTime);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
 
-      whiteNoiseNode.connect(gain);
+      source.connect(gain);
       gain.connect(ctx.destination);
-      whiteNoiseNode.start();
+      source.start();
 
-      noiseSourceRef.current = whiteNoiseNode;
+      noiseSourceRef.current = source;
       gainNodeRef.current = gain;
-      setSynthNoisePlaying(type);
+      setBrownNoisePlaying(true);
     } catch (e) {
-      console.error('Audio synthesizer error:', e);
+      console.error(e);
     }
   };
 
@@ -285,895 +176,675 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       } catch (e) {}
       audioCtxRef.current = null;
     }
-    setSynthNoisePlaying(null);
-  };
-
-  const handleVolumeChange = (vol: number) => {
-    setSynthVolume(vol);
-    if (gainNodeRef.current && audioCtxRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(vol, audioCtxRef.current.currentTime);
-    }
+    setBrownNoisePlaying(false);
   };
 
   useEffect(() => {
     return () => stopNoise();
   }, []);
 
-  const faqs = [
-    {
-      q: 'How is Mental Beacon different from a typical mood tracker or mindfulness app?',
-      a: 'Generic apps sell you subscriptions to log 1-to-5 smiley faces, or put you on a 6-week waiting list for $200/hr therapists. Mental Beacon is designed around the developmental friction of 15–35 year olds (quarter-life shock, rent dread, Slack boundary burnout). It gives you instant acoustic noise generation, ACT/CBT cognitive defusion, anonymous shared-struggle peer spaces, 7-day somatic pattern trajectories, and a proactive 6-level safety threshold with 988 Lifeline integration.'
-    },
-    {
-      q: 'Is my identity protected, and will my data ever be sold?',
-      a: 'We operate under a strict Zero-Ad & Zero-Tracker guarantee. We do not use Meta Pixels, Google Analytics trackers, or TikTok SDKs. All community interaction is pseudonymous (e.g. @QuietWanderer24). Your private journal entries are encrypted client-side. You can export all your data in 1 click or permanently erase it.'
-    },
-    {
-      q: 'How does the 6-Level Safety Threshold (Emergency Circle) work?',
-      a: 'Distress is progressive. Rather than waiting for a crisis, Beacon monitors check-up patterns and keywords. At Level 1, it recommends peer connection. Level 3 engages vagus breath pacing. If acute limits are reached (Levels 4–6), it helps dispatch pre-written zero-pressure check-in messages to your designated Trusted Contacts, links to the 988 Suicide & Crisis Lifeline, and activates safety protocols.'
-    },
-    {
-      q: 'Why is the Core Tier 100% free forever for young adults?',
-      a: 'Mental health support should never be blocked by a paywall when you are stressed about rent or tuition. Mental Beacon is financially sustained through B2B partnerships with universities and employers who license our developmental wellbeing infrastructure to reduce overloaded campus counseling queues.'
+  const randomizeHandle = () => {
+    const randomName = NATURE_MONIKERS[Math.floor(Math.random() * NATURE_MONIKERS.length)];
+    const randomNum = Math.floor(Math.random() * 90 + 10);
+    setUserHandle(`${randomName}${randomNum}`);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Smooth calming simulated save
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setFormSubmitted(true);
+      if (onSetUsername && userHandle) {
+        onSetUsername(userHandle);
+      }
+    }, 700);
+  };
+
+  const handleCompleteAndEnter = () => {
+    if (onSetUsername && userHandle) {
+      onSetUsername(userHandle);
     }
-  ];
+    onViewService('service_in_progress');
+  };
 
   return (
-    <div className="w-full bg-[#F4F1EA] text-[#2B2E2B] transition-colors selection:bg-[#B9D2B9] selection:text-[#1B4326]">
-      {/* 1. Announcement Pill */}
-      <section className="pt-6 pb-2 px-4 max-w-7xl mx-auto flex justify-center">
-        <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-[#B9D2B9]/50 border border-[#2E6F40]/30 text-xs sm:text-sm font-medium text-[#1B4326] shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-[#2E6F40] animate-pulse"></span>
-          <span>Impact-Driven Youth Wellbeing Sanctuary (15–35)</span>
-          <span className="hidden md:inline text-[#2E6F40]/70">• Zero Ad Trackers • 100% Free Core Tier</span>
-        </div>
-      </section>
+    <article className="w-full bg-[#F4F1EA] text-[#2B2E2B] selection:bg-[#B9D2B9] selection:text-[#1B4326]">
+      {/* 1. HERO SECTION: Singular, calm & focused */}
+      <section className="pt-16 sm:pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
+        <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-3 block">
+          A CALM SANCTUARY FOR MENTAL GROUNDING
+        </span>
 
-      {/* 2. Hero Section */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-center">
-        <p className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#2E6F40] mb-3">
-          EARTHY, CALM & AUTHENTIC WELLBEING
-        </p>
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#1B4326] font-normal tracking-tight leading-[1.15] max-w-4xl mx-auto mb-6">
+        <h1 className="text-4xl sm:text-6xl font-serif text-[#1B4326] font-normal tracking-tight leading-[1.18] mb-6">
           A quiet place to breathe, ground, and connect when life feels heavy.
         </h1>
-        <p className="text-base sm:text-lg lg:text-xl text-[#2B2E2B] max-w-3xl mx-auto font-normal leading-relaxed mb-10">
-          Not another generic mood tracker or 6-week therapy waiting list. Mental Beacon is purpose-built
-          for quarter-life dread, early career burnout, rent anxiety, and screen fatigue. Built with
-          anonymous peer spaces, real-time acoustic audio, somatic breathwork, and a proactive 6-level safety circle.
+
+        <p className="text-base sm:text-xl text-[#2B2E2B] leading-relaxed max-w-2xl mx-auto mb-10 font-normal">
+          Mental Beacon is an independent mental wellbeing initiative. We provide immediate nervous
+          system regulation, reflective clarity, and authentic peer connection—so no one has to carry
+          uncertainty, burnout, or modern pressure alone.
         </p>
 
-        {/* CTA Button Group */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        {/* Minimal Actions */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={() => onNavigate('communities')}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#1B4326] text-[#F4F1EA] font-semibold text-base hover:bg-[#2E6F40] transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-3 group border-2 border-[#1B4326]"
+            onClick={() => onViewService('service_in_progress')}
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-base font-semibold transition-all shadow-md hover:shadow flex items-center justify-center space-x-3 group border border-[#1B4326]"
           >
-            <span>Enter Free Sanctuary</span>
+            <span>View our online service</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
           <a
-            href="#live-grounder"
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#FFFFFF] text-[#1B4326] font-semibold text-base hover:bg-[#B9D2B9]/30 transition-all border-2 border-[#1B4326] shadow-sm flex items-center justify-center space-x-2"
+            href="#join-sanctuary"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#FFFFFF] hover:bg-[#B9D2B9]/30 text-[#1B4326] text-base font-semibold transition-all border-2 border-[#1B4326] shadow-sm flex items-center justify-center space-x-2"
           >
-            <Wind className="w-5 h-5 text-[#2E6F40]" />
-            <span>Try 60s Grounder</span>
+            <Heart className="w-5 h-5 text-[#2E6F40]" />
+            <span>Join our community</span>
           </a>
+        </div>
+      </section>
 
-          <button
-            onClick={onOpenEmergency}
-            className="w-full sm:w-auto px-6 py-4 rounded-xl bg-rose-50 text-rose-900 font-semibold text-base hover:bg-rose-100 transition-all border-2 border-rose-300 shadow-sm flex items-center justify-center space-x-2"
-          >
-            <ShieldAlert className="w-5 h-5 text-rose-700 animate-pulse" />
-            <span>Safety Circle (988)</span>
-          </button>
+      {/* 2. WHO WE ARE, WHAT WE ARE & WHAT WE AIM TO DO */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-[#D8D4C9]">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-2 block">
+            OUR PURPOSE & PHILOSOPHY
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-serif text-[#1B4326] font-normal">
+            Who we are, what we built, and why we are here.
+          </h2>
         </div>
 
-        {/* Trust Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto text-left">
-          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm">
-            <div className="text-2xl font-bold text-[#1B4326] font-serif">100% Free</div>
-            <div className="text-xs text-[#2B2E2B]/80 font-medium">Core Tier for All Youth (15–35)</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Who We Are */}
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#B9D2B9]/60 text-[#1B4326] flex items-center justify-center mb-6">
+                <Compass className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-[#1B4326] mb-3">
+                Who We Are
+              </h3>
+              <p className="text-sm text-[#2B2E2B]/85 leading-relaxed">
+                We are an independent collective of peer guides, clinical psychologists, and community advocates. We created Mental Beacon after seeing how modern mental health tools often feel sterile, commercialized, or locked behind six-week waiting queues.
+              </p>
+            </div>
+            <div className="pt-6 mt-6 border-t border-[#D8D4C9] text-xs font-semibold text-[#2E6F40]">
+              Independent & Human-Centered
+            </div>
           </div>
-          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm">
-            <div className="text-2xl font-bold text-[#1B4326] font-serif">Zero Trackers</div>
-            <div className="text-xs text-[#2B2E2B]/80 font-medium">No Meta Pixels or Ad Data Brokers</div>
+
+          {/* What We Are */}
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] shadow-md flex flex-col justify-between relative overflow-hidden">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#1B4326] text-[#F4F1EA] flex items-center justify-center mb-6">
+                <Sparkles className="w-6 h-6 text-[#C8B87E]" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-[#1B4326] mb-3">
+                What Mental Beacon Is
+              </h3>
+              <p className="text-sm text-[#2B2E2B]/85 leading-relaxed">
+                Mental Beacon is a digital sanctuary engineered for physiological and emotional grounding. Not a mood tracker and not a therapist directory, but an authentic space with browser-synthesized audio, vagus nerve pacing, private encrypted vaults, and honest peer rooms.
+              </p>
+            </div>
+            <div className="pt-6 mt-6 border-t border-[#D8D4C9] text-xs font-semibold text-[#1B4326]">
+              Real Somatic Stabilization
+            </div>
           </div>
-          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm">
-            <div className="text-2xl font-bold text-[#1B4326] font-serif">6-Tier Safety</div>
-            <div className="text-xs text-[#2B2E2B]/80 font-medium">Proactive Crisis Circle & 988 Lifeline</div>
-          </div>
-          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm">
-            <div className="text-2xl font-bold text-[#1B4326] font-serif">4.85 / 5.0</div>
-            <div className="text-xs text-[#2B2E2B]/80 font-medium">Peer CSAT & Grounding Satisfaction</div>
+
+          {/* What We Aim To Do */}
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#B9D2B9]/60 text-[#1B4326] flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-[#1B4326] mb-3">
+                What We Aim To Do
+              </h3>
+              <p className="text-sm text-[#2B2E2B]/85 leading-relaxed">
+                Our mission is to bring relief in minutes rather than weeks. We aim to destigmatize real-life dilemmas—from career burnout and decision paralysis to loneliness—while protecting every visitor with a gentle, proactive safety net.
+              </p>
+            </div>
+            <div className="pt-6 mt-6 border-t border-[#D8D4C9] text-xs font-semibold text-[#2E6F40]">
+              Immediate, Dignified Relief
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Interactive Live Grounding Experience (Instant Relief Widget) */}
-      <section id="live-grounder" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] shadow-xl overflow-hidden p-6 sm:p-10">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#B9D2B9] text-[#1B4326] inline-block mb-3">
-              Interactive Nervous System Reliever
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
-              Experience immediate grounding right now.
-            </h2>
-            <p className="text-sm sm:text-base text-[#2B2E2B]">
-              No signup required. Test our somatic vagus pacer and acoustic web audio generators below to down-regulate your nervous system in 60 seconds.
-            </p>
-          </div>
+      {/* 3. THREE QUIET PILLARS OF OUR ONLINE SERVICE */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-[#D8D4C9]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-2 block">
+            HOW THE SERVICE SUPPORTS YOU
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-serif text-[#1B4326] font-normal">
+            Three core anchors for your wellbeing.
+          </h2>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Live Breath Pacer */}
-            <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#D8D4C9] flex flex-col items-center text-center">
-              <div className="flex items-center justify-between w-full mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2E6F40]">
-                  4-7-8 Somatic Vagus Pacer
-                </span>
-                <button
-                  onClick={() => setAudioChime(!audioChime)}
-                  className="p-1.5 rounded-lg bg-[#FFFFFF] border border-[#D8D4C9] text-[#2B2E2B] hover:text-[#1B4326] text-xs flex items-center space-x-1"
-                  title="Toggle gentle chime"
-                >
-                  {audioChime ? <Volume2 className="w-4 h-4 text-[#2E6F40]" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
-                </button>
+        <div className="space-y-6">
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#F4F1EA] text-[#1B4326] border border-[#D8D4C9] flex items-center justify-center shrink-0">
+                <Headphones className="w-6 h-6 text-[#2E6F40]" />
               </div>
-
-              {/* Animated Circle */}
-              <div className="relative w-48 h-48 my-4 flex items-center justify-center">
-                <div
-                  className={`absolute rounded-full transition-all duration-1000 border-4 border-[#2E6F40] bg-[#B9D2B9]/40 ${
-                    breathActive
-                      ? breathPhase === 'Inhale'
-                        ? 'w-44 h-44 scale-110 shadow-lg'
-                        : breathPhase === 'Hold'
-                        ? 'w-44 h-44 scale-105 shadow-md'
-                        : 'w-24 h-24 scale-95 opacity-80'
-                      : 'w-32 h-32 opacity-70'
-                  }`}
-                />
-                <div className="relative z-10 flex flex-col items-center">
-                  <span className="text-xl font-bold text-[#1B4326] font-serif">
-                    {breathActive ? breathPhase : 'Ready'}
-                  </span>
-                  <span className="text-3xl font-extrabold text-[#2E6F40] mt-1">
-                    {breathActive ? `${breathCountdown}s` : '4-7-8'}
-                  </span>
-                  <span className="text-[11px] text-[#2B2E2B]/80 font-medium mt-1">
-                    {breathActive
-                      ? breathPhase === 'Inhale'
-                        ? 'Deep nasal inhale'
-                        : breathPhase === 'Hold'
-                        ? 'Hold gently at top'
-                        : 'Slow mouth release'
-                      : 'Natural tranquilizer'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Controls */}
-              <div className="flex items-center space-x-3 mt-2">
-                <button
-                  onClick={() => {
-                    setBreathActive(!breathActive);
-                    if (!breathActive) {
-                      setBreathPhase('Inhale');
-                      setBreathCountdown(4);
-                      playSoftTone(440, 0.4);
-                    }
-                  }}
-                  className={`px-5 py-2 rounded-xl font-semibold text-xs sm:text-sm flex items-center space-x-2 transition-all ${
-                    breathActive
-                      ? 'bg-amber-600 text-white hover:bg-amber-700'
-                      : 'bg-[#1B4326] text-[#F4F1EA] hover:bg-[#2E6F40]'
-                  }`}
-                >
-                  {breathActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  <span>{breathActive ? 'Pause Session' : 'Start 4-7-8 Breath'}</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setBreathActive(false);
-                    setBreathPhase('Inhale');
-                    setBreathCountdown(4);
-                  }}
-                  className="p-2 rounded-xl bg-[#FFFFFF] border border-[#D8D4C9] text-[#2B2E2B] hover:text-[#1B4326]"
-                  title="Reset timer"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Live Acoustic Web Audio Synthesizer */}
-            <div className="p-6 rounded-2xl bg-[#F4F1EA] border border-[#D8D4C9] flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#2E6F40]">
-                    Acoustic Noise Synthesizer
-                  </span>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#B9D2B9] text-[#1B4326] font-semibold">
-                    Pure Web Audio API
-                  </span>
-                </div>
-                <h3 className="text-lg font-serif font-bold text-[#1B4326] mb-2">
-                  Browser-Generated Soundscapes
+                <h3 className="text-lg font-serif font-bold text-[#1B4326] mb-1">
+                  1. Somatic Breathwork & Browser Acoustic Synthesizer
                 </h3>
-                <p className="text-xs text-[#2B2E2B] leading-relaxed mb-4">
-                  Pure mathematical audio calculated in real-time by your device. Zero external streaming buffers or MP3 files. Designed to mask sensory distractions, racing thoughts, and late-night insomnia.
+                <p className="text-xs sm:text-sm text-[#2B2E2B]/80 leading-relaxed max-w-xl">
+                  Down-regulate the sympathetic nervous system on demand. Paced visual guides (4-7-8, Box) combined with pure mathematical brown and pink noise generated directly on your device.
                 </p>
-
-                {/* Noise Buttons */}
-                <div className="space-y-3 mb-4">
-                  <button
-                    onClick={() => toggleNoise('brown')}
-                    className={`w-full p-3.5 rounded-xl border flex items-center justify-between transition-all text-left ${
-                      synthNoisePlaying === 'brown'
-                        ? 'bg-[#1B4326] text-[#F4F1EA] border-[#1B4326] shadow-sm'
-                        : 'bg-[#FFFFFF] text-[#2B2E2B] border-[#D8D4C9] hover:border-[#1B4326]'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-semibold text-sm">Brown Noise (Deep Rumble)</div>
-                      <div className="text-xs opacity-80">Ideal for ADHD, focus, and chest tightness</div>
-                    </div>
-                    {synthNoisePlaying === 'brown' ? (
-                      <Pause className="w-5 h-5 text-[#B9D2B9] animate-pulse" />
-                    ) : (
-                      <Play className="w-5 h-5 text-[#2E6F40]" />
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => toggleNoise('pink')}
-                    className={`w-full p-3.5 rounded-xl border flex items-center justify-between transition-all text-left ${
-                      synthNoisePlaying === 'pink'
-                        ? 'bg-[#1B4326] text-[#F4F1EA] border-[#1B4326] shadow-sm'
-                        : 'bg-[#FFFFFF] text-[#2B2E2B] border-[#D8D4C9] hover:border-[#1B4326]'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-semibold text-sm">Pink Noise (Gentle Rain Slope)</div>
-                      <div className="text-xs opacity-80">Balanced 1/f falloff for deep nervous relaxation</div>
-                    </div>
-                    {synthNoisePlaying === 'pink' ? (
-                      <Pause className="w-5 h-5 text-[#B9D2B9] animate-pulse" />
-                    ) : (
-                      <Play className="w-5 h-5 text-[#2E6F40]" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Volume Slider */}
-              <div className="pt-2 border-t border-[#D8D4C9]">
-                <div className="flex items-center justify-between text-xs text-[#2B2E2B]/80 mb-1.5 font-medium">
-                  <span>Synthesizer Volume</span>
-                  <span>{Math.round(synthVolume * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.01"
-                  max="0.8"
-                  step="0.01"
-                  value={synthVolume}
-                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                  className="w-full accent-[#2E6F40] cursor-pointer"
-                />
               </div>
             </div>
+            <button
+              onClick={() => onViewService('service_in_progress')}
+              className="text-xs font-bold text-[#1B4326] hover:text-[#2E6F40] whitespace-nowrap flex items-center space-x-1"
+            >
+              <span>Explore Audio Deck</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-[#D8D4C9] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#2B2E2B]/80">
-            <span className="flex items-center space-x-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#2E6F40]" />
-              <span>Full suite includes 432Hz Drone, 7-11 Panic Release, Box Breathing, and White Noise.</span>
-            </span>
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#F4F1EA] text-[#1B4326] border border-[#D8D4C9] flex items-center justify-center shrink-0">
+                <Compass className="w-6 h-6 text-[#2E6F40]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-serif font-bold text-[#1B4326] mb-1">
+                  2. Honest Shared-Struggle Peer Rooms
+                </h3>
+                <p className="text-xs sm:text-sm text-[#2B2E2B]/80 leading-relaxed max-w-xl">
+                  Six sub-divided peer spaces dedicated to the real friction of adulthood: career imposter syndrome, decision paralysis, burnout, and loneliness. Share anonymously without social media pretense.
+                </p>
+              </div>
+            </div>
             <button
-              onClick={() => onNavigate('calm')}
-              className="text-[#1B4326] hover:text-[#2E6F40] font-bold flex items-center space-x-1 underline underline-offset-4"
+              onClick={() => onViewService('service_in_progress')}
+              className="text-xs font-bold text-[#1B4326] hover:text-[#2E6F40] whitespace-nowrap flex items-center space-x-1"
             >
-              <span>Open Complete Breath & Sound Deck</span>
+              <span>Explore Spaces</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#F4F1EA] text-[#1B4326] border border-[#D8D4C9] flex items-center justify-center shrink-0">
+                <Shield className="w-6 h-6 text-[#2E6F40]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-serif font-bold text-[#1B4326] mb-1">
+                  3. Multi-Tier Proactive Safety Circle
+                </h3>
+                <p className="text-xs sm:text-sm text-[#2B2E2B]/80 leading-relaxed max-w-xl">
+                  Support before a crisis occurs. A 6-level lower threshold system that steps in with somatic calm, reaches out to your designated trusted circle, and connects with 24/7 lifeline support.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onOpenEmergency}
+              className="text-xs font-bold text-[#1B4326] hover:text-[#2E6F40] whitespace-nowrap flex items-center space-x-1"
+            >
+              <span>View Safety Model</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
+
+        {/* Big Central CTA */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => onViewService('service_in_progress')}
+            className="px-8 py-3.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-sm font-semibold transition-all shadow-sm inline-flex items-center space-x-2"
+          >
+            <span>View our online service</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </section>
 
-      {/* 4. The 6 Sub-divided Peer Communities Showcase */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#2E6F40] mb-2 block">
-            TARGETED RELATABILITY & SAFE CONVERSATION
+      {/* 4. GROUND IN THIS MOMENT: Interactive Calming Teaser */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-[#D8D4C9]">
+        <div className="p-8 sm:p-12 rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] shadow-lg text-center">
+          <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#B9D2B9] text-[#1B4326] inline-block mb-3">
+            Ground in 60 Seconds
           </span>
-          <h2 className="text-3xl sm:text-5xl font-serif text-[#1B4326] font-normal mb-4">
-            Six focus rooms where you never have to pretend.
+          <h2 className="text-2xl sm:text-3xl font-serif text-[#1B4326] font-normal mb-3">
+            Pause right here. Experience physical down-regulation.
           </h2>
-          <p className="text-base text-[#2B2E2B]">
-            Generic forums are noisy and toxic. Mental Beacon divides discussions into the exact developmental friction points of early adulthood, tracked by problem frequency algorithms.
+          <p className="text-xs sm:text-sm text-[#2B2E2B]/80 max-w-lg mx-auto mb-8 leading-relaxed">
+            Take one slow breath with our 4-7-8 somatic tranquilizer, or turn on deep brown noise to quiet racing mental chatter.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 my-6">
+            {/* Visual breathing orb */}
+            <div className="relative w-44 h-44 flex items-center justify-center">
+              <div
+                className={`absolute rounded-full transition-all duration-1000 border-4 border-[#1B4326] bg-[#B9D2B9]/40 ${
+                  breathActive
+                    ? breathPhase === 'Inhale'
+                      ? 'w-40 h-40 scale-105 shadow-md'
+                      : breathPhase === 'Hold'
+                      ? 'w-40 h-40 scale-100 shadow-sm'
+                      : 'w-24 h-24 scale-95 opacity-80'
+                    : 'w-32 h-32 opacity-70'
+                }`}
+              />
+              <div className="relative z-10 flex flex-col items-center">
+                <span className="text-base font-serif font-bold text-[#1B4326]">
+                  {breathActive ? breathPhase : '4-7-8 Breath'}
+                </span>
+                <span className="text-2xl font-mono font-bold text-[#2E6F40] mt-0.5">
+                  {breathActive ? `${breathCountdown}s` : 'Ready'}
+                </span>
+              </div>
+            </div>
+
+            {/* Quick controls */}
+            <div className="flex flex-col items-center sm:items-start space-y-3">
+              <button
+                onClick={() => {
+                  setBreathActive(!breathActive);
+                  if (!breathActive) {
+                    setBreathPhase('Inhale');
+                    setBreathCountdown(4);
+                    playSoftTone(440, 0.4);
+                  }
+                }}
+                className={`px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center space-x-2 transition-all ${
+                  breathActive
+                    ? 'bg-amber-700 text-white'
+                    : 'bg-[#1B4326] text-[#F4F1EA] hover:bg-[#2E6F40]'
+                }`}
+              >
+                {breathActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                <span>{breathActive ? 'Pause Breath' : 'Begin 4-7-8 Breath'}</span>
+              </button>
+
+              <button
+                onClick={toggleBrownNoise}
+                className={`px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm border flex items-center space-x-2 transition-all ${
+                  brownNoisePlaying
+                    ? 'bg-[#1B4326] text-[#F4F1EA] border-[#1B4326]'
+                    : 'bg-[#F4F1EA] text-[#1B4326] border-[#D8D4C9] hover:border-[#1B4326]'
+                }`}
+              >
+                <Volume2 className="w-4 h-4 text-[#2E6F40]" />
+                <span>{brownNoisePlaying ? 'Mute Brown Noise' : 'Play Brown Noise'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. INTERACTIVE & ENGAGING CALM ONBOARDING INTAKE FORM */}
+      <section id="join-sanctuary" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-[#D8D4C9]">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-2 block">
+            EXPERIENCE MENTAL BEACON
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
+            Join the community & step into your space.
+          </h2>
+          <p className="text-sm text-[#2B2E2B]/80 leading-relaxed">
+            Tell us where you are at today so we can personalize your sanctuary experience. Information collection is private, unhurried, and calming.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {COMMUNITIES_PREVIEW.map((comm) => {
-            const IconComponent = comm.icon;
-            return (
-              <div
-                key={comm.id}
-                className="rounded-2xl bg-[#FFFFFF] border-2 border-[#D8D4C9] hover:border-[#1B4326] p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#B9D2B9]/50 text-[#1B4326] flex items-center justify-center border border-[#2E6F40]/30">
-                      <IconComponent className="w-6 h-6" />
-                    </div>
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#F4F1EA] text-[#2E6F40] border border-[#D8D4C9]">
-                      {comm.stats}
-                    </span>
+        <div className="bg-[#FFFFFF] rounded-3xl border-2 border-[#1B4326] shadow-xl p-6 sm:p-10">
+          {!formSubmitted ? (
+            <form onSubmit={handleFormSubmit} className="space-y-8">
+              {/* Progress Pills */}
+              <div className="flex items-center justify-between pb-4 border-b border-[#D8D4C9] text-xs">
+                <span className="font-bold text-[#1B4326]">
+                  {formStep === 1 && "Step 1 of 3: How does your mind feel right now?"}
+                  {formStep === 2 && "Step 2 of 3: What presence brings you comfort?"}
+                  {formStep === 3 && "Step 3 of 3: Your Invitation & Safe Alias"}
+                </span>
+                <div className="flex space-x-1.5">
+                  {[1, 2, 3].map((step) => (
+                    <button
+                      key={step}
+                      type="button"
+                      onClick={() => setFormStep(step)}
+                      className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center transition-all ${
+                        formStep === step
+                          ? 'bg-[#1B4326] text-[#F4F1EA]'
+                          : formStep > step
+                          ? 'bg-[#B9D2B9] text-[#1B4326]'
+                          : 'bg-[#F4F1EA] text-[#2B2E2B]/50'
+                      }`}
+                    >
+                      {step}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* STEP 1: Interactive Feeling Selection */}
+              {formStep === 1 && (
+                <div className="space-y-4">
+                  <p className="text-xs font-medium text-[#2B2E2B]/80">
+                    Tap the emotional texture that matches your present moment:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                      {
+                        emoji: '☀️',
+                        title: 'Grounded & Seeking Connection',
+                        desc: 'Feeling centered and wanting to connect meaningfully with others on a shared journey.'
+                      },
+                      {
+                        emoji: '🌱',
+                        title: 'Creative Milestones & Growth',
+                        desc: 'Starting new chapters, cultivating positive habits, and celebrating small wins daily.'
+                      },
+                      {
+                        emoji: '🌿',
+                        title: 'Curious, Reflective & Mindful',
+                        desc: 'Exploring intentional living, quiet presence, and deepening self-awareness.'
+                      },
+                      {
+                        emoji: '🌊',
+                        title: 'Overthinking & Racing Loops',
+                        desc: 'Mental fog, second-guessing decisions, or Sunday evening dread you can\'t shake.'
+                      },
+                      {
+                        emoji: '🍂',
+                        title: 'Burnout & Depleted Battery',
+                        desc: 'Emotionally drained, low motivation, or feeling constantly behind on everything.'
+                      },
+                      {
+                        emoji: '🌙',
+                        title: 'Quiet Loneliness & Isolation',
+                        desc: 'Carrying heavy questions without someone to talk to authentically.'
+                      }
+                    ].map((item, i) => {
+                      const isSelected = selectedFeeling === item.title;
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelectedFeeling(item.title)}
+                          className={`p-4 rounded-2xl cursor-pointer border-2 transition-all ${
+                            isSelected
+                              ? 'bg-[#B9D2B9]/50 border-[#1B4326] shadow-sm'
+                              : 'bg-[#F4F1EA] border-[#D8D4C9] hover:border-[#1B4326]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-serif font-bold text-sm text-[#1B4326] flex items-center gap-2">
+                              <span className="text-base">{item.emoji}</span>
+                              {item.title}
+                            </span>
+                            {isSelected && <CheckCircle2 className="w-4 h-4 text-[#1B4326] shrink-0" />}
+                          </div>
+                          <p className="text-xs text-[#2B2E2B]/75 leading-relaxed">{item.desc}</p>
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  <h3 className="text-xl font-serif font-bold text-[#1B4326] mb-1.5 leading-snug">
-                    {comm.title}
-                  </h3>
-                  <p className="text-xs text-[#2B2E2B]/80 font-medium mb-4">
-                    {comm.tagline}
-                  </p>
-
-                  <div className="p-3 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9] text-xs text-[#2B2E2B] mb-5">
-                    <span className="font-semibold text-[#1B4326] block mb-1">Active Community Topic:</span>
-                    <span className="italic">"{comm.topTopic}"</span>
-                    <div className="mt-2 text-[11px] font-semibold text-[#2E6F40]">
-                      Active handle: {comm.sampleHandle}
-                    </div>
+                  <div className="pt-4 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setFormStep(2)}
+                      className="px-6 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold transition-all flex items-center space-x-1.5"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
+              )}
 
+              {/* STEP 2: Support Preference */}
+              {formStep === 2 && (
+                <div className="space-y-4">
+                  <p className="text-xs font-medium text-[#2B2E2B]/80">
+                    Which presence calls to you most right now?
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                      {
+                        emoji: '✨',
+                        title: 'Sharing Encouragement & Peer Solidarity',
+                        desc: 'Uplifting others and receiving authentic support in a space free of performance.'
+                      },
+                      {
+                        emoji: '🧘',
+                        title: 'Daily Calm, Grounding & Breathwork',
+                        desc: '4-7-8 breathing pacer, pure web audio brown/pink noise, and somatic resets.'
+                      },
+                      {
+                        emoji: '📖',
+                        title: 'Creative Journaling & Mindful Reflection',
+                        desc: 'Contextual prompts to untangle thoughts and write with complete privacy.'
+                      },
+                      {
+                        emoji: '🛡️',
+                        title: 'Proactive Safety & Support Circle',
+                        desc: 'Configuring low-pressure emergency check-ins with trusted people around you.'
+                      }
+                    ].map((item, i) => {
+                      const isSelected = selectedSupport === item.title;
+                      return (
+                        <div
+                          key={i}
+                          onClick={() => setSelectedSupport(item.title)}
+                          className={`p-4 rounded-2xl cursor-pointer border-2 transition-all ${
+                            isSelected
+                              ? 'bg-[#B9D2B9]/50 border-[#1B4326] shadow-sm'
+                              : 'bg-[#F4F1EA] border-[#D8D4C9] hover:border-[#1B4326]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-serif font-bold text-sm text-[#1B4326] flex items-center gap-2">
+                              <span className="text-base">{item.emoji}</span>
+                              {item.title}
+                            </span>
+                            {isSelected && <CheckCircle2 className="w-4 h-4 text-[#1B4326] shrink-0" />}
+                          </div>
+                          <p className="text-xs text-[#2B2E2B]/75 leading-relaxed">{item.desc}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="pt-4 flex justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setFormStep(1)}
+                      className="px-5 py-2.5 rounded-xl bg-[#F4F1EA] hover:bg-[#D8D4C9]/40 text-[#2B2E2B] text-xs font-semibold border border-[#D8D4C9]"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormStep(3)}
+                      className="px-6 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold transition-all flex items-center space-x-1.5"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Alias & Invitation Details */}
+              {formStep === 3 && (
+                <div className="space-y-4">
+                  {/* Alias */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-semibold text-[#1B4326]">
+                        Your Community Pseudonym
+                      </label>
+                      <button
+                        type="button"
+                        onClick={randomizeHandle}
+                        className="text-xs text-[#2E6F40] hover:text-[#1B4326] flex items-center space-x-1 font-medium"
+                      >
+                        <Shuffle className="w-3 h-3" />
+                        <span>Shuffle Alias</span>
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-2.5 text-[#1B4326] font-bold text-sm">@</span>
+                      <input
+                        type="text"
+                        required
+                        value={userHandle}
+                        onChange={(e) => setUserHandle(e.target.value.replace('@', ''))}
+                        className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9] text-[#1B4326] font-semibold text-sm focus:outline-none focus:border-[#1B4326]"
+                        placeholder="YourCalmAlias"
+                      />
+                    </div>
+                    <p className="text-[11px] text-[#2B2E2B]/70 mt-1">
+                      You will participate pseudonymously. No real names or social profiles are required.
+                    </p>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1B4326] mb-1">
+                      Email for Access Passkey
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9] text-[#2B2E2B] text-sm focus:outline-none focus:border-[#1B4326]"
+                      placeholder="you@domain.com"
+                    />
+                    <p className="text-[11px] text-[#2B2E2B]/70 mt-1">
+                      Strict Zero-Ad Policy: We never send marketing emails or sell contact telemetry.
+                    </p>
+                  </div>
+
+                  {/* Intention Note */}
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1B4326] mb-1">
+                      What are you hoping to find here? (Optional)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={userIntention}
+                      onChange={(e) => setUserIntention(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9] text-[#2B2E2B] text-xs focus:outline-none focus:border-[#1B4326]"
+                      placeholder="e.g. Seeking a place to clear my head after work without doomscrolling..."
+                    />
+                  </div>
+
+                  <div className="pt-4 flex items-center justify-between border-t border-[#D8D4C9]">
+                    <button
+                      type="button"
+                      onClick={() => setFormStep(2)}
+                      className="px-5 py-2.5 rounded-xl bg-[#F4F1EA] hover:bg-[#D8D4C9]/40 text-[#2B2E2B] text-xs font-semibold border border-[#D8D4C9]"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-7 py-3 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-sm font-semibold transition-all shadow-md flex items-center space-x-2"
+                    >
+                      <span>{isSubmitting ? 'Confirming...' : 'Complete Invitation & Step Inside'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </form>
+          ) : (
+            /* Calming Confirmation Card */
+            <div className="text-center py-6 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-[#B9D2B9] text-[#1B4326] flex items-center justify-center mx-auto border-2 border-[#1B4326] shadow">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-[#1B4326]">
+                Welcome to Mental Beacon, @{userHandle}.
+              </h3>
+              <p className="text-xs sm:text-sm text-[#2B2E2B]/85 max-w-md mx-auto leading-relaxed">
+                Your place in the sanctuary has been established. You are entering with focus on <strong>{selectedFeeling}</strong> and preference for <strong>{selectedSupport}</strong>.
+              </p>
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
-                  onClick={() => onNavigate('communities')}
-                  className="w-full py-2.5 rounded-xl bg-[#F4F1EA] hover:bg-[#1B4326] text-[#1B4326] hover:text-[#F4F1EA] font-semibold text-xs sm:text-sm border border-[#D8D4C9] hover:border-[#1B4326] transition-all flex items-center justify-center space-x-2"
+                  onClick={handleCompleteAndEnter}
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] font-semibold text-sm shadow flex items-center justify-center space-x-2"
                 >
-                  <span>Enter This Space</span>
+                  <span>Enter Online Service Now</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            );
-          })}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* 5. Deep Forest Green Banner: The 6-Level Safety Circle & Proactive Escalation */}
-      <section className="bg-[#1B4326] text-[#F4F1EA] py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-y-2 border-[#1B4326]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#C8B87E] mb-2 block">
-              MULTI-LEVEL SAFETY ESCALATION ARCHITECTURE
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-serif text-[#F4F1EA] font-normal mb-4">
-              Catching distress before it becomes an emergency.
-            </h2>
-            <p className="text-base text-[#F4F1EA]/85 leading-relaxed">
-              Most mental health products do nothing until a user is in acute crisis, or simply flash a helpline link. Mental Beacon introduces a progressive 6-tier threshold that down-regulates anxiety step-by-step.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {SAFETY_TIERS.map((tier, idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl bg-[#FFFFFF]/10 backdrop-blur-md border border-[#F4F1EA]/20 p-6 flex flex-col justify-between hover:bg-[#FFFFFF]/15 transition-all"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#C8B87E] text-[#1B4326]">
-                      {tier.tier}
-                    </span>
-                    <Shield className="w-4 h-4 text-[#C8B87E]" />
-                  </div>
-                  <h3 className="text-lg font-serif font-bold text-[#F4F1EA] mb-2">
-                    {tier.name}
-                  </h3>
-                  <p className="text-xs text-[#F4F1EA]/80 leading-relaxed mb-4">
-                    {tier.desc}
-                  </p>
-                </div>
-                <div className="text-xs font-semibold text-[#C8B87E] flex items-center space-x-1 pt-2 border-t border-[#F4F1EA]/10">
-                  <span>Standard Protocol: {tier.action}</span>
-                </div>
+      {/* 6. MINIMAL FINE PRINT FOOTER */}
+      <footer className="bg-[#1B4326] text-[#F4F1EA] py-12 px-4 sm:px-6 lg:px-8 border-t-2 border-[#1B4326]">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-8 border-b border-[#F4F1EA]/20">
+            {/* Logo */}
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-[#B9D2B9] text-[#1B4326] flex items-center justify-center font-bold">
+                MB
               </div>
-            ))}
+              <div>
+                <span className="font-serif font-bold text-lg text-[#F4F1EA] block">Mental Beacon</span>
+                <span className="text-[11px] text-[#C8B87E] block">Human-centered mental wellbeing sanctuary</span>
+              </div>
+            </div>
+
+            {/* Direct service button in footer */}
+            <button
+              onClick={() => onViewService('service_in_progress')}
+              className="px-5 py-2.5 rounded-xl bg-[#F4F1EA] text-[#1B4326] text-xs font-semibold hover:bg-[#B9D2B9] transition-all"
+            >
+              View our online service
+            </button>
           </div>
 
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF]/10 border border-[#F4F1EA]/25 max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          {/* Quiet Fine Print row */}
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4F1EA]/70">
             <div>
-              <h3 className="text-xl font-serif font-bold text-[#F4F1EA] mb-1">
-                Configure Your Inner Trusted Circle
-              </h3>
-              <p className="text-xs text-[#F4F1EA]/80">
-                Designate trusted friends or mentors with pre-written, low-pressure messages. Directly connected to the 988 Suicide & Crisis Lifeline.
-              </p>
-            </div>
-            <button
-              onClick={onOpenEmergency}
-              className="px-6 py-3.5 rounded-xl bg-[#C8B87E] text-[#1B4326] font-bold text-sm hover:bg-[#F4F1EA] transition-all shadow-md whitespace-nowrap"
-            >
-              Simulate Crisis Safety Flow
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Pattern Diagnostics & Private Encrypted Journal */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          {/* Patterns Visualizer */}
-          <div className="rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] p-8 shadow-md">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#2E6F40] mb-2 block">
-              60-Second Sensory-Biometric Check-In
-            </span>
-            <h2 className="text-3xl font-serif text-[#1B4326] font-normal mb-3">
-              Detect trends before burnout takes over.
-            </h2>
-            <p className="text-sm text-[#2B2E2B] leading-relaxed mb-6">
-              Track 7-day stress trajectories, energy fluctuations, and primary life triggers (Work, Rent, Family, Screen Time). Our pattern algorithm automatically surfaces your lower-threshold score.
-            </p>
-
-            <div className="space-y-4 mb-6">
-              <div className="p-4 rounded-xl bg-[#F4F1EA] border border-[#D8D4C9]">
-                <div className="flex justify-between items-center text-xs font-semibold text-[#1B4326] mb-2">
-                  <span>Weekly Stress vs Energy Trajectory</span>
-                  <span className="text-[#2E6F40]">7-Day Diagnostic</span>
-                </div>
-                <div className="flex items-end h-20 space-x-2 pt-2">
-                  {[
-                    { day: 'Mon', stress: 70, energy: 40 },
-                    { day: 'Tue', stress: 65, energy: 45 },
-                    { day: 'Wed', stress: 80, energy: 30 },
-                    { day: 'Thu', stress: 85, energy: 25 },
-                    { day: 'Fri', stress: 60, energy: 50 },
-                    { day: 'Sat', stress: 40, energy: 75 },
-                    { day: 'Sun', stress: 55, energy: 60 }
-                  ].map((bar, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center">
-                      <div className="w-full flex items-end justify-center space-x-1 h-14">
-                        <div
-                          style={{ height: `${bar.stress}%` }}
-                          className="w-2.5 rounded-t bg-[#1B4326]"
-                          title={`Stress: ${bar.stress}%`}
-                        />
-                        <div
-                          style={{ height: `${bar.energy}%` }}
-                          className="w-2.5 rounded-t bg-[#B9D2B9]"
-                          title={`Energy: ${bar.energy}%`}
-                        />
-                      </div>
-                      <span className="text-[10px] text-[#2B2E2B]/70 mt-1">{bar.day}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-center space-x-4 mt-3 text-[11px] font-medium text-[#2B2E2B]">
-                  <span className="flex items-center space-x-1">
-                    <span className="w-2.5 h-2.5 rounded bg-[#1B4326]"></span>
-                    <span>Stress Level</span>
-                  </span>
-                  <span className="flex items-center space-x-1">
-                    <span className="w-2.5 h-2.5 rounded bg-[#B9D2B9]"></span>
-                    <span>Energy Battery</span>
-                  </span>
-                </div>
-              </div>
+              © 2026 Mental Beacon. Designed for quiet dignity and nervous system health.
             </div>
 
-            <button
-              onClick={() => onNavigate('checkups')}
-              className="w-full py-3 rounded-xl bg-[#1B4326] text-[#F4F1EA] font-semibold text-sm hover:bg-[#2E6F40] transition-all flex items-center justify-center space-x-2"
-            >
-              <span>Take Today’s 60-Second Check-in</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Private Encrypted Journal & Defusion */}
-          <div className="rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] p-8 shadow-md">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#2E6F40] mb-2 block">
-              Client-Side Encrypted Vault
-            </span>
-            <h2 className="text-3xl font-serif text-[#1B4326] font-normal mb-3">
-              Private journaling without surveillance.
-            </h2>
-            <p className="text-sm text-[#2B2E2B] leading-relaxed mb-6">
-              Write freely with contextual prompts built around comparison, imposter syndrome, and emotional overwhelm. Your entries stay locked in your private browser vault with zero public indexing.
-            </p>
-
-            <div className="p-5 rounded-2xl bg-[#F4F1EA] border border-[#D8D4C9] mb-6">
-              <div className="flex items-center space-x-2 text-xs font-bold text-[#2E6F40] mb-2">
-                <Brain className="w-4 h-4" />
-                <span>Featured ACT Defusion Prompt:</span>
-              </div>
-              <p className="text-sm font-serif italic text-[#1B4326] mb-3">
-                "What expectation did you carry today that belonged to your parents, your boss, or social media rather than yourself?"
-              </p>
-              <div className="flex items-center justify-between text-[11px] text-[#2B2E2B]/75 font-medium">
-                <span>Prompts update daily</span>
-                <span className="text-[#2E6F40] font-bold">100% Client-Side Encryption</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mb-6">
+            {/* Fine print links */}
+            <div className="flex items-center space-x-4 text-[11px]">
               <button
-                onClick={() => onNavigate('journal')}
-                className="py-2.5 px-4 rounded-xl bg-[#B9D2B9]/60 hover:bg-[#B9D2B9] text-[#1B4326] font-semibold text-xs border border-[#2E6F40]/30 transition-all text-center"
+                onClick={onOpenTransparency}
+                className="hover:text-[#F4F1EA] transition-colors underline-offset-4 hover:underline"
               >
-                Open Private Journal
+                Data Privacy & Zero-Ad Guarantee
               </button>
+              <span>•</span>
               <button
-                onClick={() => onNavigate('games')}
-                className="py-2.5 px-4 rounded-xl bg-[#F4F1EA] hover:bg-[#D8D4C9]/50 text-[#1B4326] font-semibold text-xs border border-[#D8D4C9] transition-all text-center"
+                onClick={onOpenPro}
+                className="hover:text-[#F4F1EA] transition-colors underline-offset-4 hover:underline"
               >
-                Play Calm Micro-Games
+                Sustainability Model
               </button>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-[#B9D2B9]/30 border border-[#2E6F40]/20 flex items-center space-x-3 text-xs text-[#1B4326]">
-              <Lock className="w-5 h-5 text-[#2E6F40] flex-shrink-0" />
-              <span>We never train public AI on your personal thoughts or search queries.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Comparison: Generic Wellness Apps vs. Mental Beacon */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#2E6F40] mb-2 block">
-            THE WELLBEING PARADIGM SHIFT
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
-            Why Mental Beacon is fundamentally different.
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Old Way */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm">
-            <div className="inline-block px-3 py-1 rounded-full bg-rose-100 text-rose-900 text-xs font-bold mb-4">
-              Traditional Mental Health Apps
-            </div>
-            <ul className="space-y-4 text-xs sm:text-sm text-[#2B2E2B]/90">
-              <li className="flex items-start space-x-2.5">
-                <span className="text-rose-500 font-bold mt-0.5">✕</span>
-                <span>Monetize your anxiety through targeted ads & third-party data tracking.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-rose-500 font-bold mt-0.5">✕</span>
-                <span>Superficial 1-to-5 emoji mood logging with zero real nervous system intervention.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-rose-500 font-bold mt-0.5">✕</span>
-                <span>Six-week therapy backlogs charging $180–$250 per session out-of-pocket.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-rose-500 font-bold mt-0.5">✕</span>
-                <span>No proactive safety circle when spiraling alone at 2:00 AM.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Mental Beacon Sanctuary */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] shadow-lg relative overflow-hidden">
-            <div className="inline-block px-3 py-1 rounded-full bg-[#B9D2B9] text-[#1B4326] text-xs font-bold mb-4">
-              Mental Beacon Sanctuary
-            </div>
-            <ul className="space-y-4 text-xs sm:text-sm text-[#2B2E2B] font-medium">
-              <li className="flex items-start space-x-2.5">
-                <span className="text-[#2E6F40] font-bold mt-0.5">✓</span>
-                <span><strong>Zero-Ad Commitment</strong>: No Meta pixels, no ad trackers, 100% free youth tier.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-[#2E6F40] font-bold mt-0.5">✓</span>
-                <span><strong>Immediate Somatic Relief</strong>: Browser WebAudio brown/pink noise & vagus breath pacers.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-[#2E6F40] font-bold mt-0.5">✓</span>
-                <span><strong>Sub-divided Peer Rooms</strong>: Real conversations on rent spikes, career dread, and impostor feeling.</span>
-              </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="text-[#2E6F40] font-bold mt-0.5">✓</span>
-                <span><strong>6-Level Proactive Safety Threshold</strong>: Seamless escalation with 988 lifeline & trusted circle.</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Ethics, Financial Model & Zero-Ad Transparency */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#B9D2B9]/30 border-2 border-[#1B4326] shadow-sm text-center sm:text-left flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#2E6F40] mb-2 block">
-              FINANCIAL SUSTAINABILITY & ETHICAL MODEL
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
-              How is Mental Beacon 100% free for young adults?
-            </h2>
-            <p className="text-sm text-[#2B2E2B] leading-relaxed mb-4">
-              We never sell your data or monetize ads. Mental Beacon is funded via B2B licensing with universities and forward-thinking employers who sponsor our platform to eliminate 6-week campus counseling waitlists.
-            </p>
-            <div className="flex flex-wrap gap-2 text-xs font-semibold text-[#1B4326]">
-              <span className="px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#D8D4C9]">No Paywalls for Crisis Care</span>
-              <span className="px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#D8D4C9]">Zero Data Telemetry Brokering</span>
-              <span className="px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#D8D4C9]">1-Click Complete Data Wipe</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-3 w-full sm:w-auto">
-            <button
-              onClick={onOpenTransparency}
-              className="px-6 py-3.5 rounded-xl bg-[#FFFFFF] text-[#1B4326] font-semibold text-sm border-2 border-[#1B4326] hover:bg-[#F4F1EA] transition-all shadow-sm flex items-center justify-center space-x-2"
-            >
-              <Lock className="w-4 h-4 text-[#2E6F40]" />
-              <span>Data Privacy Center</span>
-            </button>
-            <button
-              onClick={onOpenPro}
-              className="px-6 py-3.5 rounded-xl bg-[#1B4326] text-[#F4F1EA] font-semibold text-sm hover:bg-[#2E6F40] transition-all shadow-sm flex items-center justify-center space-x-2"
-            >
-              <span>Our Impact Model</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Testimonials / Voices of Young Adults */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#2E6F40] mb-2 block">
-            AUTHENTIC EXPERIENCES
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
-            Voices from inside our peer sanctuary.
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm flex flex-col justify-between">
-            <p className="text-xs sm:text-sm text-[#2B2E2B] leading-relaxed italic mb-4">
-              "Graduating college left me completely stranded. Every friend moved cities and my social feed made me feel like an utter failure. Finding the Quarter-Life room showed me nearly everyone my age is feeling this exact disorientation."
-            </p>
-            <div className="flex items-center space-x-3 pt-3 border-t border-[#D8D4C9]">
-              <div className="w-8 h-8 rounded-full bg-[#B9D2B9] text-[#1B4326] font-bold text-xs flex items-center justify-center">
-                QW
-              </div>
-              <div>
-                <div className="text-xs font-bold text-[#1B4326]">@QuietWanderer24</div>
-                <div className="text-[11px] text-[#2B2E2B]/70">Member for 4 months • Age 23</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm flex flex-col justify-between">
-            <p className="text-xs sm:text-sm text-[#2B2E2B] leading-relaxed italic mb-4">
-              "The Brown Noise generator alone saved my sleep schedule. When my mind loops on Slack messages at 1:00 AM, combining the audio synthesizer with the 4-7-8 breathing pacer shuts down my chest tightness in under five minutes."
-            </p>
-            <div className="flex items-center space-x-3 pt-3 border-t border-[#D8D4C9]">
-              <div className="w-8 h-8 rounded-full bg-[#B9D2B9] text-[#1B4326] font-bold text-xs flex items-center justify-center">
-                OD
-              </div>
-              <div>
-                <div className="text-xs font-bold text-[#1B4326]">@OverthinkingDev</div>
-                <div className="text-[11px] text-[#2B2E2B]/70">Junior Software Eng • Age 25</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#D8D4C9] shadow-sm flex flex-col justify-between">
-            <p className="text-xs sm:text-sm text-[#2B2E2B] leading-relaxed italic mb-4">
-              "Having the 6-Level safety threshold configured gives me peace of mind. I added my sister as my Trusted Contact with a pre-written message. Knowing I don't have to explain everything during a panic attack is invaluable."
-            </p>
-            <div className="flex items-center space-x-3 pt-3 border-t border-[#D8D4C9]">
-              <div className="w-8 h-8 rounded-full bg-[#B9D2B9] text-[#1B4326] font-bold text-xs flex items-center justify-center">
-                CR
-              </div>
-              <div>
-                <div className="text-xs font-bold text-[#1B4326]">@CalmRiver</div>
-                <div className="text-[11px] text-[#2B2E2B]/70">Graduate Student • Age 27</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 10. Frequently Asked Questions (FAQ) */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#2E6F40] mb-2 block">
-            CLEAR ANSWERS
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-serif text-[#1B4326] font-normal mb-3">
-            Frequently Asked Questions
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openFaq === index;
-            return (
-              <div
-                key={index}
-                className="rounded-2xl bg-[#FFFFFF] border border-[#D8D4C9] overflow-hidden transition-all shadow-sm"
+              <span>•</span>
+              <button
+                onClick={onOpenEmergency}
+                className="text-rose-300 hover:text-white transition-colors font-medium"
               >
-                <button
-                  onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full p-5 text-left flex items-center justify-between font-serif font-bold text-base sm:text-lg text-[#1B4326] hover:text-[#2E6F40] transition-colors"
-                >
-                  <span>{faq.q}</span>
-                  {isOpen ? (
-                    <ChevronUp className="w-5 h-5 text-[#2E6F40] flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-[#2B2E2B]/60 flex-shrink-0" />
-                  )}
-                </button>
-                {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#2B2E2B] leading-relaxed border-t border-[#D8D4C9]/60">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 11. Final Action Banner */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-        <div className="p-8 sm:p-14 rounded-3xl bg-[#FFFFFF] border-2 border-[#1B4326] shadow-xl">
-          <h2 className="text-3xl sm:text-5xl font-serif text-[#1B4326] font-normal mb-4">
-            You don't have to carry modern pressure alone.
-          </h2>
-          <p className="text-sm sm:text-base text-[#2B2E2B] max-w-2xl mx-auto mb-8 leading-relaxed">
-            Join thousands of young adults grounding their nervous systems, finding authentic peer solidarity, and tracking developmental patterns.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => onNavigate('communities')}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#1B4326] text-[#F4F1EA] font-semibold text-base hover:bg-[#2E6F40] transition-all shadow-md flex items-center justify-center space-x-2"
-            >
-              <span>Launch Mental Beacon Free</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => onNavigate('checkups')}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#F4F1EA] text-[#1B4326] font-semibold text-base hover:bg-[#B9D2B9]/50 transition-all border-2 border-[#1B4326]"
-            >
-              <span>Daily Sensory Check-In</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 12. Deep Forest Green Footer (--bg-banner-dark) */}
-      <footer className="bg-[#1B4326] text-[#F4F1EA] py-14 px-4 sm:px-6 lg:px-8 border-t-2 border-[#1B4326]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10 pb-10 border-b border-[#F4F1EA]/20">
-            {/* Brand column */}
-            <div className="md:col-span-1">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-[#B9D2B9] text-[#1B4326] flex items-center justify-center font-bold">
-                  MB
-                </div>
-                <span className="font-serif font-bold text-lg text-[#F4F1EA]">Mental Beacon</span>
-              </div>
-              <p className="text-xs text-[#F4F1EA]/80 leading-relaxed mb-4">
-                Impact-driven wellbeing and social grounding space engineered for young adults (15–35).
-              </p>
-              <div className="text-[11px] text-[#C8B87E] font-medium">
-                Zero third-party trackers • Client-side encryption
-              </div>
-            </div>
-
-            {/* Grounding & Tools */}
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#C8B87E] mb-3">
-                Grounding & Respiration
-              </h4>
-              <ul className="space-y-2 text-xs text-[#F4F1EA]/80">
-                <li>
-                  <button onClick={() => onNavigate('calm')} className="hover:text-[#F4F1EA] transition-colors">
-                    4-7-8 Deep Relaxation Pacer
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('calm')} className="hover:text-[#F4F1EA] transition-colors">
-                    Browser Acoustic Synthesizer
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('calm')} className="hover:text-[#F4F1EA] transition-colors">
-                    Box Breathing (4-4-4-4)
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('games')} className="hover:text-[#F4F1EA] transition-colors">
-                    Zen River Stone Balancer
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            {/* Peer Spaces & Diagnostics */}
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#C8B87E] mb-3">
-                Sanctuary Modules
-              </h4>
-              <ul className="space-y-2 text-xs text-[#F4F1EA]/80">
-                <li>
-                  <button onClick={() => onNavigate('communities')} className="hover:text-[#F4F1EA] transition-colors">
-                    6 Sub-divided Peer Rooms
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('checkups')} className="hover:text-[#F4F1EA] transition-colors">
-                    Sensory-Biometric Check-ups
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('journal')} className="hover:text-[#F4F1EA] transition-colors">
-                    Encrypted Vault Journal
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('chat')} className="hover:text-[#F4F1EA] transition-colors">
-                    Beacon AI Companion
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            {/* Safety & Ethics */}
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#C8B87E] mb-3">
-                Crisis & Ethics
-              </h4>
-              <ul className="space-y-2 text-xs text-[#F4F1EA]/80">
-                <li>
-                  <button onClick={onOpenEmergency} className="text-rose-300 hover:text-white font-semibold flex items-center space-x-1">
-                    <ShieldAlert className="w-3.5 h-3.5" />
-                    <span>Safety Circle & 988 Lifeline</span>
-                  </button>
-                </li>
-                <li>
-                  <button onClick={onOpenTransparency} className="hover:text-[#F4F1EA] transition-colors">
-                    Data Privacy & Zero-Ad Guarantee
-                  </button>
-                </li>
-                <li>
-                  <button onClick={onOpenPro} className="hover:text-[#F4F1EA] transition-colors">
-                    Financial Sustainability Model
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => onNavigate('analytics')} className="hover:text-[#F4F1EA] transition-colors">
-                    Live Impact Metrics
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-[#F4F1EA]/70 gap-4">
-            <div>
-              © 2026 Mental Beacon (MB). Dedicated to youth nervous system health and authentic connection.
-            </div>
-            <div className="flex items-center space-x-2 text-rose-300 font-medium">
-              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
-              <span>Crisis Support: Call or text <strong>988</strong> anytime 24/7 (US & Canada).</span>
+                988 Crisis Lifeline
+              </button>
             </div>
           </div>
         </div>
       </footer>
-    </div>
+    </article>
   );
 };

@@ -499,13 +499,16 @@
     "avgSessionMinutes": 14.5,
     "satisfactionScore": 4.85,
     "pageViews": {
-      "communities": 18452,
+      "communities": 18453,
       "checkup_patterns": 12300,
-      "journal": 8920,
+      "journal": 8921,
       "breathing_sound": 15600,
-      "articles": 10210,
-      "games": 7480,
-      "chatbot": 9150
+      "articles": 10211,
+      "games": 7481,
+      "chatbot": 9150,
+      "landing": 2,
+      "checkups": 1,
+      "calm": 1
     }
   }
 }

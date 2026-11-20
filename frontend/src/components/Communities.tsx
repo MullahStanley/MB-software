@@ -152,7 +152,7 @@ export const Communities: React.FC<CommunitiesProps> = ({ username, onTriggerThr
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B9D2B9] text-[#1B4326] text-xs font-bold mb-3 border border-[#2E6F40]/30">
             <Users className="w-3.5 h-3.5 text-[#1B4326]" />
-            <span>Sub-divided Peer Spaces for Young Adults (15–35)</span>
+            <span>Sub-divided Peer Spaces for Authentic Solidarity</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-serif font-normal text-[#F4F1EA] tracking-tight">
             You are not late, defective, or alone in this transition.

@@ -13,12 +13,13 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { EmergencyThresholdModal } from './components/EmergencyThresholdModal';
 import { TransparencyCenter } from './components/TransparencyCenter';
 import { SustainableProModal } from './components/SustainableProModal';
+import { OnlineServiceInProgress } from './components/OnlineServiceInProgress';
 import { api } from './api';
 
 export const App: React.FC = () => {
-  // Start on the Landing Page
+  // Main view is the Landing Page
   const [currentTab, setCurrentTab] = useState<string>('landing');
-  const [username, setUsername] = useState<string>('QuietWanderer24');
+  const [username, setUsername] = useState<string>('QuietFern');
   
   // Emergency Modal State
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
@@ -42,7 +43,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F4F1EA] text-[#2B2E2B] flex flex-col selection:bg-[#B9D2B9] selection:text-[#1B4326]">
-      {/* Navigation Bar */}
+      {/* Navigation Bar (Uncluttered: 0 items in landing mode) */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -57,10 +58,20 @@ export const App: React.FC = () => {
       {currentTab === 'landing' ? (
         <main className="flex-1 w-full">
           <LandingPage
-            onNavigate={setCurrentTab}
+            onViewService={(tab) => setCurrentTab(tab || 'service_in_progress')}
+            onSetUsername={setUsername}
             onOpenEmergency={() => handleTriggerThreshold(4, 'landing_action')}
             onOpenTransparency={() => setIsTransparencyOpen(true)}
             onOpenPro={() => setIsProOpen(true)}
+          />
+        </main>
+      ) : currentTab === 'service_in_progress' ? (
+        <main className="flex-1 w-full">
+          <OnlineServiceInProgress
+            onBackToOverview={() => setCurrentTab('landing')}
+            onGoToForm={() => setCurrentTab('landing')}
+            onOpenEmergency={() => handleTriggerThreshold(4, 'in_progress_action')}
+            onExplorePrototype={(tab) => setCurrentTab(tab)}
           />
         </main>
       ) : (
@@ -73,8 +84,8 @@ export const App: React.FC = () => {
             >
               <span>← Back to Sanctuary Overview</span>
             </button>
-            <span className="text-xs text-[#2B2E2B]/60 font-medium">
-              Logged in anonymously as <strong className="text-[#1B4326]">@{username}</strong>
+            <span className="text-xs text-[#2B2E2B]/70 font-medium">
+              Connected as <strong className="text-[#1B4326]">@{username}</strong>
             </span>
           </div>
 
@@ -116,35 +127,35 @@ export const App: React.FC = () => {
         </main>
       )}
 
-      {/* App Workspace Footer (Shown when inside specific modules) */}
-      {currentTab !== 'landing' && (
-        <footer className="bg-[#1B4326] text-[#F4F1EA] border-t-2 border-[#1B4326] py-8 text-xs mt-12">
+      {/* App Workspace Footer (Shown only when using internal online service, not on landing or in-progress page) */}
+      {currentTab !== 'landing' && currentTab !== 'service_in_progress' && (
+        <footer className="bg-[#1B4326] text-[#F4F1EA] border-t-2 border-[#1B4326] py-6 text-xs mt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
-              <span className="font-serif font-bold text-base text-[#F4F1EA] tracking-tight">Mental Beacon (MB)</span>
-              <span className="text-[#C8B87E]">• Youth Wellbeing & Grounding (15–35)</span>
+              <span className="font-serif font-bold text-sm text-[#F4F1EA] tracking-tight">Mental Beacon</span>
+              <span className="text-[#F4F1EA]/60 text-[11px]">• Human-Centered Wellbeing Sanctuary</span>
             </div>
 
-            <div className="flex items-center space-x-4 text-[#F4F1EA]/80">
+            <div className="flex items-center space-x-4 text-[#F4F1EA]/75 text-[11px]">
               <button
                 onClick={() => setIsTransparencyOpen(true)}
                 className="hover:text-[#F4F1EA] transition-colors"
               >
-                Data Sovereignty & Zero Ads
+                Data Privacy (Fine Print)
               </button>
               <span>•</span>
               <button
                 onClick={() => setIsProOpen(true)}
                 className="hover:text-[#C8B87E] transition-colors"
               >
-                Sustainability Model
+                Financial Model
               </button>
               <span>•</span>
               <button
                 onClick={() => handleTriggerThreshold(5, 'footer_crisis')}
-                className="text-rose-300 hover:text-white transition-colors font-bold"
+                className="text-rose-300 hover:text-white transition-colors font-medium"
               >
-                Crisis Helplines (988)
+                988 Lifeline
               </button>
             </div>
           </div>

@@ -42,7 +42,7 @@ export const ArticlesHub: React.FC = () => {
             <span>Youth Psychoeducation & Brain Architecture</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-serif font-normal text-[#F4F1EA]">
-            Practical Developmental Guides for Ages 15–35.
+            Practical Developmental Guides for Human Wellbeing.
           </h1>
           <p className="mt-2 text-sm text-[#F4F1EA]/85 leading-relaxed font-normal">
             Evidence-based perspectives on neurobiology, executive dysfunction, establishing boundaries with family, handling early career panic, and somatic recovery.

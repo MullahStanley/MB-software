@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
-  Sparkles,
+  ArrowRight,
+  ArrowLeft,
   Compass, 
   Activity, 
   BookOpen, 
@@ -9,11 +10,9 @@ import {
   Gamepad2, 
   MessageSquareHeart, 
   ShieldAlert, 
-  Lock, 
   BarChart3,
   User,
-  Home,
-  ArrowRight
+  Check
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -32,22 +31,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   username,
   setUsername,
   onOpenEmergency,
-  onOpenTransparency,
-  onOpenPro
 }) => {
+  const isLanding = currentTab === 'landing';
   const [isEditingUser, setIsEditingUser] = React.useState(false);
   const [tempUser, setTempUser] = React.useState(username);
 
-  const navItems = [
-    { id: 'landing', label: 'Overview', icon: Home },
+  const serviceItems = [
     { id: 'communities', label: 'Communities', icon: Compass },
-    { id: 'checkups', label: 'Patterns & Check-up', icon: Activity },
-    { id: 'journal', label: 'Private Journal', icon: BookOpen },
     { id: 'calm', label: 'Breath & Sounds', icon: Wind },
+    { id: 'journal', label: 'Journal', icon: BookOpen },
+    { id: 'checkups', label: 'Check-up', icon: Activity },
     { id: 'articles', label: 'Articles', icon: FileText },
     { id: 'games', label: 'Calm Games', icon: Gamepad2 },
     { id: 'chat', label: 'Beacon AI', icon: MessageSquareHeart },
-    { id: 'analytics', label: 'Impact & Metrics', icon: BarChart3 },
+    { id: 'analytics', label: 'Impact', icon: BarChart3 },
   ];
 
   const handleSaveUser = () => {
@@ -57,83 +54,81 @@ export const Navbar: React.FC<NavbarProps> = ({
     setIsEditingUser(false);
   };
 
+  // 1. MINIMAL LANDING NAVBAR: Zero items in the navbar
+  if (isLanding) {
+    return (
+      <header className="sticky top-0 z-40 bg-[#F4F1EA]/90 backdrop-blur-md border-b border-[#D8D4C9]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Brand — MB CARE text only, no icon */}
+            <div 
+              className="cursor-pointer group"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              <span className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-[#1B4326] group-hover:text-[#2E6F40] transition-colors select-none">
+                MB CARE
+              </span>
+            </div>
+
+            {/* Right side action: No items in navbar, just clean CTA */}
+            <div className="flex items-center space-x-4">
+              <a
+                href="#join-sanctuary"
+                className="hidden sm:inline-block text-xs font-semibold text-[#1B4326] hover:text-[#2E6F40] transition-colors underline-offset-4 hover:underline"
+              >
+                Join Community
+              </a>
+
+              <button
+                onClick={() => setCurrentTab('service_in_progress')}
+                className="px-5 py-2.5 rounded-xl bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow flex items-center space-x-2 border border-[#1B4326]"
+              >
+                <span>View our online service</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // 2. MINIMAL ONLINE SERVICE (WEBAPP) HEADER
   return (
     <header className="sticky top-0 z-40 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#D8D4C9] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div 
-            className="flex items-center space-x-3 cursor-pointer group" 
-            onClick={() => setCurrentTab('landing')}
-          >
-            <div className="w-10 h-10 rounded-xl bg-[#1B4326] text-[#F4F1EA] flex items-center justify-center shadow-md border-2 border-[#1B4326] group-hover:bg-[#2E6F40] transition-colors">
-              <Sparkles className="w-5 h-5 text-[#C8B87E]" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-serif font-bold tracking-tight text-[#1B4326]">
-                  Mental Beacon
-                </span>
-                <span className="hidden sm:inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#B9D2B9] text-[#1B4326] border border-[#2E6F40]/30">
-                  Youth Space 15–35
-                </span>
-              </div>
-              <p className="text-[10px] text-[#2E6F40] font-semibold tracking-wide uppercase hidden sm:block">
-                Impact-Driven Social Grounding
-              </p>
+          {/* Back to landing page */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setCurrentTab('landing')}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#F4F1EA] text-[#1B4326] border border-[#D8D4C9] hover:bg-[#B9D2B9]/30 text-xs font-semibold transition-all"
+              title="Return to Landing Page Overview"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#2E6F40]" />
+              <span>Back to Overview</span>
+            </button>
+
+            <div className="hidden md:flex items-center space-x-2">
+              <span className="text-sm font-serif font-bold text-[#1B4326]">
+                Online Service Space
+              </span>
             </div>
           </div>
 
           {/* Quick Support & User Profile */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Context switcher button */}
-            {currentTab === 'landing' ? (
-              <button
-                onClick={() => setCurrentTab('communities')}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#1B4326] text-[#F4F1EA] hover:bg-[#2E6F40] transition-all shadow-sm"
-              >
-                <span>Launch App</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                onClick={() => setCurrentTab('landing')}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#F4F1EA] text-[#1B4326] border border-[#D8D4C9] hover:bg-[#B9D2B9]/30 transition-all shadow-sm"
-              >
-                <Home className="w-3.5 h-3.5 text-[#2E6F40]" />
-                <span>Overview</span>
-              </button>
-            )}
-
-            {/* Emergency Contacts / Threshold Button */}
+            {/* Crisis Safety Button */}
             <button
               onClick={onOpenEmergency}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-lg bg-rose-50 text-rose-800 border-2 border-rose-300 hover:bg-rose-100 transition-all shadow-sm"
-              title="Trusted Contacts & Safety Escalation"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-50 text-rose-800 border border-rose-300 hover:bg-rose-100 transition-all shadow-sm"
+              title="Emergency & Safety Circle"
             >
-              <ShieldAlert className="w-4 h-4 text-rose-600 animate-pulse" />
-              <span>Safety Circle</span>
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
+              <span className="hidden sm:inline">Safety Circle (988)</span>
             </button>
 
-            {/* Privacy Transparency */}
-            <button
-              onClick={onOpenTransparency}
-              className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-medium rounded-lg text-[#2B2E2B] hover:text-[#1B4326] hover:bg-[#F4F1EA] transition-all border border-transparent hover:border-[#D8D4C9]"
-              title="Data Transparency & Privacy"
-            >
-              <Lock className="w-3.5 h-3.5 text-[#2E6F40]" />
-              <span className="hidden md:inline">Data Privacy</span>
-            </button>
-
-            {/* Sustainability / Pro */}
-            <button
-              onClick={onOpenPro}
-              className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 text-xs font-medium rounded-lg text-[#1B4326] bg-[#B9D2B9]/50 border border-[#2E6F40]/30 hover:bg-[#B9D2B9] transition-all"
-            >
-              <span>Impact Model</span>
-            </button>
-
-            {/* User Pseudonym handle */}
+            {/* Pseudonym handle */}
             <div className="relative">
               {isEditingUser ? (
                 <div className="flex items-center space-x-1 bg-[#F4F1EA] p-1 rounded-lg border border-[#D8D4C9]">
@@ -141,47 +136,47 @@ export const Navbar: React.FC<NavbarProps> = ({
                     type="text"
                     value={tempUser}
                     onChange={(e) => setTempUser(e.target.value)}
-                    className="w-28 px-2 py-0.5 text-xs bg-[#FFFFFF] text-[#1B4326] font-semibold rounded border border-[#D8D4C9] focus:outline-none focus:border-[#2E6F40]"
+                    className="w-24 px-2 py-0.5 text-xs bg-[#FFFFFF] text-[#1B4326] font-semibold rounded border border-[#D8D4C9] focus:outline-none"
                     placeholder="Username"
                     autoFocus
                   />
                   <button
                     onClick={handleSaveUser}
-                    className="px-2 py-0.5 text-xs bg-[#1B4326] hover:bg-[#2E6F40] text-[#F4F1EA] rounded font-semibold"
+                    className="px-2 py-0.5 text-xs bg-[#1B4326] text-[#F4F1EA] rounded font-semibold"
                   >
-                    Save
+                    <Check className="w-3 h-3" />
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setIsEditingUser(true)}
                   className="flex items-center space-x-1.5 px-2.5 py-1.5 text-xs rounded-lg bg-[#F4F1EA] text-[#1B4326] hover:bg-[#B9D2B9]/40 border border-[#D8D4C9] transition-all"
-                  title="Click to change anonymous username"
+                  title="Click to edit anonymous alias"
                 >
                   <User className="w-3.5 h-3.5 text-[#2E6F40]" />
-                  <span className="max-w-[110px] truncate font-semibold">@{username}</span>
+                  <span className="max-w-[100px] truncate font-semibold">@{username}</span>
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation Row */}
-        <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none border-t border-[#D8D4C9]">
-          {navItems.map((item) => {
+        {/* Compact Service Navigation Tabs (Only in webapp mode) */}
+        <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none border-t border-[#D8D4C9]/70">
+          {serviceItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setCurrentTab(item.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-lg whitespace-nowrap transition-all ${
+                className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
                   isActive
                     ? 'bg-[#1B4326] text-[#F4F1EA] shadow-sm'
                     : 'text-[#2B2E2B]/80 hover:text-[#1B4326] hover:bg-[#B9D2B9]/30'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#C8B87E]' : 'text-[#2E6F40]'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#C8B87E]' : 'text-[#2E6F40]'}`} />
                 <span>{item.label}</span>
               </button>
             );
