@@ -39,6 +39,65 @@
   }
 }
 
+/* ── Motion: async screens fade-rise in, photos settle gently ── */
+@keyframes page-fade-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes soft-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slow-drift {
+  0%, 100% { transform: scale(1.06) translate3d(0, 0, 0); }
+  50% { transform: scale(1.12) translate3d(-1.2%, -1%, 0); }
+}
+
+.animate-page-in {
+  animation: page-fade-rise 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.animate-soft-in {
+  animation: soft-fade-in 0.8s ease-out both;
+}
+
+.photo-drift {
+  animation: slow-drift 32s ease-in-out infinite;
+  will-change: transform;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-in,
+  .animate-soft-in,
+  .photo-drift,
+  .animate-breathe-in-out {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Custom earthy scrollbar for soothing UI */
 ::-webkit-scrollbar {
   width: 8px;

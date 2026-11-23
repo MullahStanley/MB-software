@@ -22,6 +22,8 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
+import { AsyncImage } from './AsyncImage';
+import { VisionGallery } from './VisionGallery';
 
 interface LandingPageProps {
   onViewService: (tab?: string) => void;
@@ -212,8 +214,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <article className="w-full bg-[#F4F1EA] text-[#2B2E2B] selection:bg-[#B9D2B9] selection:text-[#1B4326]">
-      {/* 1. HERO SECTION: Singular, calm & focused */}
-      <section className="pt-16 sm:pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
+      {/* 1. HERO SECTION: Singular, calm & focused, anchored on a blended horizon photo */}
+      <section className="relative isolate overflow-hidden border-b border-[#D8D4C9]/60">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <AsyncImage
+            src="/images/misty-sunrise.jpg"
+            alt=""
+            priority
+            drift
+            className="h-full w-full"
+            imgClassName="opacity-40 saturate-[0.8]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#F4F1EA]/80 via-[#F4F1EA]/75 to-[#F4F1EA]" />
+          <div className="absolute inset-0 bg-[#B9D2B9] opacity-20 mix-blend-color" />
+        </div>
+
+        <div className="relative pt-16 sm:pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
         <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-3 block">
           A CALM SANCTUARY FOR MENTAL GROUNDING
         </span>
@@ -246,9 +262,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <span>Join our community</span>
           </a>
         </div>
+        </div>
       </section>
 
-      {/* 2. WHO WE ARE, WHAT WE ARE & WHAT WE AIM TO DO */}
+      {/* 2. GOALS, PROJECTS & VISION — photo-led story panels */}
+      <VisionGallery onViewService={onViewService} />
+
+      {/* 3. WHO WE ARE, WHAT WE ARE & WHAT WE AIM TO DO */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-[#D8D4C9]">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-bold tracking-widest uppercase text-[#2E6F40] mb-2 block">

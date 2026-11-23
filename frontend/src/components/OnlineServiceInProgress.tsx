@@ -9,6 +9,7 @@ import {
   Heart,
   ArrowRight,
 } from 'lucide-react';
+import { AsyncImage } from './AsyncImage';
 
 interface OnlineServiceInProgressProps {
   onBackToOverview: () => void;
@@ -59,7 +60,20 @@ export const OnlineServiceInProgress: React.FC<OnlineServiceInProgressProps> = (
   ];
 
   return (
-    <article className="min-h-screen bg-[#F4F1EA] text-[#2B2E2B] flex flex-col selection:bg-[#B9D2B9] selection:text-[#1B4326]">
+    <article className="relative isolate min-h-screen bg-[#F4F1EA] text-[#2B2E2B] flex flex-col overflow-hidden selection:bg-[#B9D2B9] selection:text-[#1B4326]">
+      {/* A quiet forest in progress, blended into the cream canvas */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]">
+        <AsyncImage
+          src="/images/forest-trail.jpg"
+          alt=""
+          priority
+          className="h-full w-full"
+          imgClassName="opacity-30 saturate-[0.75]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F4F1EA]/65 via-[#F4F1EA]/85 to-[#F4F1EA]" />
+        <div className="absolute inset-0 bg-[#B9D2B9] opacity-20 mix-blend-color" />
+      </div>
+
       {/* Main Notice Body — no inner header; the global Navbar handles navigation */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-16 sm:py-24 flex flex-col items-center text-center">
 
