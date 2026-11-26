@@ -1,4 +1,4 @@
-import { Community, Post, Checkup, TrustedContact, AlertLog, JournalEntry, Article, ChatMessage } from './types';
+import { Community, Post, PostReply, Checkup, TrustedContact, AlertLog, JournalEntry, Article, ChatMessage } from './types';
 import fs from 'fs';
 import path from 'path';
 

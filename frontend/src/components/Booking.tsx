@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { CalendarDays, ChevronLeft, ChevronRight, Clock, Sunrise, Sun, Sunset, Check } from 'lucide-react';
 
 const SLOTS = ['09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
+const TIME_GROUPS = [
+  { label: 'Morning', icon: Sunrise, slots: SLOTS.slice(0, 3) },
+  { label: 'Afternoon', icon: Sun, slots: SLOTS.slice(3, 5) },
+  { label: 'Evening', icon: Sunset, slots: SLOTS.slice(5) },
+];
 const PRICES = {
   virtual: { single: 2500, package: 9000 },
   physical: { single: 3000, package: 11000 },
@@ -33,6 +39,140 @@ const fmtDateFull = (isoDate: string) =>
     new Date(isoDate + 'T00:00:00')
   );
 
+const fmtTime = (time: string) => {
+  const [h, m] = time.split(':').map(Number);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, '0')} ${suffix}`;
+};
+
+interface DateTimePickerProps {
+  date: string;
+  time: string;
+  onChange: (next: { date: string; time: string }) => void;
+  viewMonth: Date;
+  setViewMonth: (d: Date) => void;
+}
+
+const DateTimePicker: React.FC<DateTimePickerProps> = ({ date, time, onChange, viewMonth, setViewMonth }) => {
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  return (
+    <div className="rounded-2xl border border-[#1B462A]/15 bg-white shadow-sm overflow-hidden">
+      {/* Month navigation */}
+      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[#1B462A]/10">
+        <button
+          type="button"
+          onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
+          disabled={viewMonth <= monthStart}
+          aria-label="Previous month"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#1B462A] hover:bg-[#B9D2B9]/40 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <div className="flex items-center gap-2 text-sm font-bold text-[#1B462A]">
+          <CalendarDays className="w-4 h-4 text-[#2E6F40]" />
+          {viewMonth.toLocaleDateString('en-KE', { month: 'long', year: 'numeric' })}
+        </div>
+        <button
+          type="button"
+          onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
+          aria-label="Next month"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#1B462A] hover:bg-[#B9D2B9]/40 transition-colors"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Calendar grid */}
+      <div className="px-4 sm:px-5 pt-4">
+        <div className="grid grid-cols-7 text-center text-[11px] font-bold uppercase tracking-wider text-[#3F5A47]/70 mb-1">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
+            <div key={d} className="py-1">{d}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {calendarDays(viewMonth).map((d, i) => {
+            if (!d) return <div key={i} className="aspect-square" />;
+            const dIso = iso(d);
+            const available = d > today && d.getDay() !== 0 && d <= maxDate;
+            const isSelected = date === dIso;
+            const isToday = dIso === iso(today);
+            return (
+              <button
+                key={dIso}
+                type="button"
+                disabled={!available}
+                onClick={() => onChange({ date: dIso, time: '' })}
+                className={`aspect-square rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                  isSelected
+                    ? 'bg-[#1B462A] text-[#F3EDE1] shadow-md scale-105'
+                    : available
+                    ? 'text-[#1B462A] hover:bg-[#B9D2B9]/50'
+                    : 'text-[#1B462A]/25 cursor-not-allowed'
+                } ${isToday && !isSelected ? 'ring-1 ring-[#C8B87E]' : ''}`}
+              >
+                {d.getDate()}
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-[11px] text-[#3F5A47]/70 mt-2 pb-4">Sunday appointments are unavailable.</p>
+      </div>
+
+      {/* Time selection */}
+      <div className={`px-4 sm:px-5 pb-5 border-t border-[#1B462A]/10 pt-4 ${date ? '' : 'opacity-50 pointer-events-none'}`}>
+        <div className="flex items-center gap-2 text-sm font-bold mb-3">
+          <Clock className="w-4 h-4 text-[#2E6F40]" />
+          {date ? `Available times · ${fmtDateFull(date)}` : 'Select a date to see available times'}
+        </div>
+        <div className="space-y-3">
+          {TIME_GROUPS.map((group) => {
+            const Icon = group.icon;
+            return (
+              <div key={group.label}>
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#3F5A47]/70 mb-1.5">
+                  <Icon className="w-3.5 h-3.5" /> {group.label}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {group.slots.map((s) => {
+                    const isSelected = time === s;
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => onChange({ date, time: s })}
+                        className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-[#1B462A] text-[#F3EDE1] border-[#1B462A] shadow-sm'
+                            : 'border-[#1B462A]/20 text-[#1B462A] hover:border-[#1B462A] hover:bg-[#B9D2B9]/30'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5" />}
+                        {fmtTime(s)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Selection summary */}
+      <div className={`px-5 py-3 text-sm flex items-center gap-2 border-t border-[#1B462A]/10 ${date && time ? 'bg-[#1B462A] text-[#F3EDE1]' : 'bg-[#F3EDE1] text-[#3F5A47]'}`}>
+        <Clock className="w-4 h-4 shrink-0" />
+        {date && time
+          ? `${fmtDateFull(date)} at ${fmtTime(time)}`
+          : date
+          ? `${fmtDateFull(date)} — pick a time`
+          : 'No date or time selected yet'}
+      </div>
+    </div>
+  );
+};
+
 export const Booking: React.FC<{ onGoHome?: () => void }> = ({ onGoHome }) => {
   const [step, setStep] = useState(1);
   const [format, setFormat] = useState<'virtual' | 'physical' | null>(null);
@@ -47,6 +187,7 @@ export const Booking: React.FC<{ onGoHome?: () => void }> = ({ onGoHome }) => {
     { date: '', time: '' },
   ]);
   const [viewMonth, setViewMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const [activePkg, setActivePkg] = useState(0);
   // intake
   const [name, setName] = useState('');
   const [pronouns, setPronouns] = useState('');
@@ -89,12 +230,25 @@ export const Booking: React.FC<{ onGoHome?: () => void }> = ({ onGoHome }) => {
     return Object.keys(e).length === 0;
   };
 
+  const weekKey = (isoDate: string) => {
+    if (!isoDate) return '';
+    const d = new Date(isoDate + 'T00:00:00');
+    const tmp = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = tmp.getUTCDay() || 7;
+    tmp.setUTCDate(tmp.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil(((tmp.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    return `${tmp.getUTCFullYear()}-W${weekNo}`;
+  };
+
   const validateScheduling = () => {
     if (plan === 'single') {
       return !!(singleDate && singleTime);
     }
-    return pkgSlots.every((s) => s.date && s.time) &&
-      new Set(pkgSlots.map((s) => s.date + '|' + s.time)).size === pkgSlots.length;
+    const filled = pkgSlots.every((s) => s.date && s.time);
+    const uniqueCombos = new Set(pkgSlots.map((s) => s.date + '|' + s.time)).size === pkgSlots.length;
+    const uniqueWeeks = new Set(pkgSlots.map((s) => weekKey(s.date))).size === pkgSlots.length;
+    return filled && uniqueCombos && uniqueWeeks;
   };
 
   const allDates = () => {
@@ -211,122 +365,83 @@ export const Booking: React.FC<{ onGoHome?: () => void }> = ({ onGoHome }) => {
             {/* STEP 2: Scheduling */}
             {step === 2 && (
               <>
-                <h3 className="text-2xl font-bold mb-4">
+                <h3 className="text-2xl font-bold mb-1">
                   {plan === 'package' ? 'Choose your 4 session dates & times' : 'Choose an appointment'}
                 </h3>
+                <p className="text-[#3F5A47] text-sm mb-4">
+                  {plan === 'package'
+                    ? 'Pick a date and time for each session. Sessions run for 2 hours, once per week.'
+                    : 'Select a date, then choose a time that works for you.'}
+                </p>
 
                 {plan === 'single' && (
-                  <>
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <button
-                          onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
-                          disabled={viewMonth <= new Date(today.getFullYear(), today.getMonth(), 1)}
-                          className="px-3 py-1 rounded border border-[#1B462A]/30 disabled:opacity-40"
-                        >
-                          ‹
-                        </button>
-                        <span className="font-semibold">{viewMonth.toLocaleDateString('en-KE', { month: 'long', year: 'numeric' })}</span>
-                        <button
-                          onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
-                          className="px-3 py-1 rounded border border-[#1B462A]/30"
-                        >
-                          ›
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-7 gap-1 text-center text-xs text-[#3F5A47] mb-1">
-                        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
-                          <div key={d} className="py-1">{d}</div>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-7 gap-1">
-                        {calendarDays(viewMonth).map((d, i) => {
-                          if (!d) return <div key={i} />;
-                          const dIso = iso(d);
-                          const available = d > today && d.getDay() !== 0 && d <= maxDate;
-                          return (
-                            <button
-                              key={dIso}
-                              disabled={!available}
-                              onClick={() => { setSingleDate(dIso); setSingleTime(null); }}
-                              className={`aspect-square rounded-md text-sm ${
-                                singleDate === dIso
-                                  ? 'bg-[#1B462A] text-[#F3EDE1]'
-                                  : available
-                                  ? 'hover:bg-[#B9D2B9]/40'
-                                  : 'text-[#1B462A]/30 cursor-not-allowed'
-                              }`}
-                            >
-                              {d.getDate()}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {singleDate && (
-                      <>
-                        <h4 className="font-semibold mb-2">Select a time</h4>
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">
-                          {SLOTS.map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => setSingleTime(s)}
-                              className={`py-2 rounded-md border ${singleTime === s ? 'bg-[#1B462A] text-[#F3EDE1] border-[#1B462A]' : 'border-[#1B462A]/20'}`}
-                            >
-                              {s}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </>
+                  <div className="mb-4">
+                    <DateTimePicker
+                      date={singleDate || ''}
+                      time={singleTime || ''}
+                      onChange={(v) => {
+                        setSingleDate(v.date || null);
+                        setSingleTime(v.time || null);
+                      }}
+                      viewMonth={viewMonth}
+                      setViewMonth={setViewMonth}
+                    />
+                  </div>
                 )}
 
                 {plan === 'package' && (
                   <div className="space-y-4 mb-4">
-                    {pkgSlots.map((slot, idx) => (
-                      <div key={idx} className="border border-[#1B462A]/20 rounded-md p-3">
-                        <div className="font-semibold mb-2">Session {idx + 1}</div>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          <select
-                            value={slot.date}
-                            onChange={(e) => {
-                              const next = [...pkgSlots];
-                              next[idx] = { ...next[idx], date: e.target.value };
-                              setPkgSlots(next);
-                            }}
-                            className="w-full px-3 py-2 border border-[#1B462A] rounded-md"
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {pkgSlots.map((slot, idx) => {
+                        const filled = !!(slot.date && slot.time);
+                        const isActive = activePkg === idx;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setActivePkg(idx)}
+                            className={`rounded-xl border px-2.5 py-2.5 text-left transition-all ${
+                              isActive
+                                ? 'border-[#1B462A] bg-[#1B462A] text-[#F3EDE1] shadow-sm'
+                                : 'border-[#1B462A]/20 bg-white hover:bg-[#B9D2B9]/30'
+                            }`}
                           >
-                            <option value="">Select date</option>
-                            {Array.from({ length: 12 }).map((_, i) => {
-                              const d = new Date(today);
-                              d.setDate(d.getDate() + i + 1);
-                              if (d.getDay() === 0) return null;
-                              const v = iso(d);
-                              return <option key={v} value={v}>{d.toLocaleDateString('en-KE', { weekday: 'short', day: 'numeric', month: 'short' })}</option>;
-                            })}
-                          </select>
-                          <select
-                            value={slot.time}
-                            onChange={(e) => {
-                              const next = [...pkgSlots];
-                              next[idx] = { ...next[idx], time: e.target.value };
-                              setPkgSlots(next);
-                            }}
-                            className="w-full px-3 py-2 border border-[#1B462A] rounded-md"
-                          >
-                            <option value="">Select time</option>
-                            {SLOTS.map((s) => (
-                              <option key={s} value={s}>{s}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    ))}
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-[11px] font-bold uppercase tracking-wider">Session {idx + 1}</span>
+                              {filled && <Check className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#C8B87E]' : 'text-[#2E6F40]'}`} />}
+                            </div>
+                            <div
+                              className={`text-sm mt-0.5 ${
+                                isActive ? 'text-[#F3EDE1]/80' : filled ? 'text-[#3F5A47]' : 'text-[#1B462A]/40'
+                              }`}
+                            >
+                              {slot.date
+                                ? new Date(slot.date + 'T00:00:00').toLocaleDateString('en-KE', {
+                                    weekday: 'short',
+                                    day: 'numeric',
+                                    month: 'short',
+                                  })
+                                : 'Not set'}
+                              {slot.time ? ` · ${fmtTime(slot.time)}` : ''}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <DateTimePicker
+                      date={pkgSlots[activePkg].date}
+                      time={pkgSlots[activePkg].time}
+                      onChange={(v) => {
+                        setPkgSlots((prev) => prev.map((s, i) => (i === activePkg ? v : s)));
+                      }}
+                      viewMonth={viewMonth}
+                      setViewMonth={setViewMonth}
+                    />
+
                     {!validateScheduling() && pkgSlots.some((s) => s.date || s.time) && (
-                      <p className="text-sm text-[#1B462A] bg-[#E8E0CF] px-2 py-1 rounded inline-block">
-                        Please fill all 4 slots with unique date & time combinations.
+                      <p className="text-sm text-[#1B462A] bg-[#E8E0CF] px-3 py-2 rounded-md">
+                        Please fill all 4 slots with unique date & time combinations, one session per week (sessions are 2 hours).
                       </p>
                     )}
                   </div>

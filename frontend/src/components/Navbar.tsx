@@ -5,6 +5,7 @@ import {
   Compass,
   Activity,
   BookOpen,
+  Book,
   Wind,
   FileText,
   Gamepad2,
@@ -125,8 +126,25 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, usern
             >
               Book a session
             </button>
-            <button className="md:hidden" onClick={() => setMobileOpen((v) => !v)}>
-              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button
+              className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl text-[#1B4326] hover:bg-[#B9D2B9]/40 transition-colors"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen((v) => !v)}
+            >
+              <span className="relative inline-block w-8 h-8" style={{ perspective: '600px' }}>
+                <span
+                  className="absolute inset-0 transition-transform duration-500"
+                  style={{ transformStyle: 'preserve-3d', transform: mobileOpen ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                >
+                  <span className="absolute inset-0 flex items-center justify-center" style={{ backfaceVisibility: 'hidden' }}>
+                    <Book className="w-8 h-8" />
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-center" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                    <BookOpen className="w-8 h-8" />
+                  </span>
+                </span>
+              </span>
             </button>
           </div>
         </div>

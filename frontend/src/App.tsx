@@ -8,6 +8,7 @@ import { api } from './api';
 const Approach = lazy(() => import('./components/Approach').then((m) => ({ default: m.Approach })));
 const MBCare = lazy(() => import('./components/MBCare').then((m) => ({ default: m.MBCare })));
 const Booking = lazy(() => import('./components/Booking').then((m) => ({ default: m.Booking })));
+const ClientIntakeForm = lazy(() => import('./components/ClientIntakeForm').then((m) => ({ default: m.ClientIntakeForm })));
 const UnderDevelopment = lazy(() => import('./components/UnderDevelopment').then((m) => ({ default: m.UnderDevelopment })));
 
 // Existing screens
@@ -71,7 +72,7 @@ export const App: React.FC = () => {
       return (
         <Home
           onViewService={(tab) => setCurrentTab(tab || 'mbcare')}
-          onGoArticles={() => setCurrentTab('articles')}
+          onGoArticles={() => setCurrentTab('underdev')}
         />
       );
     }
@@ -81,7 +82,11 @@ export const App: React.FC = () => {
     }
 
     if (currentTab === 'mbcare') {
-      return <MBCare onBook={() => setCurrentTab('booking')} onGoHome={() => setCurrentTab('home')} />;
+      return <MBCare onBook={() => setCurrentTab('booking')} onGoHome={() => setCurrentTab('home')} onIntake={() => setCurrentTab('intake')} />;
+    }
+
+    if (currentTab === 'intake') {
+      return <ClientIntakeForm onGoHome={() => setCurrentTab('home')} onGoBooking={() => setCurrentTab('booking')} />;
     }
 
     if (currentTab === 'booking') {

@@ -322,7 +322,7 @@ export const EmergencyThresholdModal: React.FC<EmergencyThresholdModalProps> = (
                   </div>
                   <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#D8D4C9] text-xs">
                     <span className="font-bold text-[#1B4326] block">MB Specialist Referral Concierge</span>
-                    <span className="text-[#2E6F40] font-mono block mt-1">support@mentalbeacon.org</span>
+                    <span className="text-[#2E6F40] font-mono block mt-1">support@mentalbeacon.co.ke</span>
                     <span className="text-[11px] text-[#2B2E2B]/70 block mt-1">Matched sliding-scale youth therapists</span>
                   </div>
                 </div>

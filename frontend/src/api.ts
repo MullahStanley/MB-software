@@ -259,6 +259,15 @@ export const api = {
     return json.analytics;
   },
 
+  async submitIntake(data: any): Promise<any> {
+    const res = await fetch(`${BASE_URL}/intake`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
   async trackPage(page: string): Promise<void> {
     await fetch(`${BASE_URL}/analytics/track`, {
       method: 'POST',

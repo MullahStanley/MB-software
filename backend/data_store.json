@@ -499,16 +499,25 @@
     "avgSessionMinutes": 14.5,
     "satisfactionScore": 4.85,
     "pageViews": {
-      "communities": 18453,
+      "communities": 18460,
       "checkup_patterns": 12300,
-      "journal": 8921,
+      "journal": 8926,
       "breathing_sound": 15600,
-      "articles": 10211,
-      "games": 7481,
+      "articles": 10226,
+      "games": 7484,
       "chatbot": 9150,
-      "landing": 2,
-      "checkups": 1,
-      "calm": 1
+      "landing": 44,
+      "checkups": 4,
+      "calm": 8,
+      "service_in_progress": 10,
+      "chat": 5,
+      "analytics": 3,
+      "home": 123,
+      "approach": 21,
+      "mbcare": 44,
+      "booking": 42,
+      "underdev": 27,
+      "intake": 2
     }
   }
 }
